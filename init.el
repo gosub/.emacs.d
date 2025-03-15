@@ -447,7 +447,7 @@ with single prefix insert full date-time ISO8601 string"
 
 ;; kill buffer without confirmation
 (global-set-key (kbd "C-x k")
-		'kill-this-buffer)
+		'kill-current-buffer)
 
 ;; toggle line truncation on/off
 (global-set-key (kbd "C-c w")
