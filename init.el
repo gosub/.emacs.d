@@ -335,7 +335,6 @@ with single prefix insert full date-time ISO8601 string"
 
 ;; show line number on the side
 (global-display-line-numbers-mode)
-(setq linum-format "%3d")
 
 ;; column number in info bar
 (column-number-mode 1)
