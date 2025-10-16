@@ -79,4 +79,4 @@
     ("rp" "Pause recording" sclang-server-pause-recording)]])
 
 
-(provide 'gg-sclang-utils)
+(provide 'gg-sclang-aux)

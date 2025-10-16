@@ -46,11 +46,11 @@
 		(display-line-numbers-mode 0)
 		(electric-indent-mode -1))))
 
-(use-package gg-sclang-utils)
+(use-package gg-sclang-aux)
 
 (use-package sclang
   :defer t
-  :after (gg-sclang-utils)
+  :after (gg-sclang-aux)
   :commands (sclang-start)
   :custom
   (sclang-show-workspace-on-startup nil)
