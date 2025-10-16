@@ -62,3 +62,6 @@ C-c C-a    print a random sample from the SuperDirt folder"
                          (shell-command-to-string (cdr (assoc "path" filepath))) ":")))
      (cdr (assoc "separator" filepath))
      "BootTidal.hs")))
+
+
+(provide 'gg-tidal-aux)
