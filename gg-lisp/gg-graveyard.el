@@ -31,3 +31,4 @@
 ;(global-set-key (kbd "C-c r")
 ;		'gg/search-backward-and-copy-line)
 
+(provide 'gg-graveyard)
