@@ -1,6 +1,11 @@
 ;;; Graveyard - a plethora of functions I don't use anymore
 
 
+; my idea is to substitute this two next functions
+; with some custom keybindings in isearch-mode
+; that marks a thing-at-point (word,line,paragraph)
+; copy it, and paste it where the search started
+
 (defun gg/search-forward-and-copy-line ()
   "search forwards and insert whole line found at point"
   (interactive)
