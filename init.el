@@ -129,30 +129,6 @@ with single prefix insert full date-time ISO8601 string"
     (insert (format-time-string fmt))))
 
 
-(defun gg/search-forward-and-copy-line ()
-  "search forwards and insert whole line found at point"
-  (interactive)
-  (let ((p (point)))
-    (when (not (null (isearch-forward)))
-      (move-beginning-of-line nil)
-      (kill-line)
-      (yank)
-      (goto-char p)
-      (yank))))
-
-
-(defun gg/search-backward-and-copy-line ()
-  "search backward and insert whole line found at point"
-  (interactive)
-  (let ((p (point)))
-    (when (not (null (isearch-backward)))
-      (move-beginning-of-line nil)
-      (kill-line)
-      (yank)
-      (goto-char p)
-      (yank))))
-
-
 (defun gg/increment-number-at-point ()
   "increment number at point, partially simulating C-a in vim"
   (interactive)
@@ -390,12 +366,6 @@ with single prefix insert full date-time ISO8601 string"
 ;; insert current date in iso format
 (global-set-key (kbd "C-c d")
 		'gg/insert-current-date)
-
-;; search and duplicate whole line
-(global-set-key (kbd "C-c s")
-		'gg/search-forward-and-copy-line)
-(global-set-key (kbd "C-c r")
-		'gg/search-backward-and-copy-line)
 
 ;; missing ctrl-A from vim
 (global-set-key (kbd "C-c +")
