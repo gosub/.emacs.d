@@ -36,4 +36,17 @@
 ;(global-set-key (kbd "C-c r")
 ;		'gg/search-backward-and-copy-line)
 
+
+(defun gg/yank-line-at-beginning-of-buffer ()
+  "yank the content of the clipboard at the beginning of the buffer"
+  (interactive)
+  (beginning-of-buffer)
+  (yank)
+  (newline))
+
+
+;; yank at beginning of buffer
+;(global-set-key (kbd "C-c y")
+;		'gg/yank-line-at-beginning-of-buffer)
+
 (provide 'gg-graveyard)

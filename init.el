@@ -147,14 +147,6 @@ with single prefix insert full date-time ISO8601 string"
   (find-file gg-done-file))
 
 
-(defun gg/yank-line-at-beginning-of-buffer ()
-  "yank the content of the clipboard at the beginning of the buffer"
-  (interactive)
-  (beginning-of-buffer)
-  (yank)
-  (newline))
-
-
 (defun gg/yt-playlist-to-org (playlist-url)
   "turn a youtube playlist link into an org section, where each video is a subsection"
   (interactive "sPlaylist url or id: ")
@@ -374,10 +366,6 @@ with single prefix insert full date-time ISO8601 string"
 ;; toggle line truncation on/off
 (global-set-key (kbd "C-c w")
 		'visual-line-mode)
-
-;; yank at beginning of buffer
-(global-set-key (kbd "C-c y")
-		'gg/yank-line-at-beginning-of-buffer)
 
 ;; copy line at point in kill ring
 ;; with format switched between csv and org link
