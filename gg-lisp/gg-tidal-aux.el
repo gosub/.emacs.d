@@ -17,6 +17,11 @@
     (funcall selected-step-function)))
 
 
+; tidalcycles samples folder
+(setq gg-tidal-sample-folder
+      (expand-file-name "~/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples"))
+
+
 (defun gg/tidal-random-sample ()
   "print the name of random tidal sample from the SuperDirt sample folder"
   (interactive)
