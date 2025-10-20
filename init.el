@@ -72,6 +72,12 @@
   :commands (gg/xkcd-geohashing-coords
 	     gg/browse-xkcd-geohashing-map))
 
+
+(use-package gg-serendip
+  :defer t
+  :commands (gg/serendip-transient))
+
+
 ;;; Dirs and files
 
 ;; put autosave and backup files inside .emacs.d/ subdirs
