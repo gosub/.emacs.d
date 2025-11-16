@@ -49,4 +49,31 @@
 ;(global-set-key (kbd "C-c y")
 ;		'gg/yank-line-at-beginning-of-buffer)
 
+
+;; some time ago, I used to save interesting links in a csv files
+;; and used this function to convert csv to org link format
+;; now I save directy in org link format, so I do not use this anymore
+
+(defun gg/switch-csv-and-org-link (string)
+  (cond ((string-match "^....-..-..,\"?\\([^\"]*\\)\"?,\\(.*\\)$" string)
+	 (concat "[[" (match-string 2 string)
+		 "][" (match-string 1 string) "]]"))
+	((string-match "\\[\\[\\(.*\\)\\]\\[\\(.*\\)\\]\\]" string)
+	 (concat (format-time-string "%Y-%m-%d") ",\""
+	    (match-string 2 string) "\","
+	    (match-string 1 string)))))
+
+(defun gg/copy-line-at-point-with-switched-link-format ()
+  (interactive)
+  (let ((switched-line-at-point
+	 (gg/switch-csv-and-org-link (thing-at-point 'line t))))
+   (when switched-line-at-point (kill-new switched-line-at-point))))
+
+
+;; copy line at point in kill ring
+;; with format switched between csv and org link
+;(global-set-key (kbd "C-c u")
+;		'gg/copy-line-at-point-with-switched-link-format)
+
+
 (provide 'gg-graveyard)

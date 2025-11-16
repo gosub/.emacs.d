@@ -169,23 +169,6 @@ with single prefix insert full date-time ISO8601 string"
     (insert (concat "\n" playlist-header playlist-entries "\n"))))
 
 
-(defun gg/switch-csv-and-org-link (string)
-  (cond ((string-match "^....-..-..,\"?\\([^\"]*\\)\"?,\\(.*\\)$" string)
-	 (concat "[[" (match-string 2 string)
-		 "][" (match-string 1 string) "]]"))
-	((string-match "\\[\\[\\(.*\\)\\]\\[\\(.*\\)\\]\\]" string)
-	 (concat (format-time-string "%Y-%m-%d") ",\""
-	    (match-string 2 string) "\","
-	    (match-string 1 string)))))
-
-
-(defun gg/copy-line-at-point-with-switched-link-format ()
-  (interactive)
-  (let ((switched-line-at-point
-	 (gg/switch-csv-and-org-link (thing-at-point 'line t))))
-   (when switched-line-at-point (kill-new switched-line-at-point))))
-
-
 (defun gg/get-string-from-file (filePath)
   "Return file content as string."
   (with-temp-buffer
@@ -372,11 +355,6 @@ with single prefix insert full date-time ISO8601 string"
 ;; toggle line truncation on/off
 (global-set-key (kbd "C-c w")
 		'visual-line-mode)
-
-;; copy line at point in kill ring
-;; with format switched between csv and org link
-(global-set-key (kbd "C-c u")
-		'gg/copy-line-at-point-with-switched-link-format)
 
 ;; on my new Lenovo E14 gen5
 ;; Fn key is interpreded as <WakeUp>
