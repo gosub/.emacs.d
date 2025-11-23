@@ -220,6 +220,8 @@ with single prefix insert full date-time ISO8601 string"
 (setq browse-url-generic-program
       "firefox")
 
+;; electric pair auto-inserts matching parens and quotes
+(electric-pair-mode 1)
 
 
 ;;; Visuals
