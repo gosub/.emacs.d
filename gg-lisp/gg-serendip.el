@@ -11,10 +11,6 @@
        ,body)))
 
 
-(defun random-element (l)
-  (nth (random (length l)) l))
-
-
 (defun gg/describe-random-interactive-function ()
   "Display the documentation of a random interactive function."
   (interactive)
@@ -22,7 +18,7 @@
    all-the-funs
    (lambda (atom) (and (symbol-function atom)
 		       (commandp (symbol-function atom))))
-   (describe-function (random-element all-the-funs))))
+   (describe-function (seq-random-elt all-the-funs))))
 
 
 (defun gg/describe-random-macro ()
@@ -31,7 +27,7 @@
   (atoms-do-when
    all-the-macros
    macrop
-   (describe-function (random-element all-the-macros))))
+   (describe-function (seq-random-elt all-the-macros))))
 
 
 (defun gg/random-emacs-info-node ()
@@ -57,7 +53,7 @@
      map)
     ;; Pick a random key
     (if keys
-        (let* ((key (random-element keys))
+        (let* ((key (seq-random-elt keys))
                (cmd (key-binding key)))
           (describe-function cmd))
       (message "No keybindings found in `global-map`!"))))
