@@ -59,6 +59,13 @@
       (message "No keybindings found in `global-map`!"))))
 
 
+(defun gg/find-random-lisp-file ()
+  "Find a random .el file in the lisp-directory and subdirectories"
+  (interactive)
+  (let ((lisps (directory-files-recursively lisp-directory "\\.el$")))
+    (find-file (seq-random-elt lisps))))
+
+
 (transient-define-prefix gg/serendip-transient ()
   "Find something about emacs, serendipitously"
   ["Find something about emacs, serendipitously" ""
