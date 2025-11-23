@@ -73,6 +73,7 @@
    ("i" "random info node" gg/random-emacs-info-node :transient t)
    ("k" "random keybinding" gg/describe-random-global-keybinding :transient t)
    ("m" "random macro" gg/describe-random-macro :transient t)
+   ("l" "random lisp file" gg/find-random-lisp-file :transient t)
    ("q" "quit" ignore)])
 
 
