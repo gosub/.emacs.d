@@ -4,12 +4,14 @@
 
 (require 'cl-lib)
 
+
 (defun drench ()
   "Start playing drench."
   (interactive)
   (switch-to-buffer *drench-buffer-name*)
   (drench-mode)
   (drench-init-level 1))
+
 
 (defmacro drench-define-face+var (number bg-color)
   (let ((sym (intern (format "drench-face-%d" number))))
@@ -20,6 +22,7 @@
        :group 'drench-faces)
      (defvar ,sym ',sym))))
 
+
 (drench-define-face+var 1 "red")
 (drench-define-face+var 2 "dark blue")
 (drench-define-face+var 3 "dark green")
@@ -29,7 +32,7 @@
 
 
 (define-derived-mode drench-mode special-mode "drench"
-  (define-key drench-mode-map (kbd "1") 
+  (define-key drench-mode-map (kbd "1")
     (lambda () (interactive) (drench-fill 1)))
   (define-key drench-mode-map (kbd "2")
     (lambda () (interactive) (drench-fill 2)))
@@ -43,14 +46,15 @@
     (lambda () (interactive) (drench-fill 6)))
   (define-key drench-mode-map (kbd "q")
     'drench-quit-game)
-  (font-lock-add-keywords 
-   nil 
+  (font-lock-add-keywords
+   nil
    '(("1" . drench-face-1)
      ("2" . drench-face-2)
      ("3" . drench-face-3)
      ("4" . drench-face-4)
      ("5" . drench-face-5)
      ("6" . drench-face-6))))
+
 
 (defvar *drench-buffer-name* "*drench*"
   "Name of the drench game buffer.")
@@ -70,6 +74,7 @@
 (defvar *drench-moves-done* nil
   "How many moves we have done during the current level.")
 
+
 (defun drench-random-board ()
   (let* ((size (* *drench-board-size*
 		 *drench-board-size*))
@@ -82,12 +87,14 @@
 (defun drench-max-moves-current-level ()
  (+ 1 (- *drench-max-moves* *drench-level*)))
 
+
 (defun drench-init-level (lvl)
   "Start a new level of drench."
   (setq *drench-board* (drench-random-board))
   (setq *drench-level* lvl)
   (setq *drench-moves-done* 0)
   (drench-print-board))
+
 
 (defun drench-print-board ()
   (let ((inhibit-read-only t))
@@ -96,23 +103,27 @@
       (dotimes (col *drench-board-size*)
 	(insert (number-to-string (drench-get-square row col))))
       (insert "\n"))
-    (insert "\n\nmoves left: " 
-	    (number-to-string 
+    (insert "\n\nmoves left: "
+	    (number-to-string
 	     (drench-remaining-moves))
 	    "\n")))
+
 
 (defun drench-get-square (row column)
   (elt *drench-board*
        (+ column (* row *drench-board-size*))))
+
 
 (defun drench-set-square (row column value)
   (aset *drench-board*
 	(+ column (* row *drench-board-size*))
 	value))
 
+
 (defun drench-remaining-moves ()
   (- (drench-max-moves-current-level)
      *drench-moves-done*))
+
 
 (defun drench-board-filled? ()
   (cl-loop with f = (elt *drench-board* 1)
@@ -143,17 +154,19 @@
 				   (= similar (drench-get-square newx newy)))
 			 do (push (list newx newy) tovisit)))))
 
+
 (defun drench-fill (value)
   (drench-flood-fill value)
-  (setq *drench-moves-done* 
+  (setq *drench-moves-done*
 	(+ *drench-moves-done* 1))
   (drench-print-board)
   (drench-evaluate-endgame))
 
+
 (defun drench-evaluate-endgame ()
   (when (drench-board-filled?)
     (beep)
-    (if	(y-or-n-p 
+    (if	(y-or-n-p
 	 (format "You completed level %d, continue?" *drench-level*))
 	(drench-init-level (+ 1 *drench-level*))
       (drench-quit-game)))
@@ -162,6 +175,7 @@
 	 (format "You lost at level %d, new-game?" *drench-level*))
 	(drench-init-level 1)
       (drench-quit-game))))
+
 
 (defun drench-quit-game ()
   (interactive)
