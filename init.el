@@ -78,6 +78,10 @@
   :commands (gg/serendip-transient))
 
 
+(use-package drench
+  :defer t
+  :commands (drench))
+
 ;;; Dirs and files
 
 ;; put autosave and backup files inside .emacs.d/ subdirs
