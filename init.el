@@ -82,6 +82,15 @@
   :defer t
   :commands (drench))
 
+
+(use-package preshell
+  :custom
+  (preshell-commands-alist
+   '(("pacman update" . "sudo pacman -Syu")
+     ("pacman list installed" . "pacman -Q")
+     ("pacman list installed expliclitly" . "pacman -Qe"))))
+
+
 ;;; Dirs and files
 
 ;; put autosave and backup files inside .emacs.d/ subdirs
