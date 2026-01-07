@@ -88,7 +88,8 @@
   (preshell-commands-alist
    '(("pacman update" . "sudo pacman -Syu")
      ("pacman list installed" . "pacman -Q")
-     ("pacman list installed expliclitly" . "pacman -Qe"))))
+     ("pacman list installed expliclitly" . "pacman -Qe")
+     ("nix env update" . "nix-channel --update && nix-env -u '*'"))))
 
 
 ;;; Dirs and files
