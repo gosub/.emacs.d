@@ -142,8 +142,9 @@
   "Insert current date in ISO8601 format (YYY-MM-DD)
 with single prefix insert full date-time ISO8601 string"
   (interactive "p")
-  (let* ((fmts '("%F" "%FT%T%:z"))
+  (let* ((fmts '("%F" "%FT%T%:z" "%YW%V"))
 	(fmt (cl-case arg
+	       (16 (caddr fmts))
 	       (4 (cadr fmts))
 	       (t (car fmts)))))
     (insert (format-time-string fmt))))
