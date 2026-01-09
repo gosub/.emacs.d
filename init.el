@@ -93,7 +93,8 @@
      ("nix env update" . "nix-channel --update && nix-env -u '*'")
      ("nix env list installed" . "nix-env --query")
      ("nix garbage collect" . "nix-collect-garbage")
-     ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs"))))
+     ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs")
+     ("ollama serve" . "ollama serve"))))
 
 
 ;;; Dirs and files
