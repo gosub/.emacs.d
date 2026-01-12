@@ -89,7 +89,7 @@
    '(("pacman update" . "sudo pacman -Syu")
      ("pacman list installed" . "pacman -Q")
      ("pacman list installed expliclitly" . "pacman -Qe")
-     ("pacman install from package list" . "sudo pacman --needed -S - < /etc/gg_arch_pkgs.list")
+     ("pacman install from package list" . "sudo pacman --needed -S - < /home/gg/.config/pkgs/arch")
      ("nix env update" . "nix-channel --update && nix-env -u '*'")
      ("nix env list installed" . "nix-env --query")
      ("nix garbage collect" . "nix-collect-garbage")
