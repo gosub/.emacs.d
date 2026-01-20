@@ -12,6 +12,12 @@
 
 ;;; packages
 
+(use-package icomplete
+  :custom
+  (icomplete-show-matches-on-no-input t)
+  :config
+  (icomplete-vertical-mode 1))
+
 (use-package ledger-mode
   :ensure t
   :defer t)
