@@ -16,7 +16,7 @@
                   t))
          (command (cdr (assoc choice preshell-commands-alist))))
     (when command
-      (async-shell-command command))))
+      (async-shell-command command (concat "preshell:" choice)))))
 
 
 (provide 'preshell)
