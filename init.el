@@ -327,10 +327,6 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 
 ;;; Keybindings
 
-;; save bufer with F2, like in GWBASIC
-(global-set-key (kbd "<f2>")
-		'save-buffer)
-
 ;; keybinding to most used file
 (global-set-key (kbd "<f5>")
 		'gg/apparecchia)
