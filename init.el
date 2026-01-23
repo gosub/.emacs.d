@@ -145,17 +145,6 @@
 
 ;;; Functions
 
-(defun gg/insert-current-date (arg)
-  "Insert current date in ISO8601 format (YYY-MM-DD)
-with single prefix insert full date-time ISO8601 string"
-  (interactive "p")
-  (let* ((fmts '("%F" "%FT%T%:z" "%YW%V"))
-	(fmt (cl-case arg
-	       (16 (caddr fmts))
-	       (4 (cadr fmts))
-	       (t (car fmts)))))
-    (insert (format-time-string fmt))))
-
 
 (defun gg/increment-number-at-point ()
   "increment number at point, partially simulating C-a in vim"
