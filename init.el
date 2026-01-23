@@ -103,6 +103,12 @@
      ("ollama serve" . "ollama serve"))))
 
 
+(use-package gg-insert-date
+  :custom
+  (gg/insert-date-format-list '("%F" "%FT%T%:z" "%YW%V"))
+  :bind
+  ("C-c d" . gg/insert-current-date))
+
 ;;; Dirs and files
 
 ;; put autosave and backup files inside .emacs.d/ subdirs
@@ -319,10 +325,6 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 ;; keybinding to most used file
 (global-set-key (kbd "<f5>")
 		'gg/apparecchia)
-
-;; insert current date in iso format
-(global-set-key (kbd "C-c d")
-		'gg/insert-current-date)
 
 ;; missing ctrl-A from vim
 (global-set-key (kbd "C-c +")
