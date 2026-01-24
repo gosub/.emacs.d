@@ -113,12 +113,16 @@
 
 ;; put autosave and backup files inside .emacs.d/ subdirs
 
-(make-directory "~/.emacs.d/autosaves" :parents)
-(make-directory "~/.emacs.d/backups" :parents)
-(setq auto-save-file-name-transforms
-      '((".*" "~/.emacs.d/autosaves/\\1" t)))
-(setq backup-directory-alist
-      '((".*". "~/.emacs.d/backups/")))
+(setq
+ my-autosave-dir (expand-file-name "autosaves" user-emacs-directory)
+ my-backup-dir (expand-file-name "backup" user-emacs-directory))
+
+(make-directory my-autosave-dir :parents)
+(make-directory my-backup-dir :parents)
+
+(setq
+ auto-save-file-name-transforms `((".*" ,(expand-file-name "\\1" my-autosave-dir) t))
+ backup-directory-alist `((".*". ,my-backup-dir)))
 
 ;; put emacs-customized values in a separate file
 ;; instead of appending it to init.el
