@@ -1,37 +1,60 @@
-;;; additional package repositories
+;;;  -*- lexical-binding: t; -*-
+
+;;; PACKAGE CEREMONY
 
 (add-to-list 'package-archives
   '("melpa" . "https://melpa.org/packages/"))
 
-
-;;; personal local packages (gg-lisp subfolder)
+(require 'use-package)
 
 (add-to-list 'load-path
   (expand-file-name "gg-lisp" user-emacs-directory))
 
 
-;;; packages
+;;; PACKAGES OF MINE
+
+(use-package gg-sclang-aux)
+
+(use-package gg-xkcd-geohashing
+  :defer t
+  :commands (gg/xkcd-geohashing-coords
+	     gg/browse-xkcd-geohashing-map))
+
+(use-package gg-serendip
+  :defer t
+  :commands (gg/serendip-transient))
+
+(use-package drench
+  :defer t
+  :commands (drench))
+
+(use-package preshell
+  :custom
+  (preshell-commands-alist
+   '(("pacman update" . "sudo pacman -Syu")
+     ("pacman list installed" . "pacman -Q")
+     ("pacman list installed expliclitly" . "pacman -Qe")
+     ("pacman install from package list" . "sudo pacman --needed -S - < /home/gg/.config/pkgs/arch")
+     ("nix env update" . "nix-channel --update && nix-env -u '*'")
+     ("nix env list installed" . "nix-env --query")
+     ("nix garbage collect" . "nix-collect-garbage")
+     ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs")
+     ("ollama serve" . "ollama serve"))))
+
+(use-package gg-insert-date
+  :custom
+  (gg/insert-date-format-list '("%F" "%FT%T%:z" "%YW%V"))
+  :bind
+  ("C-c d" . gg/insert-current-date))
+
+
+;;; BUILT-IN PACKAGES CONFIG
 
 (use-package icomplete
   :custom
   (icomplete-show-matches-on-no-input t)
   :config
   (icomplete-vertical-mode 1))
-
-(use-package ledger-mode
-  :ensure t
-  :defer t)
-
-(use-package magit
-  :ensure t)
-
-(use-package evil
-  :ensure t
-  :bind ("C-c v" . evil-local-mode))
-
-(use-package move-text
-  :ensure t
-  :config (move-text-default-bindings))
 
 (use-package org
   :defer t
@@ -52,7 +75,23 @@
 		(display-line-numbers-mode 0)
 		(electric-indent-mode -1))))
 
-(use-package gg-sclang-aux)
+
+;;; EXTERNAL PACKAGES
+
+(use-package ledger-mode
+  :ensure t
+  :defer t)
+
+(use-package magit
+  :ensure t)
+
+(use-package evil
+  :ensure t
+  :bind ("C-c v" . evil-local-mode))
+
+(use-package move-text
+  :ensure t
+  :config (move-text-default-bindings))
 
 (use-package sclang
   :defer t
@@ -72,42 +111,6 @@
   :pin melpa
   :after ox)
 
-
-(use-package gg-xkcd-geohashing
-  :defer t
-  :commands (gg/xkcd-geohashing-coords
-	     gg/browse-xkcd-geohashing-map))
-
-
-(use-package gg-serendip
-  :defer t
-  :commands (gg/serendip-transient))
-
-
-(use-package drench
-  :defer t
-  :commands (drench))
-
-
-(use-package preshell
-  :custom
-  (preshell-commands-alist
-   '(("pacman update" . "sudo pacman -Syu")
-     ("pacman list installed" . "pacman -Q")
-     ("pacman list installed expliclitly" . "pacman -Qe")
-     ("pacman install from package list" . "sudo pacman --needed -S - < /home/gg/.config/pkgs/arch")
-     ("nix env update" . "nix-channel --update && nix-env -u '*'")
-     ("nix env list installed" . "nix-env --query")
-     ("nix garbage collect" . "nix-collect-garbage")
-     ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs")
-     ("ollama serve" . "ollama serve"))))
-
-
-(use-package gg-insert-date
-  :custom
-  (gg/insert-date-format-list '("%F" "%FT%T%:z" "%YW%V"))
-  :bind
-  ("C-c d" . gg/insert-current-date))
 
 ;;; Dirs and files
 
