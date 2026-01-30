@@ -75,6 +75,15 @@
 		(display-line-numbers-mode 0)
 		(electric-indent-mode -1))))
 
+(use-package cc-mode
+  :hook
+  (c++-mode .
+	    (lambda ()
+              (setq-local
+	       tab-width 4
+               c-basic-offset 4
+               backward-delete-char-untabify-method nil))))
+
 
 ;;; EXTERNAL PACKAGES
 
@@ -333,16 +342,3 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 ;; so we ignore it
 (when (gg/is-computer-model? "ThinkPad E14 Gen 5")
   (global-set-key (kbd "<WakeUp>") 'ignore))
-
-
-;;; CPP
-
-(defun gg/c++-mode-hook ()
-  "in c++-mode use tabs for indentation"
-  (setq
-   tab-width 4
-   c-basic-offset 4
-   backward-delete-char-untabify-method nil))
-
-
-(add-hook 'c++-mode-hook 'gg/c++-mode-hook)
