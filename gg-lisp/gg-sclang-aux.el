@@ -55,6 +55,8 @@
 	nil))))
 
 
+(require 'transient)
+
 (transient-define-prefix gg/sclang-transient ()
   "Transient for sclang-mode common options."
   [["Control"
