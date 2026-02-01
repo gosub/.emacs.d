@@ -66,6 +66,9 @@
   :defer t
   :commands (gg/movie-pirate))
 
+(use-package gg-other-win
+  :bind ("C-x 4 k" . gg/kill-buffer-and-windows-other-window))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
