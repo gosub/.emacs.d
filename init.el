@@ -69,6 +69,10 @@
 (use-package gg-other-win
   :bind ("C-x 4 k" . gg/kill-buffer-and-windows-other-window))
 
+(use-package gg-align-columns
+  :defer t
+  :commands (gg/align-columns-by-whitespace))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
