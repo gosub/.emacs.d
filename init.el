@@ -202,6 +202,11 @@
 
 ;;; UX AND GFX
 
+;; random theme
+(let ((theme (seq-random-elt (custom-available-themes))))
+  (load-theme theme t)
+  (message "Loaded random theme: %s" theme))
+
 ;; type y instead of yes
 (setq use-short-answers t)
 
