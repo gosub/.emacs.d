@@ -325,21 +325,12 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 
 ;;; Keybindings
 
-;; keybinding to most used file
-(global-set-key (kbd "<f5>")
-		'gg/apparecchia)
-
-;; missing ctrl-A from vim
-(global-set-key (kbd "C-c +")
-		'gg/increment-number-at-point)
-
-;; kill buffer without confirmation
-(global-set-key (kbd "C-x k")
-		'kill-current-buffer)
-
-;; toggle line truncation on/off
-(global-set-key (kbd "C-c w")
-		'visual-line-mode)
+(use-package emacs
+  :bind
+  (("<f5>" . gg/apparecchia)
+   ("C-c +" . gg/increment-number-at-point)
+   ("C-x k" . kill-current-buffer)
+   ("C-c w" . visual-line-mode)))
 
 ;; on my new Lenovo E14 gen5
 ;; Fn key is interpreded as <WakeUp>
