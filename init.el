@@ -171,14 +171,6 @@
 ;   (load custom-file))
 
 
-;;; Functions
-
-
-
-
-
-
-
 
 
 ;;; UX
