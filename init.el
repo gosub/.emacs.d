@@ -51,6 +51,10 @@
   :bind
   ("C-c +" . gg/increment-number-at-point))
 
+(use-package gg-workspace
+  :bind
+  ("<f5>" . gg/apparecchia))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
@@ -157,36 +161,7 @@
 ;   (load custom-file))
 
 
-(defvar gg-txt-directory "~/box/txt"
-  "Directory containing personal text files.")
-
-(defvar gg-notes-file
-  (expand-file-name "ziba.org" gg-txt-directory)
-  "Path to personal notes org file.")
-
-(defvar gg-todo-file
-  (expand-file-name "todo.org" gg-txt-directory)
-  "Path to todo org file.")
-
-(defvar gg-done-file
-  (expand-file-name "done.org" gg-txt-directory)
-  "Path to done/archive org file.")
-
-
 ;;; Functions
-
-
-
-
-(defun gg/apparecchia ()
-  "setup initials buffers and windows as I like them"
-  (interactive)
-  (eshell)
-  (split-window-right)
-  (other-window 1)
-  (find-file gg-notes-file)
-  (find-file gg-todo-file)
-  (find-file gg-done-file))
 
 
 (defun gg/yt-playlist-to-org (playlist-url)
@@ -310,8 +285,7 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 
 (use-package emacs
   :bind
-  (("<f5>" . gg/apparecchia)
-   ("C-x k" . kill-current-buffer)
+  (("C-x k" . kill-current-buffer)
    ("C-c w" . visual-line-mode)))
 
 ;; on my new Lenovo E14 gen5
