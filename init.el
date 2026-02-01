@@ -55,6 +55,10 @@
   :bind
   ("<f5>" . gg/apparecchia))
 
+(use-package gg-org-yt
+  :defer t
+  :commands (gg/yt-playlist-to-org))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
@@ -164,20 +168,6 @@
 ;;; Functions
 
 
-(defun gg/yt-playlist-to-org (playlist-url)
-  "turn a youtube playlist link into an org section, where each video is a subsection"
-  (interactive "sPlaylist url or id: ")
-  (let*
-      ((header-cmd (concat "yt-dlp"
-			   " --ignore-errors --get-filename "
-			   " --output '* [/] [[https://www.youtube.com/playlist?list=%(playlist_id)s][%(uploader)s - %(playlist_title)s]]' "
-			   " --playlist-end 1 "))
-       (playlist-header (shell-command-to-string (concat header-cmd playlist-url)))
-       (entries-cmd (concat "yt-dlp"
-			    " --ignore-errors --get-filename "
-			    " --output '- [ ] [[https://www.youtube.com/watch?v=%(id)s][%(title)s]]' "))
-       (playlist-entries (shell-command-to-string (concat entries-cmd playlist-url))))
-    (insert (concat "\n" playlist-header playlist-entries "\n"))))
 
 
 (defun gg/get-string-from-file (filePath)
