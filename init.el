@@ -69,6 +69,11 @@
 
 ;;; BUILT-IN PACKAGES CONFIG
 
+(use-package emacs
+  :bind
+  (("C-x k" . kill-current-buffer)
+   ("C-c w" . visual-line-mode)))
+
 (use-package icomplete
   :custom
   (icomplete-show-matches-on-no-input t)
@@ -142,7 +147,7 @@
   :after ox)
 
 
-;;; Dirs and files
+;;; AUTOSAVE AND BACKUP
 
 ;; put autosave and backup files inside .emacs.d/ subdirs
 
@@ -157,24 +162,14 @@
  auto-save-file-name-transforms `((".*" ,my-autosave-dir t))
  backup-directory-alist `((".*". ,my-backup-dir)))
 
-;; put emacs-customized values in a separate file
-;; instead of appending it to init.el
-;; necessary since package-list and package-install
-;; use it as record of explicitly installed packages
+;; put emacs-customized values in a separate file instead of appending it to
+;; init.el but never load it, I want init.el to the only source of truth
 
 (setq custom-file
       (expand-file-name "custom.el" user-emacs-directory))
 
-;; I do not want to use customized values for configuration
-;; init.el is the only source of truth
 
-; (when (file-exists-p custom-file)
-;   (load custom-file))
-
-
-
-
-;;; UX
+;;; UX AND GFX
 
 ;; type y instead of yes
 (setq use-short-answers t)
@@ -207,9 +202,6 @@
 ;; electric pair auto-inserts matching parens and quotes
 (electric-pair-mode 1)
 
-
-;;; Visuals
-
 ;; set default font and size
 (set-face-attribute
  'default nil :family "Source Code Pro" :height 130)
@@ -224,7 +216,6 @@
 (column-number-mode 1)
 
 ;; *scratch* default text
-
 (setq initial-scratch-message "\
 ;;                    | |     | |    \n\
 ;;  ___  ___ _ __ __ _| |_ ___| |__  \n\
@@ -233,15 +224,6 @@
 ;; |___/\\___|_|  \\__,_|\\__\\___|_| |_|\n\n")
 
 
-;;; Keybindings
-
-(use-package emacs
-  :bind
-  (("C-x k" . kill-current-buffer)
-   ("C-c w" . visual-line-mode)))
-
-;; on my new Lenovo E14 gen5
-;; Fn key is interpreded as <WakeUp>
-;; so we ignore it
+;; on my new Lenovo E14 gen5 Fn key is interpreded as <WakeUp> so we ignore it
 (when (gg/is-computer-model? "ThinkPad E14 Gen 5")
   (global-set-key (kbd "<WakeUp>") 'ignore))
