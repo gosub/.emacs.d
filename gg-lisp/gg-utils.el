@@ -18,5 +18,13 @@
   "Check if current computer model matches MODEL (Linux only)."
   (string= model (gg/linux-computer-model)))
 
+(defun gg/count-universal-arguments (arg)
+  "Count how many times C-u was pressed to produce ARG."
+  (if (and (integerp arg)
+           (> arg 0)
+           (= 0 (mod arg 4)))
+      (round (log arg 4))
+    0))
+
 (provide 'gg-utils)
 ;;; gg-utils.el ends here

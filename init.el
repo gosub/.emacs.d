@@ -13,6 +13,9 @@
 
 ;;; PACKAGES OF MINE
 
+(use-package gg-utils
+  :demand t)
+
 (use-package gg-sclang-aux)
 
 (use-package gg-xkcd-geohashing
@@ -43,7 +46,7 @@
 
 (use-package gg-insert-date
   :custom
-  (gg/insert-date-format-list '("%F" "%FT%T%:z" "%YW%V"))
+  (gg/insert-date-formats '("%F" "%FT%T%:z" "%YW%V"))
   :bind
   ("C-c d" . gg/insert-current-date))
 
@@ -58,9 +61,6 @@
 (use-package gg-org-yt
   :defer t
   :commands (gg/yt-playlist-to-org))
-
-(use-package gg-utils
-  :demand t)
 
 (use-package gg-pirate
   :defer t
