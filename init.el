@@ -133,7 +133,7 @@
 (make-directory my-backup-dir :parents)
 
 (setq
- auto-save-file-name-transforms `((".*" ,(expand-file-name "\\1" my-autosave-dir) t))
+ auto-save-file-name-transforms `((".*" ,my-autosave-dir t))
  backup-directory-alist `((".*". ,my-backup-dir)))
 
 ;; put emacs-customized values in a separate file
