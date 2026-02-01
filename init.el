@@ -174,17 +174,6 @@
 
 
 
-(defun gg/get-computer-model ()
-  (interactive)
-  (let ((dmi-product-family-file "/sys/devices/virtual/dmi/id/product_family"))
-    (if (file-readable-p dmi-product-family-file)
-	(string-trim (gg/get-string-from-file dmi-product-family-file))
-      "unknown")))
-
-
-(defun gg/is-computer-model? (model)
-  (interactive)
-  (string= model (gg/get-computer-model)))
 
 
 (defun gg/movie-pirate (url name)
