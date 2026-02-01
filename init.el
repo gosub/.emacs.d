@@ -89,6 +89,33 @@
     (gg/more-ctl-x-8-subscript)
     (gg/more-ctl-x-8-greek)))
 
+(use-package gg-websearch
+  :defer t
+  :commands (gg/search-on-youtube
+             gg/search-on-google
+             gg/search-on-hackernews))
+
+(use-package gg-epoch
+  :defer t
+  :commands (gg/epoch-to-timestamp))
+
+(use-package gg-rot128
+  :defer t
+  :commands (gg/rot128-file))
+
+(use-package watch
+  :defer t
+  :commands (watch-start))
+
+(use-package gg-tidal-aux
+  :defer t
+  :after tidal
+  :commands (gg/tidal-setup))
+
+(use-package gg-erlang-aux
+  :defer t
+  :commands (gg/require-erlang-from-distro))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
