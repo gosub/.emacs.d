@@ -153,18 +153,20 @@
 ;   (load custom-file))
 
 
-; most used files directory
-(setq gg-txt-directory "~/box/txt")
+(defvar gg-txt-directory "~/box/txt"
+  "Directory containing personal text files.")
 
-; notes file
-(setq gg-notes-file
-      (expand-file-name "ziba.org" gg-txt-directory))
-; todo file
-(setq gg-todo-file
-      (expand-file-name "todo.org" gg-txt-directory))
-; done file
-(setq gg-done-file
-      (expand-file-name "done.org" gg-txt-directory))
+(defvar gg-notes-file
+  (expand-file-name "ziba.org" gg-txt-directory)
+  "Path to personal notes org file.")
+
+(defvar gg-todo-file
+  (expand-file-name "todo.org" gg-txt-directory)
+  "Path to todo org file.")
+
+(defvar gg-done-file
+  (expand-file-name "done.org" gg-txt-directory)
+  "Path to done/archive org file.")
 
 
 ;;; Functions
