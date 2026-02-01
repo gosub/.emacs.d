@@ -88,7 +88,8 @@
 (use-package emacs
   :bind
   (("C-x k" . kill-current-buffer)
-   ("C-c w" . visual-line-mode)))
+   ("C-c w" . visual-line-mode)
+   ("M-=" . count-words)))  ; counts region or buffer
 
 (use-package icomplete
   :custom
