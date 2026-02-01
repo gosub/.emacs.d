@@ -198,12 +198,12 @@
   "turn a youtube playlist link into an org section, where each video is a subsection"
   (interactive "sPlaylist url or id: ")
   (let*
-      ((header-cmd (concat "youtube-dl"
+      ((header-cmd (concat "yt-dlp"
 			   " --ignore-errors --get-filename "
 			   " --output '* [/] [[https://www.youtube.com/playlist?list=%(playlist_id)s][%(uploader)s - %(playlist_title)s]]' "
 			   " --playlist-end 1 "))
        (playlist-header (shell-command-to-string (concat header-cmd playlist-url)))
-       (entries-cmd (concat "youtube-dl"
+       (entries-cmd (concat "yt-dlp"
 			    " --ignore-errors --get-filename "
 			    " --output '- [ ] [[https://www.youtube.com/watch?v=%(id)s][%(title)s]]' "))
        (playlist-entries (shell-command-to-string (concat entries-cmd playlist-url))))
