@@ -93,8 +93,14 @@
 (use-package icomplete
   :custom
   (icomplete-show-matches-on-no-input t)
+  (completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (read-file-name-completion-ignore-case t)
   :config
-  (icomplete-vertical-mode 1))
+  (icomplete-vertical-mode 1)
+  :bind
+  (:map icomplete-vertical-mode-minibuffer-map
+        ("<TAB>" . icomplete-force-complete)))
 
 (use-package org
   :defer t
