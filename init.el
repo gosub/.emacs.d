@@ -292,18 +292,6 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 (set-face-attribute
  'default nil :family "Source Code Pro" :height 130)
 
-;; do not show splash screen
-(setq inhibit-startup-screen 1)
-
-;; remove toolbar
-(tool-bar-mode -1)
-
-;; remove menu bar
-(menu-bar-mode -1)
-
-;; scrollbar on the right
-(set-scroll-bar-mode 'right)
-
 ;; visible bell
 (setq visible-bell t)
 
