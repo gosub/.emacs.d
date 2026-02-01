@@ -268,7 +268,7 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 
 ;; use loopback mode in gpg (epa) pin-entry
 ;; so it's emacs that asks the password
-(setq epg-pinentry-mode 'loopback)
+(setq epa-pinentry-mode 'loopback)
 
 ;; launch http url in chromium incognito
 (setq browse-url-browser-function
