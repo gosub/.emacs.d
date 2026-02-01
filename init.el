@@ -59,7 +59,8 @@
   :defer t
   :commands (gg/yt-playlist-to-org))
 
-(use-package gg-utils)
+(use-package gg-utils
+  :demand t)
 
 (use-package gg-pirate
   :defer t
