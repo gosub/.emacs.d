@@ -251,7 +251,7 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 ;;; UX
 
 ;; type y instead of yes
-(defalias 'yes-or-no-p 'y-or-n-p)
+(setq use-short-answers t)
 
 ;; set fill-column (alt-q) to 80 char per lines
 (setq-default fill-column 80)
