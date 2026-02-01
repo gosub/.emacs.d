@@ -59,6 +59,8 @@
   :defer t
   :commands (gg/yt-playlist-to-org))
 
+(use-package gg-utils)
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
@@ -170,11 +172,6 @@
 
 
 
-(defun gg/get-string-from-file (filePath)
-  "Return file content as string."
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (buffer-string)))
 
 
 (defun gg/get-computer-model ()
