@@ -99,6 +99,7 @@
    ("M-=" . count-words)))  ; counts region or buffer
 
 (use-package icomplete
+  :demand t
   :custom
   (icomplete-show-matches-on-no-input t)
   (completion-ignore-case t)
