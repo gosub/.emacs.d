@@ -47,6 +47,10 @@
   :bind
   ("C-c d" . gg/insert-current-date))
 
+(use-package gg-inc-at-point
+  :bind
+  ("C-c +" . gg/increment-number-at-point))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
@@ -172,15 +176,6 @@
 ;;; Functions
 
 
-(defun gg/increment-number-at-point ()
-  "increment number at point, partially simulating C-a in vim"
-  (interactive)
-  (save-excursion
-    (skip-chars-backward "0123456789")
-    (or (looking-at "[0123456789]+")
-	(error "No number at point"))
-    (replace-match (number-to-string 
-                      (1+ (string-to-number (match-string 0)))))))
 
 
 (defun gg/apparecchia ()
@@ -316,7 +311,6 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
 (use-package emacs
   :bind
   (("<f5>" . gg/apparecchia)
-   ("C-c +" . gg/increment-number-at-point)
    ("C-x k" . kill-current-buffer)
    ("C-c w" . visual-line-mode)))
 
