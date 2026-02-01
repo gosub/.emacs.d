@@ -73,6 +73,11 @@
   :defer t
   :commands (gg/align-columns-by-whitespace))
 
+(use-package gg-isearch-pop-yank
+  :bind
+  (:map isearch-mode-map
+        ("C-c p" . isearch-mark-whole-paragraph-pop-mark-and-yank)))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
