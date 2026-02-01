@@ -92,7 +92,9 @@
   :defer t)
 
 (use-package magit
-  :ensure t)
+  :ensure t
+  :defer t
+  :bind ("C-x g" . magit-status))
 
 (use-package evil
   :ensure t
