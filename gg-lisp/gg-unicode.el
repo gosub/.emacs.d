@@ -1,8 +1,4 @@
-;;; Additional Unicode ISO translation (C-x 8 map)
-
-; additional superscript and subscript
-; unicode characters with C-x 8
-
+;;; gg-unicode.el --- Additional C-x 8 unicode bindings -*- lexical-binding: t; -*-
 
 (defun gg/more-ctl-x-8-superscript ()
   "Add more unicode superscript characters to C-x 8."
@@ -12,7 +8,6 @@
   (define-key 'iso-transl-ctl-x-8-map "^n" [#x207F])
   (define-key 'iso-transl-ctl-x-8-map "^i" [#x2071]))
 
-
 (defun gg/more-ctl-x-8-subscript ()
   "Add more unicode subscript characters to C-x 8."
   (define-key 'iso-transl-ctl-x-8-map "_=" [#x208C])
@@ -20,9 +15,8 @@
   (define-key 'iso-transl-ctl-x-8-map "_)" [#x208E])
   (define-key 'iso-transl-ctl-x-8-map "_n" [#x2099]))
 
-
-(defun more-ctl-x-8-greek ()
-  "Add more greek unicode characters to C-x 8"
+(defun gg/more-ctl-x-8-greek ()
+  "Add greek unicode characters to C-x 8."
   (let ((greek-alist '(("ga" . "α") ("gA" . "Α")
                        ("gb" . "β") ("gB" . "Β")
                        ("gc" . "χ") ("gC" . "Χ")
@@ -52,5 +46,5 @@
       (define-key 'iso-transl-ctl-x-8-map
                   (car cell) (cdr cell)))))
 
-
-(provide 'gg-more-iso-transl)
+(provide 'gg-unicode)
+;;; gg-unicode.el ends here

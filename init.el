@@ -82,6 +82,13 @@
   :defer t
   :commands (display-year-progress))
 
+(use-package gg-unicode
+  :config
+  (with-eval-after-load 'iso-transl
+    (gg/more-ctl-x-8-superscript)
+    (gg/more-ctl-x-8-subscript)
+    (gg/more-ctl-x-8-greek)))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
