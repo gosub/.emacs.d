@@ -95,6 +95,10 @@
              gg/search-on-google
              gg/search-on-hackernews))
 
+(use-package mark-column-rectangle
+  :defer t
+  :commands (mark-column-rectangle))
+
 (use-package gg-mark-whole
   :bind
   (("C-c m w" . gg-mark-whole-word)
@@ -107,7 +111,8 @@
    ("C-c m f" . gg-mark-whole-filename)
    ("C-c m s" . gg-mark-whole-whitespace)
    ("C-c m u" . gg-mark-whole-url)
-   ("C-c m m" . gg-mark-whole-dwim)))
+   ("C-c m m" . gg-mark-whole-dwim)
+   ("C-c m r" . mark-column-rectangle)))
 
 (use-package gg-epoch
   :defer t
