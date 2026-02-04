@@ -1,6 +1,7 @@
 ;;; gg-mark-whole.el --- Mark whole text objects under cursor -*- lexical-binding: t; -*-
 
 (require 'thingatpt)
+(require 'cl-lib)
 
 (defun gg-mark-whole-word ()
   "Mark the whole word under the cursor."
@@ -82,6 +83,28 @@
           (goto-char (car bounds))
           (push-mark (cdr bounds) nil t))
       (message "No URL at point"))))
+
+(defvar gg-mark-whole-thing-types
+  '(word symbol list sexp defun line sentence paragraph
+    page whitespace filename url email uuid number)
+  "List of thing types to check in `gg-mark-whole-dwim'.")
+
+(defun gg-mark-whole-dwim ()
+  "Mark a thing at point, prompting for which type to mark.
+Only shows thing types that are actually present at point."
+  (interactive)
+  (let* ((available
+          (cl-remove-if-not
+           (lambda (type) (bounds-of-thing-at-point type))
+           gg-mark-whole-thing-types))
+         (choice (if available
+                     (intern (completing-read "Mark whole: "
+                                              (mapcar #'symbol-name available)
+                                              nil t))
+                   (user-error "No thing at point")))
+         (bounds (bounds-of-thing-at-point choice)))
+    (goto-char (car bounds))
+    (push-mark (cdr bounds) nil t)))
 
 (provide 'gg-mark-whole)
 ;;; gg-mark-whole.el ends here

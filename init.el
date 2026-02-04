@@ -106,7 +106,8 @@
    ("C-c m e" . gg-mark-whole-email)
    ("C-c m f" . gg-mark-whole-filename)
    ("C-c m s" . gg-mark-whole-whitespace)
-   ("C-c m u" . gg-mark-whole-url)))
+   ("C-c m u" . gg-mark-whole-url)
+   ("C-c m m" . gg-mark-whole-dwim)))
 
 (use-package gg-epoch
   :defer t
