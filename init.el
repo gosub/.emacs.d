@@ -100,8 +100,13 @@
   (("C-c m w" . gg-mark-whole-word)
    ("C-c m l" . gg-mark-whole-line)
    ("C-c m p" . gg-mark-whole-paragraph)
-   ("C-c m f" . gg-mark-whole-function)
-   ("C-c m b" . gg-mark-whole-buffer)))
+   ("C-c m d" . gg-mark-whole-function)
+   ("C-c m b" . gg-mark-whole-buffer)
+   ("C-c m n" . gg-mark-whole-number)
+   ("C-c m e" . gg-mark-whole-email)
+   ("C-c m f" . gg-mark-whole-filename)
+   ("C-c m s" . gg-mark-whole-whitespace)
+   ("C-c m u" . gg-mark-whole-url)))
 
 (use-package gg-epoch
   :defer t
