@@ -102,6 +102,7 @@
 (use-package gg-mark-whole
   :bind
   (("C-c m w" . gg-mark-whole-word)
+   ("C-c m W" . gg-mark-whole-WORD)
    ("C-c m l" . gg-mark-whole-line)
    ("C-c m L" . gg-mark-whole-line-with-newline)
    ("C-c m p" . gg-mark-whole-paragraph)

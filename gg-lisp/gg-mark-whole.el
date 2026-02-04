@@ -13,6 +13,21 @@
           (push-mark (cdr bounds) nil t))
       (message "No word at point"))))
 
+(defun gg-mark-whole-WORD ()
+  "Mark the whole WORD under the cursor (vim-style).
+A WORD is a sequence of non-whitespace characters."
+  (interactive)
+  (if (looking-at-p "[ \t\n]")
+      (message "No WORD at point")
+    (let ((start (save-excursion
+                   (skip-chars-backward "^ \t\n")
+                   (point)))
+          (end (save-excursion
+                 (skip-chars-forward "^ \t\n")
+                 (point))))
+      (goto-char start)
+      (push-mark end nil t))))
+
 (defun gg-mark-whole-line ()
   "Mark the whole line under the cursor."
   (interactive)
