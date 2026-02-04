@@ -19,6 +19,12 @@
   (beginning-of-line)
   (push-mark (line-end-position) nil t))
 
+(defun gg-mark-whole-line-with-newline ()
+  "Mark the whole line under the cursor including trailing newline."
+  (interactive)
+  (beginning-of-line)
+  (push-mark (line-beginning-position 2) nil t))
+
 (defun gg-mark-whole-paragraph ()
   "Mark the whole paragraph under the cursor."
   (interactive)
