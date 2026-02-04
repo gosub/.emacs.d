@@ -95,6 +95,14 @@
              gg/search-on-google
              gg/search-on-hackernews))
 
+(use-package gg-mark-whole
+  :bind
+  (("C-c m w" . gg-mark-whole-word)
+   ("C-c m l" . gg-mark-whole-line)
+   ("C-c m p" . gg-mark-whole-paragraph)
+   ("C-c m f" . gg-mark-whole-function)
+   ("C-c m b" . gg-mark-whole-buffer)))
+
 (use-package gg-epoch
   :defer t
   :commands (gg/epoch-to-timestamp))
