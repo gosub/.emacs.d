@@ -78,7 +78,7 @@
   (:map isearch-mode-map
         ("C-c p" . isearch-mark-whole-paragraph-pop-mark-and-yank)))
 
-(use-package gg-year-progress
+(use-package progress-mode
   :defer t
   :commands (display-year-progress))
 

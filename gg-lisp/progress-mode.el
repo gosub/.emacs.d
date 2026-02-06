@@ -1,4 +1,4 @@
-;;; gg-year-progress.el --- Visual year progress display -*- lexical-binding: t; -*-
+;;; progress-mode.el --- Visual year progress display -*- lexical-binding: t; -*-
 
 (defface year-progress-dark-dot
   '((t (:foreground "#666666" :weight bold)))
@@ -42,5 +42,5 @@ Uses dark dots for passed days and light dots for remaining days."
       (goto-char (point-min))
       (display-buffer buffer))))
 
-(provide 'gg-year-progress)
-;;; gg-year-progress.el ends here
+(provide 'progress-mode)
+;;; progress-mode.el ends here
