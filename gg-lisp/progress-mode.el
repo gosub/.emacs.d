@@ -121,59 +121,52 @@ Respects `progress-week-start'."
           :year year
           :leap is-leap)))
 
-(defun progress-day ()
-  "Display progress for the current day in minutes."
-  (interactive)
-  (let* ((info (progress--day-info))
-         (buffer (get-buffer-create "*Day Progress*")))
+(defun progress--display (info-fn buffer-name title-fn unit cols refresh-fn)
+  "Display a progress buffer.
+INFO-FN returns a plist with :elapsed and :total.
+BUFFER-NAME is the buffer to create.
+TITLE-FN is called with the info plist to produce the title string.
+UNIT is the label for the counted units.
+COLS is the number of columns.
+REFRESH-FN is stored for the g keybinding."
+  (let* ((info (funcall info-fn))
+         (buffer (get-buffer-create buffer-name)))
     (with-current-buffer buffer
       (let ((inhibit-read-only t))
         (erase-buffer)
         (progress--insert-section
-         (format "Day (%02d:%02d)" (plist-get info :hour) (plist-get info :minute))
-         (plist-get info :elapsed) (plist-get info :total) "Minutes"
-         progress-day-columns (/ (plist-get info :total) progress-day-columns)))
+         (funcall title-fn info)
+         (plist-get info :elapsed) (plist-get info :total) unit
+         cols (/ (plist-get info :total) cols)))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
-      (setq progress--refresh-function #'progress-day)
+      (setq progress--refresh-function refresh-fn)
       (goto-char (point-min))
       (display-buffer buffer))))
+
+(defun progress-day ()
+  "Display progress for the current day in minutes."
+  (interactive)
+  (progress--display
+   #'progress--day-info "*Day Progress*"
+   (lambda (info) (format "Day (%02d:%02d)" (plist-get info :hour) (plist-get info :minute)))
+   "Minutes" progress-day-columns #'progress-day))
 
 (defun progress-week ()
   "Display progress for the current week in hours."
   (interactive)
-  (let* ((info (progress--week-info))
-         (buffer (get-buffer-create "*Week Progress*")))
-    (with-current-buffer buffer
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (progress--insert-section
-         (format "Week (day %d/7)" (plist-get info :week-dow))
-         (plist-get info :elapsed) (plist-get info :total) "Hours"
-         progress-week-columns (/ (plist-get info :total) progress-week-columns)))
-      (unless (derived-mode-p 'progress-mode)
-        (progress-mode))
-      (setq progress--refresh-function #'progress-week)
-      (goto-char (point-min))
-      (display-buffer buffer))))
+  (progress--display
+   #'progress--week-info "*Week Progress*"
+   (lambda (info) (format "Week (day %d/7)" (plist-get info :week-dow)))
+   "Hours" progress-week-columns #'progress-week))
 
 (defun progress-year ()
   "Display progress for the current year in days."
   (interactive)
-  (let* ((info (progress--year-info))
-         (buffer (get-buffer-create "*Year Progress*")))
-    (with-current-buffer buffer
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (progress--insert-section
-         (format "Year %d%s" (plist-get info :year) (if (plist-get info :leap) " (leap)" ""))
-         (plist-get info :elapsed) (plist-get info :total) "Days"
-         progress-year-columns (/ (plist-get info :total) progress-year-columns)))
-      (unless (derived-mode-p 'progress-mode)
-        (progress-mode))
-      (setq progress--refresh-function #'progress-year)
-      (goto-char (point-min))
-      (display-buffer buffer))))
+  (progress--display
+   #'progress--year-info "*Year Progress*"
+   (lambda (info) (format "Year %d%s" (plist-get info :year) (if (plist-get info :leap) " (leap)" "")))
+   "Days" progress-year-columns #'progress-year))
 
 (provide 'progress-mode)
 ;;; progress-mode.el ends here
