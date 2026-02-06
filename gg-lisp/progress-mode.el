@@ -62,44 +62,49 @@ The displayed total is (* COLS ROWS)."
     (insert (format "Progress: %.1f%%\n"
                     (* 100.0 (/ (float elapsed) display-total))))))
 
-(defun progress--day-elapsed ()
-  "Return (ELAPSED . TOTAL) minutes for the current day."
+(defun progress--day-info ()
+  "Return plist with :elapsed, :total, :hour, :minute for the current day."
   (let* ((now (decode-time (current-time)))
          (hour (nth 2 now))
          (minute (nth 1 now)))
-    (cons (+ (* hour 60) minute) (* 24 60))))
+    (list :elapsed (+ (* hour 60) minute)
+          :total (* 24 60)
+          :hour hour
+          :minute minute)))
 
-(defun progress--week-elapsed ()
-  "Return (ELAPSED . TOTAL) hours for the current week (Monday start)."
+(defun progress--week-info ()
+  "Return plist with :elapsed, :total, :week-dow for the current week (Monday start)."
   (let* ((now (decode-time (current-time)))
          (hour (nth 2 now))
          (dow (nth 6 now))
          (week-dow (mod (+ dow 6) 7)))
-    (cons (+ (* week-dow 24) hour) (* 7 24))))
+    (list :elapsed (+ (* week-dow 24) hour)
+          :total (* 7 24)
+          :week-dow (1+ week-dow))))
 
-(defun progress--year-elapsed ()
-  "Return (ELAPSED . TOTAL) days for the current year."
+(defun progress--year-info ()
+  "Return plist with :elapsed, :total, :year, :leap for the current year."
   (let* ((now (decode-time (current-time)))
          (year (nth 5 now))
          (is-leap (date-leap-year-p year))
          (days-in-year (if is-leap 366 365))
          (day-of-year (1+ (time-to-day-in-year (current-time)))))
-    (cons day-of-year days-in-year)))
+    (list :elapsed day-of-year
+          :total days-in-year
+          :year year
+          :leap is-leap)))
 
 (defun display-day-progress ()
   "Display progress for the current day in minutes."
   (interactive)
-  (let* ((now (decode-time (current-time)))
-         (hour (nth 2 now))
-         (minute (nth 1 now))
-         (day (progress--day-elapsed))
+  (let* ((info (progress--day-info))
          (buffer (get-buffer-create "*Day Progress*")))
     (with-current-buffer buffer
       (let ((inhibit-read-only t))
         (erase-buffer)
         (progress--insert-section
-         (format "Day (%02d:%02d)" hour minute)
-         (car day) (cdr day) "Minutes" 60 24))
+         (format "Day (%02d:%02d)" (plist-get info :hour) (plist-get info :minute))
+         (plist-get info :elapsed) (plist-get info :total) "Minutes" 60 24))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
       (setq progress--refresh-function #'display-day-progress)
@@ -109,17 +114,14 @@ The displayed total is (* COLS ROWS)."
 (defun display-week-progress ()
   "Display progress for the current week in hours."
   (interactive)
-  (let* ((now (decode-time (current-time)))
-         (dow (nth 6 now))
-         (week-dow (1+ (mod (+ dow 6) 7)))
-         (week (progress--week-elapsed))
+  (let* ((info (progress--week-info))
          (buffer (get-buffer-create "*Week Progress*")))
     (with-current-buffer buffer
       (let ((inhibit-read-only t))
         (erase-buffer)
         (progress--insert-section
-         (format "Week (day %d/7)" week-dow)
-         (car week) (cdr week) "Hours" 24 7))
+         (format "Week (day %d/7)" (plist-get info :week-dow))
+         (plist-get info :elapsed) (plist-get info :total) "Hours" 24 7))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
       (setq progress--refresh-function #'display-week-progress)
@@ -129,17 +131,14 @@ The displayed total is (* COLS ROWS)."
 (defun display-year-progress ()
   "Display progress for the current year in days."
   (interactive)
-  (let* ((now (decode-time (current-time)))
-         (year (nth 5 now))
-         (is-leap (date-leap-year-p year))
-         (yr (progress--year-elapsed))
+  (let* ((info (progress--year-info))
          (buffer (get-buffer-create "*Year Progress*")))
     (with-current-buffer buffer
       (let ((inhibit-read-only t))
         (erase-buffer)
         (progress--insert-section
-         (format "Year %d%s" year (if is-leap " (leap)" ""))
-         (car yr) (cdr yr) "Days" 30 13))
+         (format "Year %d%s" (plist-get info :year) (if (plist-get info :leap) " (leap)" ""))
+         (plist-get info :elapsed) (plist-get info :total) "Days" 30 13))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
       (setq progress--refresh-function #'display-year-progress)
