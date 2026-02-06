@@ -4,6 +4,32 @@
   "Visual time progress display."
   :group 'applications)
 
+(defcustom progress-dot "●"
+  "Character used to display progress units."
+  :type 'string
+  :group 'progress-mode)
+
+(defcustom progress-day-columns 30
+  "Number of columns in the day progress display."
+  :type 'integer
+  :group 'progress-mode)
+
+(defcustom progress-week-columns 24
+  "Number of columns in the week progress display."
+  :type 'integer
+  :group 'progress-mode)
+
+(defcustom progress-year-columns 30
+  "Number of columns in the year progress display."
+  :type 'integer
+  :group 'progress-mode)
+
+(defcustom progress-week-start 'monday
+  "First day of the week."
+  :type '(choice (const :tag "Monday" monday)
+                 (const :tag "Sunday" sunday))
+  :group 'progress-mode)
+
 (defface progress-done-dot
   '((t :inherit bold))
   "Face for elapsed units."
@@ -38,15 +64,14 @@
 (defun progress--insert-dots (elapsed total cols)
   "Insert TOTAL dots, first ELAPSED with `progress-done-dot' face.
 COLS is the number of dots per row."
-  (let ((dot "●"))
-    (dotimes (i total)
+  (dotimes (i total)
       (let ((face (if (< i elapsed)
                      'progress-done-dot
                      'progress-remaining-dot)))
-        (insert (propertize dot 'face face))
+        (insert (propertize progress-dot 'face face))
         (insert " ")
         (when (and (= (mod i cols) (1- cols)) (< i (1- total)))
-          (insert "\n"))))))
+          (insert "\n")))))
 
 (defun progress--insert-section (title elapsed total unit cols rows)
   "Insert a progress section with TITLE.
@@ -73,11 +98,13 @@ The displayed total is (* COLS ROWS)."
           :minute minute)))
 
 (defun progress--week-info ()
-  "Return plist with :elapsed, :total, :week-dow for the current week (Monday start)."
+  "Return plist with :elapsed, :total, :week-dow for the current week.
+Respects `progress-week-start'."
   (let* ((now (decode-time (current-time)))
          (hour (nth 2 now))
          (dow (nth 6 now))
-         (week-dow (mod (+ dow 6) 7)))
+         (offset (if (eq progress-week-start 'monday) 6 0))
+         (week-dow (mod (+ dow offset) 7)))
     (list :elapsed (+ (* week-dow 24) hour)
           :total (* 7 24)
           :week-dow (1+ week-dow))))
@@ -104,7 +131,8 @@ The displayed total is (* COLS ROWS)."
         (erase-buffer)
         (progress--insert-section
          (format "Day (%02d:%02d)" (plist-get info :hour) (plist-get info :minute))
-         (plist-get info :elapsed) (plist-get info :total) "Minutes" 60 24))
+         (plist-get info :elapsed) (plist-get info :total) "Minutes"
+         progress-day-columns (/ (plist-get info :total) progress-day-columns)))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
       (setq progress--refresh-function #'progress-day)
@@ -121,7 +149,8 @@ The displayed total is (* COLS ROWS)."
         (erase-buffer)
         (progress--insert-section
          (format "Week (day %d/7)" (plist-get info :week-dow))
-         (plist-get info :elapsed) (plist-get info :total) "Hours" 24 7))
+         (plist-get info :elapsed) (plist-get info :total) "Hours"
+         progress-week-columns (/ (plist-get info :total) progress-week-columns)))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
       (setq progress--refresh-function #'progress-week)
@@ -138,7 +167,8 @@ The displayed total is (* COLS ROWS)."
         (erase-buffer)
         (progress--insert-section
          (format "Year %d%s" (plist-get info :year) (if (plist-get info :leap) " (leap)" ""))
-         (plist-get info :elapsed) (plist-get info :total) "Days" 30 13))
+         (plist-get info :elapsed) (plist-get info :total) "Days"
+         progress-year-columns (/ (plist-get info :total) progress-year-columns)))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
       (setq progress--refresh-function #'progress-year)
