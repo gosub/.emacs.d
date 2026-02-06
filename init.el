@@ -80,7 +80,7 @@
 
 (use-package progress-mode
   :defer t
-  :commands (display-day-progress display-week-progress display-year-progress))
+  :commands (progress-day progress-week progress-year))
 
 (use-package gg-unicode
   :config

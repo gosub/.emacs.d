@@ -94,7 +94,7 @@ The displayed total is (* COLS ROWS)."
           :year year
           :leap is-leap)))
 
-(defun display-day-progress ()
+(defun progress-day ()
   "Display progress for the current day in minutes."
   (interactive)
   (let* ((info (progress--day-info))
@@ -107,11 +107,11 @@ The displayed total is (* COLS ROWS)."
          (plist-get info :elapsed) (plist-get info :total) "Minutes" 60 24))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
-      (setq progress--refresh-function #'display-day-progress)
+      (setq progress--refresh-function #'progress-day)
       (goto-char (point-min))
       (display-buffer buffer))))
 
-(defun display-week-progress ()
+(defun progress-week ()
   "Display progress for the current week in hours."
   (interactive)
   (let* ((info (progress--week-info))
@@ -124,11 +124,11 @@ The displayed total is (* COLS ROWS)."
          (plist-get info :elapsed) (plist-get info :total) "Hours" 24 7))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
-      (setq progress--refresh-function #'display-week-progress)
+      (setq progress--refresh-function #'progress-week)
       (goto-char (point-min))
       (display-buffer buffer))))
 
-(defun display-year-progress ()
+(defun progress-year ()
   "Display progress for the current year in days."
   (interactive)
   (let* ((info (progress--year-info))
@@ -141,7 +141,7 @@ The displayed total is (* COLS ROWS)."
          (plist-get info :elapsed) (plist-get info :total) "Days" 30 13))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
-      (setq progress--refresh-function #'display-year-progress)
+      (setq progress--refresh-function #'progress-year)
       (goto-char (point-min))
       (display-buffer buffer))))
 
