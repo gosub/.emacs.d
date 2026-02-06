@@ -9,7 +9,12 @@
   :type 'string
   :group 'progress-mode)
 
-(defcustom progress-day-columns 30
+(defcustom progress-day-minutes-per-dot 10
+  "Number of minutes each dot represents in the day progress display."
+  :type 'integer
+  :group 'progress-mode)
+
+(defcustom progress-day-columns 18
   "Number of columns in the day progress display."
   :type 'integer
   :group 'progress-mode)
@@ -86,12 +91,14 @@ COLS is the number of dots per row."
                   (* 100.0 (/ (float elapsed) total)))))
 
 (defun progress--day-info ()
-  "Return plist with :elapsed, :total, :hour, :minute for the current day."
+  "Return plist with :elapsed, :total, :hour, :minute for the current day.
+Elapsed and total are in dots, scaled by `progress-day-minutes-per-dot'."
   (let* ((now (decode-time (current-time)))
          (hour (nth 2 now))
-         (minute (nth 1 now)))
-    (list :elapsed (+ (* hour 60) minute)
-          :total (* 24 60)
+         (minute (nth 1 now))
+         (minutes-elapsed (+ (* hour 60) minute)))
+    (list :elapsed (/ minutes-elapsed progress-day-minutes-per-dot)
+          :total (/ (* 24 60) progress-day-minutes-per-dot)
           :hour hour
           :minute minute)))
 
@@ -148,7 +155,9 @@ REFRESH-FN is stored for the g keybinding."
   (progress--display
    #'progress--day-info "*Day Progress*"
    (lambda (info) (format "Day (%02d:%02d)" (plist-get info :hour) (plist-get info :minute)))
-   "Minutes" progress-day-columns #'progress-day))
+   (if (= progress-day-minutes-per-dot 1) "Minutes"
+     (format "%d-Minutes" progress-day-minutes-per-dot))
+   progress-day-columns #'progress-day))
 
 (defun progress-week ()
   "Display progress for the current week in hours."
