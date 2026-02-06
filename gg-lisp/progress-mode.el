@@ -73,19 +73,17 @@ COLS is the number of dots per row."
         (when (and (= (mod i cols) (1- cols)) (< i (1- total)))
           (insert "\n")))))
 
-(defun progress--insert-section (title elapsed total unit cols rows)
+(defun progress--insert-section (title elapsed total unit cols)
   "Insert a progress section with TITLE.
 ELAPSED and TOTAL are counts of UNIT (a string).
-COLS is the number of dots per row, ROWS is the number of rows.
-The displayed total is (* COLS ROWS)."
-  (let ((display-total (* cols rows)))
-    (insert (format "%s (%d %s total):\n\n" title display-total unit))
-    (progress--insert-dots elapsed display-total cols)
-    (insert "\n\n")
-    (insert (format "%s passed: %d\n" unit elapsed))
-    (insert (format "%s remaining: %d\n" unit (- display-total elapsed)))
-    (insert (format "Progress: %.1f%%\n"
-                    (* 100.0 (/ (float elapsed) display-total))))))
+COLS is the number of dots per row."
+  (insert (format "%s (%d %s total):\n\n" title total unit))
+  (progress--insert-dots elapsed total cols)
+  (insert "\n\n")
+  (insert (format "%s passed: %d\n" unit elapsed))
+  (insert (format "%s remaining: %d\n" unit (- total elapsed)))
+  (insert (format "Progress: %.1f%%\n"
+                  (* 100.0 (/ (float elapsed) total)))))
 
 (defun progress--day-info ()
   "Return plist with :elapsed, :total, :hour, :minute for the current day."
@@ -115,7 +113,7 @@ Respects `progress-week-start'."
          (year (nth 5 now))
          (is-leap (date-leap-year-p year))
          (days-in-year (if is-leap 366 365))
-         (day-of-year (1+ (time-to-day-in-year (current-time)))))
+         (day-of-year (time-to-day-in-year (current-time))))
     (list :elapsed day-of-year
           :total days-in-year
           :year year
@@ -137,7 +135,7 @@ REFRESH-FN is stored for the g keybinding."
         (progress--insert-section
          (funcall title-fn info)
          (plist-get info :elapsed) (plist-get info :total) unit
-         cols (/ (plist-get info :total) cols)))
+         cols))
       (unless (derived-mode-p 'progress-mode)
         (progress-mode))
       (setq progress--refresh-function refresh-fn)
