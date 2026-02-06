@@ -1,5 +1,7 @@
 ;;; progress-mode.el --- Visual time progress display -*- lexical-binding: t; -*-
 
+(require 'calendar)
+
 (defgroup progress-mode nil
   "Visual time progress display."
   :group 'applications)
@@ -16,6 +18,11 @@
 
 (defcustom progress-day-columns 18
   "Number of columns in the day progress display."
+  :type 'integer
+  :group 'progress-mode)
+
+(defcustom progress-month-columns 24
+  "Number of columns in the month progress display."
   :type 'integer
   :group 'progress-mode)
 
@@ -114,6 +121,21 @@ Respects `progress-week-start'."
           :total (* 7 24)
           :week-dow (1+ week-dow))))
 
+(defun progress--month-info ()
+  "Return plist with :elapsed, :total, :month-name, :day, :days-in-month for the current month."
+  (let* ((now (decode-time (current-time)))
+         (hour (nth 2 now))
+         (day (nth 3 now))
+         (month (nth 4 now))
+         (year (nth 5 now))
+         (days-in-month (calendar-last-day-of-month month year))
+         (hours-elapsed (+ (* (1- day) 24) hour)))
+    (list :elapsed hours-elapsed
+          :total (* days-in-month 24)
+          :month-name (format-time-string "%B")
+          :day day
+          :days-in-month days-in-month)))
+
 (defun progress--year-info ()
   "Return plist with :elapsed, :total, :year, :leap for the current year."
   (let* ((now (decode-time (current-time)))
@@ -158,6 +180,17 @@ REFRESH-FN is stored for the g keybinding."
    (if (= progress-day-minutes-per-dot 1) "Minutes"
      (format "%d-Minutes" progress-day-minutes-per-dot))
    progress-day-columns #'progress-day))
+
+(defun progress-month ()
+  "Display progress for the current month in hours."
+  (interactive)
+  (progress--display
+   #'progress--month-info "*Month Progress*"
+   (lambda (info) (format "%s (day %d/%d)"
+                          (plist-get info :month-name)
+                          (plist-get info :day)
+                          (plist-get info :days-in-month)))
+   "Hours" progress-month-columns #'progress-month))
 
 (defun progress-week ()
   "Display progress for the current week in hours."
