@@ -31,6 +31,10 @@
   :defer t
   :commands (drench))
 
+(use-package scoundrel
+  :defer t
+  :commands (scoundrel))
+
 (use-package preshell
   :custom
   (preshell-commands-alist
