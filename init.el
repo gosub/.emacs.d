@@ -95,9 +95,7 @@
 
 (use-package gg-websearch
   :defer t
-  :commands (gg/search-on-youtube
-             gg/search-on-google
-             gg/search-on-hackernews))
+  :commands (gg-websearch-dwim))
 
 (use-package mark-column-rectangle
   :defer t
