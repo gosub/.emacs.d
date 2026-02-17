@@ -21,27 +21,33 @@
 
 (defcustom figlet-font-directory
   'detect
-  "Directory containing FIGlet .flf font files.
-Can be a directory path string, or one of the following symbols:
+  "Directories containing FIGlet .flf font files.
+Can be a directory path string, a list of directory paths and
+symbols, or one of the following symbols:
   `detect' - use the output of \"figlet -I2\"
   `env'    - use the FIGLET_FONTDIR environment variable"
   :type '(choice directory
                   (const :tag "Detect via figlet -I2" detect)
-                  (const :tag "Use FIGLET_FONTDIR env var" env)))
+                  (const :tag "Use FIGLET_FONTDIR env var" env)
+                  (repeat (choice directory
+                                  (const :tag "Detect via figlet -I2" detect)
+                                  (const :tag "Use FIGLET_FONTDIR env var" env)))))
 
-(defun figlet--resolve-font-directory ()
-  "Resolve `figlet-font-directory' to an actual path."
-  (pcase figlet-font-directory
-    ('detect
-     (string-trim (shell-command-to-string "figlet -I2")))
-    ('env
-     (or (getenv "FIGLET_FONTDIR")
-         (error "FIGLET_FONTDIR environment variable is not set")))
-    ((pred stringp)
-     figlet-font-directory)
-    (_
-     (error "Invalid `figlet-font-directory' value: %S"
-            figlet-font-directory))))
+(defun figlet--resolve-font-directories ()
+  "Resolve `figlet-font-directory' to a list of directory paths."
+  (let ((entries (if (listp figlet-font-directory)
+                     figlet-font-directory
+                   (list figlet-font-directory))))
+    (mapcar (lambda (entry)
+              (pcase entry
+                ('detect
+                 (string-trim (shell-command-to-string "figlet -I2")))
+                ('env
+                 (or (getenv "FIGLET_FONTDIR")
+                     (error "FIGLET_FONTDIR environment variable is not set")))
+                ((pred stringp) entry)
+                (_ (error "Invalid font directory entry: %S" entry))))
+            entries)))
 
 (cl-defstruct figlet-font
   hardblank
@@ -272,8 +278,11 @@ is looked up in `figlet-font-directory'."
           (string-match-p "/" font)
           (string-suffix-p ".flf" font))
       font
-    (expand-file-name (concat font ".flf")
-                      (figlet--resolve-font-directory))))
+    (let ((name (concat font ".flf")))
+      (or (cl-loop for dir in (figlet--resolve-font-directories)
+                   for path = (expand-file-name name dir)
+                   when (file-exists-p path) return path)
+          (error "Font %S not found in figlet-font-directory" font)))))
 
 (defun figlet-render (font text)
   "Render TEXT using FIGlet FONT and return a string.
@@ -287,10 +296,15 @@ FONT can be a font name like \"standard\" or a full path."
   "Insert a FIGlet banner using FONT for TEXT.
 FONT can be a font name like \"standard\" or a full path."
   (interactive
-   (list
-    (read-file-name "FIGlet font: " (figlet--resolve-font-directory) nil t nil
-                    (lambda (f) (string-match-p "\\.flf$" f)))
-    (read-string "Text: ")))
+   (let* ((dirs (figlet--resolve-font-directories))
+          (fonts (cl-loop for dir in dirs
+                          append (directory-files dir t "\\.flf$")))
+          (names (mapcar #'file-name-nondirectory fonts))
+          (choice (completing-read "FIGlet font: " names nil t)))
+     (list (cl-find choice fonts :test
+                    (lambda (name path)
+                      (string= name (file-name-nondirectory path))))
+           (read-string "Text: "))))
   (insert (figlet-render font text))
   (insert "\n"))
 
