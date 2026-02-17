@@ -20,9 +20,28 @@
   :group 'applications)
 
 (defcustom figlet-font-directory
-  "/usr/share/figlet"
-  "Directory containing FIGlet .flf font files."
-  :type 'directory)
+  'detect
+  "Directory containing FIGlet .flf font files.
+Can be a directory path string, or one of the following symbols:
+  `detect' - use the output of \"figlet -I2\"
+  `env'    - use the FIGLET_FONTDIR environment variable"
+  :type '(choice directory
+                  (const :tag "Detect via figlet -I2" detect)
+                  (const :tag "Use FIGLET_FONTDIR env var" env)))
+
+(defun figlet--resolve-font-directory ()
+  "Resolve `figlet-font-directory' to an actual path."
+  (pcase figlet-font-directory
+    ('detect
+     (string-trim (shell-command-to-string "figlet -I2")))
+    ('env
+     (or (getenv "FIGLET_FONTDIR")
+         (error "FIGLET_FONTDIR environment variable is not set")))
+    ((pred stringp)
+     figlet-font-directory)
+    (_
+     (error "Invalid `figlet-font-directory' value: %S"
+            figlet-font-directory))))
 
 (cl-defstruct figlet-font
   hardblank
@@ -112,7 +131,7 @@
   "Insert a FIGlet banner using FONT-NAME for TEXT."
   (interactive
    (list
-    (read-file-name "FIGlet font: " figlet-font-directory nil t nil
+    (read-file-name "FIGlet font: " (figlet--resolve-font-directory) nil t nil
                     (lambda (f) (string-match-p "\\.flf$" f)))
     (read-string "Text: ")))
   (insert (figlet-render font-name text))
