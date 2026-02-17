@@ -264,21 +264,34 @@ HARDBLANK and SMUSHMODE are from the font."
                (regexp-quote hardblank) " " line))
             output)))
 
-(defun figlet-render (font-file text)
-  "Render TEXT using FIGlet FONT-FILE and return a string."
-  (let* ((font (figlet-load-font font-file))
-         (lines (figlet--render-lines font text)))
+(defun figlet--resolve-font (font)
+  "Resolve FONT to an absolute .flf file path.
+FONT can be a full path, or a bare name like \"standard\" which
+is looked up in `figlet-font-directory'."
+  (if (or (file-name-absolute-p font)
+          (string-match-p "/" font)
+          (string-suffix-p ".flf" font))
+      font
+    (expand-file-name (concat font ".flf")
+                      (figlet--resolve-font-directory))))
+
+(defun figlet-render (font text)
+  "Render TEXT using FIGlet FONT and return a string.
+FONT can be a font name like \"standard\" or a full path."
+  (let* ((font-obj (figlet-load-font (figlet--resolve-font font)))
+         (lines (figlet--render-lines font-obj text)))
     (string-join lines "\n")))
 
 ;;;###autoload
-(defun figlet-insert (font-name text)
-  "Insert a FIGlet banner using FONT-NAME for TEXT."
+(defun figlet-insert (font text)
+  "Insert a FIGlet banner using FONT for TEXT.
+FONT can be a font name like \"standard\" or a full path."
   (interactive
    (list
     (read-file-name "FIGlet font: " (figlet--resolve-font-directory) nil t nil
                     (lambda (f) (string-match-p "\\.flf$" f)))
     (read-string "Text: ")))
-  (insert (figlet-render font-name text))
+  (insert (figlet-render font text))
   (insert "\n"))
 
 (provide 'figlet)
