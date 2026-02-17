@@ -97,6 +97,11 @@
   :defer t
   :commands (gg-websearch-dwim))
 
+(use-package figlet
+  :defer t
+  :commands (figlet-insert figlet-render figlet-font-list)
+  :custom (figlet-font-directory '(detect "/usr/share/figlet")))
+
 (use-package mark-column-rectangle
   :defer t
   :commands (mark-column-rectangle))
