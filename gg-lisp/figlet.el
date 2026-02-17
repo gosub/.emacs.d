@@ -42,9 +42,9 @@
     (list hardblank height comment-lines)))
 
 (defun figlet--strip-endmark (line endmark)
-  "Strip ENDMARK from LINE."
+  "Strip trailing ENDMARK from LINE."
   (replace-regexp-in-string
-   (regexp-quote endmark) "" line t t))
+   (concat (regexp-quote endmark) "+$") "" line))
 
 (defun figlet-load-font (font-file)
   "Load a FIGlet font from FONT-FILE."
