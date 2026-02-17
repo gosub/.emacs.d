@@ -291,19 +291,23 @@ FONT can be a font name like \"standard\" or a full path."
          (lines (figlet--render-lines font-obj text)))
     (string-join lines "\n")))
 
+(defun figlet-font-list ()
+  "Return an alist of available FIGlet fonts.
+Each entry is (NAME . PATH) where NAME is the .flf filename and
+PATH is the absolute path.  Fonts are collected from all
+directories in `figlet-font-directory'."
+  (cl-loop for dir in (figlet--resolve-font-directories)
+           append (cl-loop for path in (directory-files dir t "\\.flf$")
+                           collect (cons (file-name-nondirectory path) path))))
+
 ;;;###autoload
 (defun figlet-insert (font text)
   "Insert a FIGlet banner using FONT for TEXT.
 FONT can be a font name like \"standard\" or a full path."
   (interactive
-   (let* ((dirs (figlet--resolve-font-directories))
-          (fonts (cl-loop for dir in dirs
-                          append (directory-files dir t "\\.flf$")))
-          (names (mapcar #'file-name-nondirectory fonts))
-          (choice (completing-read "FIGlet font: " names nil t)))
-     (list (cl-find choice fonts :test
-                    (lambda (name path)
-                      (string= name (file-name-nondirectory path))))
+   (let* ((fonts (figlet-font-list))
+          (choice (completing-read "FIGlet font: " fonts nil t)))
+     (list (cdr (assoc choice fonts))
            (read-string "Text: "))))
   (insert (figlet-render font text))
   (insert "\n"))
