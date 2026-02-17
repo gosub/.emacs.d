@@ -307,12 +307,8 @@
 (column-number-mode 1)
 
 ;; *scratch* default text
-(setq initial-scratch-message "\
-;;                    | |     | |    \n\
-;;  ___  ___ _ __ __ _| |_ ___| |__  \n\
-;; / __|/ __| '__/ _` | __/ __| '_ \\ \n\
-;; \\__ \\ (__| | | (_| | || (__| | | |\n\
-;; |___/\\___|_|  \\__,_|\\__\\___|_| |_|\n\n")
+(setq initial-scratch-message
+      (concat (replace-regexp-in-string "^" ";; " (figlet-render "standard" "scratch")) "\n\n"))
 
 
 ;; on my new Lenovo E14 gen5 Fn key is interpreded as <WakeUp> so we ignore it
