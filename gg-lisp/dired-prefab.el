@@ -61,6 +61,8 @@ Each entry is a plist with keys:
 
 Placeholder syntax in :command strings:
   %{}               the selected file(s), shell-quoted
+  %{.ext}           the selected file with its extension replaced by .ext,
+                    shell-quoted (e.g. %{.mp3} on song.wav → song.mp3)
   %{Label}          prompts \"Label: \" for free text
   %{file}           prompts using read-file-name
   %{existing-file}  prompts using read-file-name, must exist
@@ -146,6 +148,7 @@ For empty string (the %{} reserved placeholder) returns \"\"."
   "Parse RAW placeholder content (text between %{ and }).
 Returns (label . spec) where spec is one of:
   reserved          — for the empty %{} placeholder
+  swap-ext          — replace file extension (auto-computed, not user-prompted)
   string            — free text input
   file              — read-file-name
   existing-file     — read-file-name, must exist
@@ -164,6 +167,8 @@ Returns (label . spec) where spec is one of:
       (cons label (cons 'choice options))))
    ((member raw dired-prefab--type-keywords)
     (cons raw (intern raw)))
+   ((string-prefix-p "." raw)
+    (cons raw 'swap-ext))
    (t
     (cons raw 'string))))
 
@@ -179,7 +184,7 @@ The reserved %{} is excluded. Order is by first occurrence."
                (entry (dired-prefab--parse-placeholder raw))
                (label (car entry))
                (spec  (cdr entry)))
-          (unless (or (eq spec 'reserved) (member label seen))
+          (unless (or (eq spec 'reserved) (eq spec 'swap-ext) (member label seen))
             (push label seen)
             (push entry result)))))
     (nreverse result)))
@@ -206,17 +211,25 @@ Returns an alist of (label . value)."
                   (dired-prefab--prompt-one (car entry) (cdr entry))))
           specs))
 
-(defun dired-prefab--expand-template (template file-or-files values)
+(defun dired-prefab--expand-template (template file-or-files values
+                                      &optional original-file)
   "Expand TEMPLATE, substituting %{} with FILE-OR-FILES and other placeholders.
-VALUES is an alist of (label . value)."
+VALUES is an alist of (label . value).
+ORIGINAL-FILE, when provided, is the unquoted filename used to expand
+%{.ext} swap-extension placeholders."
   (replace-regexp-in-string
    "%{\\([^}]*\\)}"
    (lambda (match)
      (let* ((raw (match-string 1 match))
             (key (dired-prefab--placeholder-key raw)))
-       (if (string= key "")
-           file-or-files
-         (or (cdr (assoc key values)) match))))
+       (cond
+        ((string= key "") file-or-files)
+        ((string-prefix-p "." raw)
+         (if original-file
+             (shell-quote-argument
+              (concat (file-name-sans-extension original-file) raw))
+           match))
+        (t (or (cdr (assoc key values)) match)))))
    template t t))
 
 
@@ -281,7 +294,7 @@ For multiple files, multi commands come first, then per-file single commands."
          (dolist (file files)
            (dired-prefab--run-command
             name
-            (dired-prefab--expand-template template (shell-quote-argument file) values))))))))
+            (dired-prefab--expand-template template (shell-quote-argument file) values file))))))))
 
 (provide 'dired-prefab)
 ;;; dired-prefab.el ends here

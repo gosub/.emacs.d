@@ -65,7 +65,10 @@
       :extensions images)
      (:name "Unpack archive"
       :command "tar xf %{} -C %{existing-dir}"
-      :extensions archives)))
+      :extensions archives)
+     (:name "Convert audio to mp3"
+      :command "ffmpeg -i %{} %{.mp3}"
+      :extensions audio)))
   (dired-prefab-multi-commands
    '((:name "Create tar.gz archive"
       :command "tar czf %{archive name}.tar.gz %{}"
