@@ -48,6 +48,32 @@
      ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs")
      ("ollama serve" . "ollama serve"))))
 
+(use-package dired-prefab
+  :defer t
+  :commands (dired-prefab)
+  :bind (:map dired-mode-map ("," . dired-prefab))
+  :custom
+  (dired-prefab-single-commands
+   '((:name "Play video"
+      :command "mpv %{}"
+      :extensions video)
+     (:name "Open with xdg-open"
+      :command "xdg-open %{}"
+      :type any)
+     (:name "Convert image"
+      :command "convert %{} -resize %{Scale:50%|75%|100%|150%}% %{file}"
+      :extensions images)
+     (:name "Unpack archive"
+      :command "tar xf %{} -C %{existing-dir}"
+      :extensions archives)))
+  (dired-prefab-multi-commands
+   '((:name "Create tar.gz archive"
+      :command "tar czf %{archive name}.tar.gz %{}"
+      :type any)
+     (:name "Move to directory"
+      :command "mv %{} %{existing-dir}"
+      :type any))))
+
 (use-package gg-insert-date
   :custom
   (gg/insert-date-formats '("%F" "%FT%T%:z" "%YW%V"))
