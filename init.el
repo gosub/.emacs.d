@@ -73,9 +73,6 @@
    '((:name "Join PDFs"
       :command "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=%{file} %{}"
       :extensions ("pdf"))
-     (:name "Concatenate audio"
-      :command "bash -c \"printf 'file %s\\n' %{} | ffmpeg -f concat -safe 0 -i - -c copy %{file}\""
-      :extensions audio)
      (:name "Join images vertically"
       :command "magick %{} -append %{file}"
       :extensions images)
@@ -84,10 +81,7 @@
       :extensions images)
      (:name "Images to PDF"
       :command "magick %{} %{file}"
-      :extensions images)
-     (:name "Concatenate video"
-      :command "bash -c \"printf 'file %s\\n' %{} | ffmpeg -f concat -safe 0 -i - -c copy %{file}\""
-      :extensions video))))
+      :extensions images))))
 
 (use-package gg-insert-date
   :custom
