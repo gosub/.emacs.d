@@ -1,5 +1,26 @@
 ;;; dired-prefab.el --- Run prefabricated shell commands on dired files -*- lexical-binding: t; -*-
 
+;; Dired already lets you shell-command on marked files via `!' and `&', and
+;; `dired-guess-shell-alist-user' can pre-fill the command based on file
+;; extension.  That is not enough for a few reasons:
+;;
+;; - The pre-filled command still lands in the minibuffer for the user to
+;;   confirm and edit: it's optimised for ad-hoc use, not for running a fixed
+;;   workflow with zero friction.
+;; - There is no support for template arguments.  Commands like
+;;   `tar xf FILE -C TARGET' require a destination that varies per invocation;
+;;   with dired-guess you still have to type it by hand every time.
+;; - There is no filtering by file type beyond extension matching, no
+;;   per-file vs. all-files-at-once distinction, and no completion over the
+;;   set of applicable commands.
+;;
+;; dired-prefab addresses these gaps: you configure a list of named command
+;; templates keyed by extension group, file/dir type, or an arbitrary
+;; predicate.  Invoking `dired-prefab' on one or more marked files presents
+;; only the matching commands via `completing-read', prompts for any template
+;; arguments (with typed completion where appropriate), then runs the result
+;; asynchronously — no editing, no confirmation.
+
 ;;; Code:
 
 (require 'dired)
