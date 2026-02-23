@@ -70,12 +70,24 @@
       :command "ffmpeg -i %{} %{.mp3}"
       :extensions audio)))
   (dired-prefab-multi-commands
-   '((:name "Create tar.gz archive"
-      :command "tar czf %{archive name}.tar.gz %{}"
-      :type any)
-     (:name "Move to directory"
-      :command "mv %{} %{existing-dir}"
-      :type any))))
+   '((:name "Join PDFs"
+      :command "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=%{file} %{}"
+      :extensions ("pdf"))
+     (:name "Concatenate audio"
+      :command "bash -c \"printf 'file %s\\n' %{} | ffmpeg -f concat -safe 0 -i - -c copy %{file}\""
+      :extensions audio)
+     (:name "Join images vertically"
+      :command "magick %{} -append %{file}"
+      :extensions images)
+     (:name "Join images horizontally"
+      :command "magick %{} +append %{file}"
+      :extensions images)
+     (:name "Images to PDF"
+      :command "magick %{} %{file}"
+      :extensions images)
+     (:name "Concatenate video"
+      :command "bash -c \"printf 'file %s\\n' %{} | ffmpeg -f concat -safe 0 -i - -c copy %{file}\""
+      :extensions video))))
 
 (use-package gg-insert-date
   :custom
