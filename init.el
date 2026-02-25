@@ -71,6 +71,12 @@
       :extensions audio)
      (:name "Convert audio to m4a"
       :command "ffmpeg -i %{} -b:a %{Bitrate:128k|160k|192k} %{.m4a}"
+      :extensions audio)
+     (:name "Convert audio to flac"
+      :command "ffmpeg -i %{} %{.flac}"
+      :extensions audio)
+     (:name "Convert audio to wav"
+      :command "ffmpeg -i %{} %{.wav}"
       :extensions audio)))
   (dired-prefab-multi-commands
    '((:name "Join PDFs"
