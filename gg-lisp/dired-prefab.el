@@ -63,6 +63,8 @@ Placeholder syntax in :command strings:
   %{}               the selected file(s), shell-quoted
   %{.ext}           the selected file with its extension replaced by .ext,
                     shell-quoted (e.g. %{.mp3} on song.wav → song.mp3)
+  %{stem}           the selected file with its extension stripped, shell-quoted
+  %{ext}            the extension of the selected file without the leading dot
   %{Label}          prompts \"Label: \" for free text
   %{file}           prompts using read-file-name
   %{existing-file}  prompts using read-file-name, must exist
@@ -136,6 +138,10 @@ and :predicate."
   '("file" "existing-file" "dir" "existing-dir" "number")
   "Placeholder names that trigger typed input rather than free-string prompts.")
 
+(defconst dired-prefab--auto-keywords
+  '("stem" "ext")
+  "Placeholder names that are auto-computed from the file, not user-prompted.")
+
 (defun dired-prefab--placeholder-key (raw)
   "Extract the label key from RAW placeholder content.
 For choice placeholders like \"Scale:50%|100%\" returns \"Scale\".
@@ -169,6 +175,8 @@ Returns (label . spec) where spec is one of:
     (cons raw (intern raw)))
    ((string-prefix-p "." raw)
     (cons raw 'swap-ext))
+   ((member raw dired-prefab--auto-keywords)
+    (cons raw (intern raw)))
    (t
     (cons raw 'string))))
 
@@ -184,7 +192,9 @@ The reserved %{} is excluded. Order is by first occurrence."
                (entry (dired-prefab--parse-placeholder raw))
                (label (car entry))
                (spec  (cdr entry)))
-          (unless (or (eq spec 'reserved) (eq spec 'swap-ext) (member label seen))
+          (unless (or (eq spec 'reserved) (eq spec 'swap-ext)
+                      (eq spec 'stem) (eq spec 'ext)
+                      (member label seen))
             (push label seen)
             (push entry result)))))
     (nreverse result)))
@@ -228,6 +238,14 @@ ORIGINAL-FILE, when provided, is the unquoted filename used to expand
          (if original-file
              (shell-quote-argument
               (concat (file-name-sans-extension original-file) raw))
+           match))
+        ((eq (cdr (dired-prefab--parse-placeholder raw)) 'stem)
+         (if original-file
+             (shell-quote-argument (file-name-sans-extension original-file))
+           match))
+        ((eq (cdr (dired-prefab--parse-placeholder raw)) 'ext)
+         (if original-file
+             (or (file-name-extension original-file) "")
            match))
         (t (or (cdr (assoc key values)) match)))))
    template t t))
