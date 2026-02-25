@@ -67,7 +67,10 @@
       :command "tar xf %{} -C %{existing-dir}"
       :extensions archives)
      (:name "Convert audio to mp3"
-      :command "ffmpeg -i %{} %{.mp3}"
+      :command "ffmpeg -i %{} -b:a %{Bitrate:128k|160k|192k} %{.mp3}"
+      :extensions audio)
+     (:name "Convert audio to m4a"
+      :command "ffmpeg -i %{} -b:a %{Bitrate:128k|160k|192k} %{.m4a}"
       :extensions audio)))
   (dired-prefab-multi-commands
    '((:name "Join PDFs"
