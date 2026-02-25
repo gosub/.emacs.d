@@ -66,6 +66,9 @@
      (:name "Split image in half (left/right)"
       :command "magick %{} -crop 2x1@ +repage %{stem}_%01d.%{ext}"
       :extensions images)
+     (:name "Split image in half (top/bottom)"
+      :command "magick %{} -crop 1x2@ +repage %{stem}_%01d.%{ext}"
+      :extensions images)
      (:name "Unpack archive"
       :command "tar xf %{} -C %{existing-dir}"
       :extensions archives)
