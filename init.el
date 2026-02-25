@@ -63,6 +63,9 @@
      (:name "Convert image"
       :command "convert %{} -resize %{Scale:50%|75%|100%|150%}% %{file}"
       :extensions images)
+     (:name "Split image in half (left/right)"
+      :command "magick %{} -crop 2x1@ +repage %{stem}_%01d.%{ext}"
+      :extensions images)
      (:name "Unpack archive"
       :command "tar xf %{} -C %{existing-dir}"
       :extensions archives)
