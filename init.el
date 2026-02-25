@@ -49,7 +49,7 @@
      ("ollama serve" . "ollama serve"))))
 
 (use-package dired-prefab
-  :defer t
+  :after dired
   :commands (dired-prefab)
   :bind (:map dired-mode-map ("," . dired-prefab))
   :custom
