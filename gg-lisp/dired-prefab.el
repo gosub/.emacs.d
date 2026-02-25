@@ -287,9 +287,11 @@ For multiple files, multi commands come first, then per-file single commands."
 ;;; Public command
 
 ;;;###autoload
-(defun dired-prefab ()
-  "Run a prefabricated shell command on the marked dired file(s)."
-  (interactive)
+(defun dired-prefab (&optional edit-p)
+  "Run a prefabricated shell command on the marked dired file(s).
+With a prefix argument, show the fully-expanded command in the minibuffer
+for editing before running it."
+  (interactive "P")
   (let* ((files      (dired-prefab--get-files))
          (candidates (dired-prefab--build-candidate-list files)))
     (unless candidates
@@ -304,15 +306,15 @@ For multiple files, multi commands come first, then per-file single commands."
            (values   (dired-prefab--prompt-for-placeholders specs)))
       (pcase kind
         ('multi
-         (let ((files-str (mapconcat #'shell-quote-argument files " ")))
-           (dired-prefab--run-command
-            name
-            (dired-prefab--expand-template template files-str values))))
+         (let* ((files-str   (mapconcat #'shell-quote-argument files " "))
+                (cmd-string  (dired-prefab--expand-template template files-str values))
+                (cmd-string  (if edit-p (read-string "Command: " cmd-string) cmd-string)))
+           (dired-prefab--run-command name cmd-string)))
         ('single
          (dolist (file files)
-           (dired-prefab--run-command
-            name
-            (dired-prefab--expand-template template (shell-quote-argument file) values file))))))))
+           (let* ((cmd-string (dired-prefab--expand-template template (shell-quote-argument file) values file))
+                  (cmd-string (if edit-p (read-string "Command: " cmd-string) cmd-string)))
+             (dired-prefab--run-command name cmd-string))))))))
 
 (provide 'dired-prefab)
 ;;; dired-prefab.el ends here
