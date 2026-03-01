@@ -3,13 +3,14 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'svg nil t)
 
 
 (defgroup drench nil
   "Drench game."
   :group 'games)
 
-(defcustom drench-cell-size 20
+(defcustom drench-cell-size 40
   "Pixel size of each board cell in graphical display mode."
   :type 'natnum
   :group 'drench)
@@ -66,6 +67,30 @@
        drench-face-4 drench-face-5 drench-face-6]
   "Face symbols indexed by board value (index 0 unused).")
 
+(defvar drench--svg-cache nil
+  "Vector of cached SVG cell images indexed by board value (index 0 unused).")
+
+(defun drench--cell-svg (val)
+  "Return a cached SVG image for board value VAL: colored square with its digit."
+  (unless drench--svg-cache
+    (setq drench--svg-cache (make-vector 7 nil)))
+  (or (aref drench--svg-cache val)
+      (let* ((face (aref drench-face-syms val))
+             (bg   (or (face-background face nil t) "#888888"))
+             (size drench-cell-size)
+             (svg  (svg-create size size)))
+        (svg-rectangle svg 0 0 size size :fill bg)
+        (svg-text svg (number-to-string val)
+                  :font-size (round (* size 0.55))
+                  :fill "white"
+                  :font-weight "bold"
+                  :text-anchor "middle"
+                  :dominant-baseline "central"
+                  :x (/ size 2)
+                  :y (/ size 2))
+        (let ((img (svg-image svg :ascent 'center)))
+          (aset drench--svg-cache val img)
+          img))))
 
 
 (define-derived-mode drench-mode special-mode "drench"
@@ -114,6 +139,7 @@
   (setq *drench-board* (drench-random-board))
   (setq *drench-level* lvl)
   (setq *drench-moves-done* 0)
+  (setq drench--svg-cache nil)
   (drench-print-board))
 
 
@@ -127,8 +153,10 @@
           (if (display-images-p)
               (insert (propertize " "
                                   'face face
-                                  'display `(space :width (,drench-cell-size)
-                                                   :height (,drench-cell-size))
+                                  'display (if (image-type-available-p 'svg)
+                                               (drench--cell-svg val)
+                                             `(space :width (,drench-cell-size)
+                                                     :height (,drench-cell-size)))
                                   'drench-cell (cons row col)))
             (let ((dig (aref drench-digit-chars (1- val))))
               (insert (propertize dig 'face face 'drench-cell (cons row col)))
