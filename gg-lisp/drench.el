@@ -68,12 +68,12 @@
     'drench-quit-game)
   (font-lock-add-keywords
    nil
-   '(("1" . drench-face-1)
-     ("2" . drench-face-2)
-     ("3" . drench-face-3)
-     ("4" . drench-face-4)
-     ("5" . drench-face-5)
-     ("6" . drench-face-6))))
+   '(("1" (0 'drench-face-1))
+     ("2" (0 'drench-face-2))
+     ("3" (0 'drench-face-3))
+     ("4" (0 'drench-face-4))
+     ("5" (0 'drench-face-5))
+     ("6" (0 'drench-face-6)))))
 
 
 (defun drench-random-board ()
