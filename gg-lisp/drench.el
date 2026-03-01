@@ -1,10 +1,11 @@
-;;; drench.el -- play a clone of the drench flash game in Emacs
+;;; drench.el --- Play a clone of the Drench game in Emacs  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
 (require 'cl-lib)
 
 
+;;;###autoload
 (defun drench ()
   "Start playing drench."
   (interactive)
@@ -180,3 +181,7 @@
 (defun drench-quit-game ()
   (interactive)
   (kill-buffer *drench-buffer-name*))
+
+(provide 'drench)
+
+;;; drench.el ends here
