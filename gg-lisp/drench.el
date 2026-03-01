@@ -133,12 +133,12 @@
               (insert (propertize dig 'face face 'drench-cell (cons row col)))
               (insert (propertize " " 'face face 'drench-cell (cons row col)))))))
       (insert "\n"))
-    (insert "\n")
+    (insert (format "\nmoves left: %d\n" (drench-remaining-moves)))
     (dotimes (i 6)
       (let* ((val  (1+ i))
              (face (aref drench-face-syms val)))
         (insert (propertize (format " %d " val) 'face face))))
-    (insert (format "\nmoves left: %d\n" (drench-remaining-moves)))))
+    (insert "\n")))
 
 
 (defun drench-get-square (row column)
