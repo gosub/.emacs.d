@@ -83,6 +83,8 @@
     (lambda () (interactive) (drench-fill 6)))
   (define-key drench-mode-map (kbd "q")
     'drench-quit-game)
+  (define-key drench-mode-map (kbd "n")
+    'drench-new-game)
   (define-key drench-mode-map [mouse-1] #'drench-mouse-select))
 
 
@@ -136,6 +138,7 @@
     (insert (format "\nmoves left: %d\n" (drench-remaining-moves)))
     (insert "\n")
     (insert "1-6  select color\n")
+    (insert "n    new game\n")
     (insert "q    quit\n")))
 
 
@@ -203,6 +206,10 @@
          (drench-init-level 1)
        (drench-quit-game)))))
 
+
+(defun drench-new-game ()
+  (interactive)
+  (drench-init-level 1))
 
 (defun drench-quit-game ()
   (interactive)
