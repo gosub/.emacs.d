@@ -5,6 +5,25 @@
 (require 'cl-lib)
 
 
+(defvar *drench-buffer-name* "*drench*"
+  "Name of the drench game buffer.")
+
+(defvar *drench-board* nil
+  "The game board.")
+
+(defvar *drench-board-size* 14
+  "The size of the game board.")
+
+(defvar *drench-level* nil
+  "The current game level.")
+
+(defvar *drench-max-moves* 30
+  "How many moves the player as on the first level.")
+
+(defvar *drench-moves-done* nil
+  "How many moves we have done during the current level.")
+
+
 ;;;###autoload
 (defun drench ()
   "Start playing drench."
@@ -55,25 +74,6 @@
      ("4" . drench-face-4)
      ("5" . drench-face-5)
      ("6" . drench-face-6))))
-
-
-(defvar *drench-buffer-name* "*drench*"
-  "Name of the drench game buffer.")
-
-(defvar *drench-board* nil
-  "The game board.")
-
-(defvar *drench-board-size* 14
-  "The size of the game board.")
-
-(defvar *drench-level* nil
-  "The current game level.")
-
-(defvar *drench-max-moves* 30
-  "How many moves the player as on the first level.")
-
-(defvar *drench-moves-done* nil
-  "How many moves we have done during the current level.")
 
 
 (defun drench-random-board ()
