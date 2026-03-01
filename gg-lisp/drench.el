@@ -106,7 +106,18 @@
   (define-key drench-mode-map (kbd "6")
     (lambda () (interactive) (drench-fill 6)))
   (define-key drench-mode-map (kbd "q")
-    'drench-quit-game))
+    'drench-quit-game)
+  (define-key drench-mode-map [mouse-1] #'drench-mouse-select))
+
+
+(defun drench-mouse-select (event)
+  "Select color by clicking a board cell."
+  (interactive "e")
+  (let* ((pos  (event-start event))
+         (pt   (posn-point pos))
+         (cell (and pt (get-text-property pt 'drench-cell))))
+    (when cell
+      (drench-fill (drench-get-square (car cell) (cdr cell))))))
 
 
 (defun drench-random-board ()
@@ -138,11 +149,12 @@
       (dotimes (col *drench-board-size*)
         (let* ((val (drench-get-square row col)))
           (if (display-images-p)
-              (insert (propertize " " 'display (drench--cell-image val)))
+              (insert (propertize " " 'display (drench--cell-image val)
+                                  'drench-cell (cons row col)))
             (let ((face (aref drench-face-syms val))
                   (dig  (aref drench-digit-chars (1- val))))
-              (insert (propertize dig 'face face))
-              (insert (propertize " " 'face face))))))
+              (insert (propertize dig 'face face 'drench-cell (cons row col)))
+              (insert (propertize " " 'face face 'drench-cell (cons row col)))))))
       (insert "\n"))
     (insert "\n\nmoves left: "
             (number-to-string (drench-remaining-moves))
