@@ -165,17 +165,16 @@
 
 
 (defun drench-evaluate-endgame ()
-  (when (drench-board-filled?)
-    (beep)
-    (if	(y-or-n-p
-	 (format "You completed level %d, continue?" *drench-level*))
-	(drench-init-level (+ 1 *drench-level*))
-      (drench-quit-game)))
-  (when (= (drench-remaining-moves) 0)
-    (if (y-or-n-p
-	 (format "You lost at level %d, new-game?" *drench-level*))
-	(drench-init-level 1)
-      (drench-quit-game))))
+  (cond
+    ((drench-board-filled?)
+     (beep)
+     (if (y-or-n-p (format "You completed level %d, continue?" *drench-level*))
+         (drench-init-level (+ 1 *drench-level*))
+       (drench-quit-game)))
+    ((= (drench-remaining-moves) 0)
+     (if (y-or-n-p (format "You lost at level %d, new-game?" *drench-level*))
+         (drench-init-level 1)
+       (drench-quit-game)))))
 
 
 (defun drench-quit-game ()
