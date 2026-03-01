@@ -33,22 +33,28 @@
   (drench-init-level 1))
 
 
-(defmacro drench-define-face+var (number bg-color)
-  (let ((sym (intern (format "drench-face-%d" number))))
-    `(progn
-       (defface ,sym
-       '((t (:background ,bg-color :foreground "white")))
-       ,(format "Face for number %d in drench game." number)
-       :group 'drench-faces)
-     )))
+(defmacro drench-define-face (number dark-color light-color)
+  `(defface ,(intern (format "drench-face-%d" number))
+     '((((background dark)) :background ,dark-color :foreground "white")
+       (t                   :background ,light-color :foreground "white"))
+     ,(format "Face for color %d in drench." number)
+     :group 'drench-faces))
 
+(drench-define-face 1 "#cc4444" "#bb2222")
+(drench-define-face 2 "#4466cc" "#2244bb")
+(drench-define-face 3 "#44aa55" "#227733")
+(drench-define-face 4 "#cc7722" "#aa5500")
+(drench-define-face 5 "#9944cc" "#7722aa")
+(drench-define-face 6 "#229999" "#117777")
 
-(drench-define-face+var 1 "red")
-(drench-define-face+var 2 "dark blue")
-(drench-define-face+var 3 "dark green")
-(drench-define-face+var 4 "dark orange")
-(drench-define-face+var 5 "dark magenta")
-(drench-define-face+var 6 "dark grey")
+(defconst drench-digit-chars
+  ["₁" "₂" "₃" "₄" "₅" "₆"]
+  "Subscript digit strings for board values 1–6.")
+
+(defconst drench-face-syms
+  [nil drench-face-1 drench-face-2 drench-face-3
+       drench-face-4 drench-face-5 drench-face-6]
+  "Face symbols indexed by board value (index 0 unused).")
 
 
 (define-derived-mode drench-mode special-mode "drench"
@@ -65,15 +71,7 @@
   (define-key drench-mode-map (kbd "6")
     (lambda () (interactive) (drench-fill 6)))
   (define-key drench-mode-map (kbd "q")
-    'drench-quit-game)
-  (font-lock-add-keywords
-   nil
-   '(("1" (0 'drench-face-1))
-     ("2" (0 'drench-face-2))
-     ("3" (0 'drench-face-3))
-     ("4" (0 'drench-face-4))
-     ("5" (0 'drench-face-5))
-     ("6" (0 'drench-face-6)))))
+    'drench-quit-game))
 
 
 (defun drench-random-board ()
@@ -102,12 +100,15 @@
     (erase-buffer)
     (dotimes (row *drench-board-size*)
       (dotimes (col *drench-board-size*)
-	(insert (number-to-string (drench-get-square row col))))
+        (let* ((val  (drench-get-square row col))
+               (face (aref drench-face-syms val))
+               (dig  (aref drench-digit-chars (1- val))))
+          (insert (propertize dig 'face face))
+          (insert (propertize " " 'face face))))
       (insert "\n"))
     (insert "\n\nmoves left: "
-	    (number-to-string
-	     (drench-remaining-moves))
-	    "\n")))
+            (number-to-string (drench-remaining-moves))
+            "\n")))
 
 
 (defun drench-get-square (row column)
