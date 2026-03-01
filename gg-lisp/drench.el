@@ -126,7 +126,7 @@
         (let* ((val  (drench-get-square row col))
                (face (aref drench-face-syms val)))
           (if (display-graphic-p)
-              (insert (propertize (format " %d " val)
+              (insert (propertize (format "%d " val)
                                   'face `(:inherit ,face :height ,scale)
                                   'drench-cell (cons row col)))
             (let ((dig (aref drench-digit-chars (1- val))))
