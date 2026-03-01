@@ -94,6 +94,7 @@
 
 
 (define-derived-mode drench-mode special-mode "drench"
+  (setq-local truncate-lines t)
   (define-key drench-mode-map (kbd "1")
     (lambda () (interactive) (drench-fill 1)))
   (define-key drench-mode-map (kbd "2")
@@ -139,11 +140,11 @@
   (setq *drench-board* (drench-random-board))
   (setq *drench-level* lvl)
   (setq *drench-moves-done* 0)
-  (setq drench--svg-cache nil)
   (drench-print-board))
 
 
 (defun drench-print-board ()
+  (setq drench--svg-cache nil)
   (let ((inhibit-read-only t))
     (erase-buffer)
     (dotimes (row *drench-board-size*)
