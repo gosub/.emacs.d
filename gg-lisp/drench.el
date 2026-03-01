@@ -14,9 +14,6 @@
   :type 'natnum
   :group 'drench)
 
-(defvar drench--image-cache nil
-  "Vector of cached XPM images indexed by board value (index 0 unused).")
-
 
 (defvar *drench-buffer-name* "*drench*"
   "Name of the drench game buffer.")
@@ -70,27 +67,6 @@
   "Face symbols indexed by board value (index 0 unused).")
 
 
-(defun drench--make-color-xpm (color size)
-  "Return an XPM string for a solid square of COLOR with side SIZE pixels."
-  (let ((row (concat "\"" (make-string size ?@) "\"")))
-    (concat "/* XPM */\nstatic char *img[] = {\n"
-            (format "\"%d %d 1 1\",\n" size size)
-            (format "\"@ c %s\",\n" color)
-            (mapconcat #'identity (make-list size row) ",\n")
-            "\n};")))
-
-(defun drench--cell-image (val)
-  "Return a cached XPM image for board value VAL."
-  (unless drench--image-cache
-    (setq drench--image-cache (make-vector 7 nil)))
-  (or (aref drench--image-cache val)
-      (let* ((face  (aref drench-face-syms val))
-             (color (face-background face nil t))
-             (xpm   (drench--make-color-xpm color drench-cell-size))
-             (image (create-image xpm 'xpm t :ascent 'center)))
-        (aset drench--image-cache val image)
-        image)))
-
 
 (define-derived-mode drench-mode special-mode "drench"
   (define-key drench-mode-map (kbd "1")
@@ -138,7 +114,6 @@
   (setq *drench-board* (drench-random-board))
   (setq *drench-level* lvl)
   (setq *drench-moves-done* 0)
-  (setq drench--image-cache nil)
   (drench-print-board))
 
 
@@ -147,18 +122,24 @@
     (erase-buffer)
     (dotimes (row *drench-board-size*)
       (dotimes (col *drench-board-size*)
-        (let* ((val (drench-get-square row col)))
+        (let* ((val  (drench-get-square row col))
+               (face (aref drench-face-syms val)))
           (if (display-images-p)
-              (insert (propertize " " 'display (drench--cell-image val)
+              (insert (propertize " "
+                                  'face face
+                                  'display `(space :width (,drench-cell-size)
+                                                   :height (,drench-cell-size))
                                   'drench-cell (cons row col)))
-            (let ((face (aref drench-face-syms val))
-                  (dig  (aref drench-digit-chars (1- val))))
+            (let ((dig (aref drench-digit-chars (1- val))))
               (insert (propertize dig 'face face 'drench-cell (cons row col)))
               (insert (propertize " " 'face face 'drench-cell (cons row col)))))))
       (insert "\n"))
-    (insert "\n\nmoves left: "
-            (number-to-string (drench-remaining-moves))
-            "\n")))
+    (insert "\n")
+    (dotimes (i 6)
+      (let* ((val  (1+ i))
+             (face (aref drench-face-syms val)))
+        (insert (propertize (format " %d " val) 'face face))))
+    (insert (format "\nmoves left: %d\n" (drench-remaining-moves)))))
 
 
 (defun drench-get-square (row column)
