@@ -21,7 +21,7 @@
        '((t (:background ,bg-color :foreground "white")))
        ,(format "Face for number %d in drench game." number)
        :group 'drench-faces)
-     (defvar ,sym ',sym))))
+     )))
 
 
 (drench-define-face+var 1 "red")
