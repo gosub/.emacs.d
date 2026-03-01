@@ -135,7 +135,7 @@
               (insert (propertize dig 'face face 'drench-cell (cons row col)))
               (insert (propertize " " 'face face 'drench-cell (cons row col)))))))
       (insert "\n"))
-    (insert (format "\nmoves left: %d\n" (drench-remaining-moves)))
+    (insert (format "\nlevel: %d   moves left: %d\n" *drench-level* (drench-remaining-moves)))
     (insert "\n")
     (insert "1-6  select color\n")
     (insert "n    new game\n")
