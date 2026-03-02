@@ -27,6 +27,13 @@
   :defer t
   :commands (gg/serendip-transient))
 
+(use-package dirty-gits
+  :defer t
+  :commands (dirty-gits)
+  :custom
+  (dirty-gits-root "~/box/prj/")
+  (dirty-gits-max-depth 4))
+
 (use-package drench
   :defer t
   :commands (drench))
