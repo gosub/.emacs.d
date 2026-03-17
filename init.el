@@ -201,6 +201,10 @@
   :defer t
   :commands (gg/require-erlang-from-distro))
 
+(use-package roma-random-place
+  :defer t
+  :commands (roma-random-place))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
