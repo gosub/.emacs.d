@@ -1,6 +1,6 @@
 ;;; gg-pirate.el --- Media download utilities -*- lexical-binding: t; -*-
 
-(defun gg/movie-pirate (url name)
+(defun gg-movie-pirate (url name)
   "Asynchronously download URL to ~/dl/NAME.mkv using ffmpeg.
 NAME is transformed to lowercase and spaces are replaced with underscores."
   (interactive
