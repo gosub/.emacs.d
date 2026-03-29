@@ -125,7 +125,7 @@
 
 (use-package org-hugo-new-post
   :defer t
-  :after ox-hugo
+  :after org
   :commands (org-hugo-new-post))
 
 (use-package gg-pirate
