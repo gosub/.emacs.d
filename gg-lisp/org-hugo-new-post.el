@@ -20,21 +20,22 @@
 
   (let* ((datetime (format-time-string "%Y-%m-%dT%H:%M:%S%z"))
          (export-file-name slug)
-         (tag-list (split-string tags "[ ,]+" t)))
+         (tag-list (split-string tags "[ ,]+" t))
+         new-heading-pos)
 
     (save-excursion
       (goto-char (point-min))
       (unless (re-search-forward "^\\* posts" nil t)
         (error "No '* posts' heading found"))
 
-      (org-fold-show-subtree)
       (forward-line 1)
       (beginning-of-line)
 
-      ;; Insert a level-2 heading directly to avoid org-insert-heading
+      ;; Insert a level-2 TODO heading directly to avoid org-insert-heading
       ;; adding unwanted blank lines or inheriting the wrong level
-      (insert "** " title "\n")
+      (insert "** TODO " title "\n")
       (forward-line -1)
+      (setq new-heading-pos (point))
 
       (when tag-list
         (org-set-tags tag-list))
@@ -42,9 +43,14 @@
       (org-set-property "EXPORT_FILE_NAME" export-file-name)
       (org-set-property "EXPORT_DATE" datetime)
 
-      ;; Leave point after :END: with one blank line for content
+      ;; Leave one blank line after :END: for content
       (org-end-of-meta-data t)
-      (insert "\n"))))
+      (insert "\n"))
+
+    ;; Collapse everything, then reveal only the new heading
+    (org-overview)
+    (goto-char new-heading-pos)
+    (org-fold-show-subtree)))
 
 (provide 'org-hugo-new-post)
 ;;; org-hugo-new-post.el ends here
