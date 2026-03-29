@@ -1,11 +1,17 @@
+;;; org-hugo-new-post.el --- Insert a new Hugo post heading -*- lexical-binding: t; -*-
 
+;;; Code:
+
+(require 'org)
+(declare-function org-hugo-slug "ox-hugo")
+
+;;;###autoload
 (defun org-hugo-new-post (title slug tags)
   "Create a new Hugo post under '* posts' in current Org buffer."
   (interactive
    (let* ((title (read-string "Post title: "))
           (date (format-time-string "%Y-%m-%d"))
           (base-slug (org-hugo-slug title))
-          ;; Default slug includes date
           (default-slug (format "%s-%s" date base-slug))
           (slug (read-string (format "Slug (default %s): " default-slug)
                              nil nil default-slug))
@@ -21,22 +27,24 @@
       (unless (re-search-forward "^\\* posts" nil t)
         (error "No '* posts' heading found"))
 
-      ;; Go to first child position
-      (org-show-subtree)
+      (org-fold-show-subtree)
       (forward-line 1)
+      (beginning-of-line)
 
-      ;; Insert heading
-      (org-insert-heading)
-      (org-do-demote)
-      (insert title)
+      ;; Insert a level-2 heading directly to avoid org-insert-heading
+      ;; adding unwanted blank lines or inheriting the wrong level
+      (insert "** " title "\n")
+      (forward-line -1)
 
-      ;; Tags (org-native)
       (when tag-list
         (org-set-tags tag-list))
 
-      ;; Properties
       (org-set-property "EXPORT_FILE_NAME" export-file-name)
       (org-set-property "EXPORT_DATE" datetime)
 
-      (end-of-line)
-      (insert "\n\n"))))
+      ;; Leave point after :END: with one blank line for content
+      (org-end-of-meta-data t)
+      (insert "\n"))))
+
+(provide 'org-hugo-new-post)
+;;; org-hugo-new-post.el ends here
