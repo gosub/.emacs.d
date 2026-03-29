@@ -123,6 +123,11 @@
   :defer t
   :commands (gg/yt-playlist-to-org))
 
+(use-package org-hugo-new-post
+  :defer t
+  :after ox-hugo
+  :commands (org-hugo-new-post))
+
 (use-package gg-pirate
   :defer t
   :commands (gg-movie-pirate))
