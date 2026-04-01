@@ -24,13 +24,15 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
      :buffer          (format "*%s*" process-name)
      :connection-type 'pty
      :command         (list "ffmpeg"
-                            "-hide_banner"
+                            "-hide_banner" "-loglevel" "warning"
                             "-i" url "-c" "copy" output)
      :filter          (lambda (p s)
                         (when (buffer-live-p (process-buffer p))
                           (with-current-buffer (process-buffer p)
                             (goto-char (point-max))
-                            (insert (replace-regexp-in-string "\r" "\n" s))))))))
+                            (insert (replace-regexp-in-string
+                                     "\033\\[[0-9;]*[A-Za-z]" ""
+                                     (replace-regexp-in-string "\r" "\n" s)))))))))
 
 (provide 'gg-pirate)
 ;;; gg-pirate.el ends here
