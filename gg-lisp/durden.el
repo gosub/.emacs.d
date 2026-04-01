@@ -79,10 +79,13 @@ Examples:
   (let* ((row-counts (durden--parse-layout layout))
          (col-wins   (durden--split-equal (selected-window)
                                           (length row-counts)
-                                          'right)))
-    (cl-mapc (lambda (win nrows)
-               (durden--split-equal win nrows 'below))
-             col-wins row-counts)))
+                                          'right))
+         (all-wins   (apply #'append
+                            (cl-mapcar (lambda (win nrows)
+                                         (durden--split-equal win nrows 'below))
+                                       col-wins row-counts)))
+         (bufs       (seq-filter #'durden--main-buffer-p (buffer-list))))
+    (cl-mapc #'set-window-buffer all-wins bufs)))
 
 
 ;;; Auto-tiler
