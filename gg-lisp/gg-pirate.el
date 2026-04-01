@@ -18,14 +18,24 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
          (output (expand-file-name
                   (concat safe-name ".mkv")
                   (expand-file-name dest)))
-         (process-name (format "ffmpeg-%s" safe-name)))
-    (start-process
-     process-name
-     (format "*%s*" process-name)
-     "ffmpeg"
-     "-i" url
-     "-c" "copy"
-     output)))
+         (process-name (format "ffmpeg-%s" safe-name))
+         (proc (start-process
+                process-name
+                (format "*%s*" process-name)
+                "ffmpeg"
+                "-hide_banner" "-loglevel" "error" "-stats"
+                "-i" url
+                "-c" "copy"
+                output)))
+    ;; ffmpeg uses \r to overwrite the progress line in a terminal;
+    ;; convert it to \n so each update appears on its own line in the buffer
+    (set-process-filter
+     proc
+     (lambda (p s)
+       (when (buffer-live-p (process-buffer p))
+         (with-current-buffer (process-buffer p)
+           (goto-char (point-max))
+           (insert (replace-regexp-in-string "\r" "\n" s))))))))
 
 (provide 'gg-pirate)
 ;;; gg-pirate.el ends here
