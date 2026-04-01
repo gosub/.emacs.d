@@ -53,6 +53,8 @@
      ("nix env update" . "nix-channel --update && nix-env -u '*'")
      ("nix env list installed" . "nix-env --query")
      ("nix garbage collect" . "nix-collect-garbage")
+     ("mount usb" . "sudo mount -ouser,umask=0000 /dev/sda1 /mnt/usb")
+     ("umount usb" . "sudo umount /mnt/usb/")
      ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs")
      ("ollama serve" . "ollama serve"))))
 
