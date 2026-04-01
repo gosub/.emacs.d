@@ -28,14 +28,19 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
                 "-c" "copy"
                 output)))
     ;; ffmpeg uses \r to overwrite the progress line in a terminal;
-    ;; convert it to \n so each update appears on its own line in the buffer
+    ;; honour that by killing the current line before inserting the new content
     (set-process-filter
      proc
      (lambda (p s)
        (when (buffer-live-p (process-buffer p))
          (with-current-buffer (process-buffer p)
-           (goto-char (point-max))
-           (insert (replace-regexp-in-string "\r" "\n" s))))))))
+           (let ((chunks (split-string s "\r")))
+             (goto-char (point-max))
+             (insert (car chunks))
+             (dolist (chunk (cdr chunks))
+               (goto-char (point-max))
+               (delete-region (line-beginning-position) (point))
+               (insert chunk)))))))))
 
 (provide 'gg-pirate)
 ;;; gg-pirate.el ends here
