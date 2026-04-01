@@ -19,14 +19,15 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
                   (concat safe-name ".mkv")
                   (expand-file-name dest)))
          (process-name (format "ffmpeg-%s" safe-name)))
-    ;; make-process with no :stderr merges stderr into stdout so the filter
-    ;; receives ffmpeg's -stats output (which goes to stderr by default)
+    ;; :connection-type 'pty gives a real terminal so stderr (where ffmpeg
+    ;; writes -stats) is merged with stdout and reaches the filter
     (make-process
-     :name    process-name
-     :buffer  (format "*%s*" process-name)
-     :command (list "ffmpeg"
-                    "-hide_banner" "-loglevel" "error" "-stats"
-                    "-i" url "-c" "copy" output)
+     :name            process-name
+     :buffer          (format "*%s*" process-name)
+     :connection-type 'pty
+     :command         (list "ffmpeg"
+                            "-hide_banner" "-stats"
+                            "-i" url "-c" "copy" output)
      ;; ffmpeg uses \r to overwrite the progress line in a terminal;
      ;; honour that by killing the current line before inserting the new content
      :filter  (lambda (p s)
