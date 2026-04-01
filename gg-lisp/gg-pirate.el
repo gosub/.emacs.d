@@ -19,27 +19,18 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
                   (concat safe-name ".mkv")
                   (expand-file-name dest)))
          (process-name (format "ffmpeg-%s" safe-name)))
-    ;; :connection-type 'pty gives a real terminal so stderr (where ffmpeg
-    ;; writes -stats) is merged with stdout and reaches the filter
     (make-process
      :name            process-name
      :buffer          (format "*%s*" process-name)
      :connection-type 'pty
      :command         (list "ffmpeg"
-                            "-hide_banner" "-stats"
+                            "-hide_banner"
                             "-i" url "-c" "copy" output)
-     ;; ffmpeg uses \r to overwrite the progress line in a terminal;
-     ;; honour that by killing the current line before inserting the new content
-     :filter  (lambda (p s)
-                (when (buffer-live-p (process-buffer p))
-                  (with-current-buffer (process-buffer p)
-                    (let ((chunks (split-string s "\r")))
-                      (goto-char (point-max))
-                      (insert (car chunks))
-                      (dolist (chunk (cdr chunks))
-                        (goto-char (point-max))
-                        (delete-region (line-beginning-position) (point))
-                        (insert chunk)))))))))
+     :filter          (lambda (p s)
+                        (when (buffer-live-p (process-buffer p))
+                          (with-current-buffer (process-buffer p)
+                            (goto-char (point-max))
+                            (insert (replace-regexp-in-string "\r" "\n" s))))))))
 
 (provide 'gg-pirate)
 ;;; gg-pirate.el ends here
