@@ -12,13 +12,25 @@
 
 (defcustom durden-excluded-buffer-names
   '("*scratch*" "*Messages*" "*Help*" "*Completions*")
-  "Buffer names excluded from `durden-auto-tile'."
+  "Buffer names excluded from both `durden-tile' and `durden-auto-tile'."
   :type '(repeat string)
   :group 'durden)
 
 (defcustom durden-excluded-major-modes
   '()
-  "Major modes excluded from `durden-auto-tile'."
+  "Major modes excluded from both `durden-tile' and `durden-auto-tile'."
+  :type '(repeat symbol)
+  :group 'durden)
+
+(defcustom durden-auto-tile-excluded-buffer-names
+  '()
+  "Buffer names excluded from `durden-auto-tile' in addition to the base list."
+  :type '(repeat string)
+  :group 'durden)
+
+(defcustom durden-auto-tile-excluded-major-modes
+  '(dired-mode)
+  "Major modes excluded from `durden-auto-tile' in addition to the base list."
   :type '(repeat symbol)
   :group 'durden)
 
@@ -91,12 +103,19 @@ Examples:
 ;;; Auto-tiler
 
 (defun durden--main-buffer-p (buf)
-  "Return non-nil if BUF should be included in auto-tiling."
+  "Return non-nil if BUF passes the base exclusion filters."
   (and (buffer-live-p buf)
        (not (string-prefix-p " " (buffer-name buf)))
        (not (member (buffer-name buf) durden-excluded-buffer-names))
        (not (with-current-buffer buf
               (member major-mode durden-excluded-major-modes)))))
+
+(defun durden--auto-tile-buffer-p (buf)
+  "Return non-nil if BUF should be included in `durden-auto-tile'."
+  (and (durden--main-buffer-p buf)
+       (not (member (buffer-name buf) durden-auto-tile-excluded-buffer-names))
+       (not (with-current-buffer buf
+              (member major-mode durden-auto-tile-excluded-major-modes)))))
 
 (defun durden--tile-recursive (window buffers)
   "Display BUFFERS across WINDOW, splitting recursively along the larger axis."
@@ -119,13 +138,15 @@ Examples:
 ;;;###autoload
 (defun durden-auto-tile ()
   "Tile all main buffers across the frame.
-Buffers listed in `durden-excluded-buffer-names' or whose major mode is in
-`durden-excluded-major-modes' are skipped.  At most `durden-max-windows'
+Buffers are excluded by `durden-excluded-buffer-names' and
+`durden-excluded-major-modes' (shared with `durden-tile'), plus the
+auto-tile-specific `durden-auto-tile-excluded-buffer-names' and
+`durden-auto-tile-excluded-major-modes'.  At most `durden-max-windows'
 windows are created.  Each split goes along the larger dimension of the
 current window."
   (interactive)
   (let ((bufs (seq-take
-               (seq-filter #'durden--main-buffer-p (buffer-list))
+               (seq-filter #'durden--auto-tile-buffer-p (buffer-list))
                durden-max-windows)))
     (if (null bufs)
         (message "durden: no main buffers to tile")
