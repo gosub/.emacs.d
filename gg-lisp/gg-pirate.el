@@ -18,29 +18,27 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
          (output (expand-file-name
                   (concat safe-name ".mkv")
                   (expand-file-name dest)))
-         (process-name (format "ffmpeg-%s" safe-name))
-         (proc (start-process
-                process-name
-                (format "*%s*" process-name)
-                "ffmpeg"
-                "-hide_banner" "-loglevel" "error" "-stats"
-                "-i" url
-                "-c" "copy"
-                output)))
-    ;; ffmpeg uses \r to overwrite the progress line in a terminal;
-    ;; honour that by killing the current line before inserting the new content
-    (set-process-filter
-     proc
-     (lambda (p s)
-       (when (buffer-live-p (process-buffer p))
-         (with-current-buffer (process-buffer p)
-           (let ((chunks (split-string s "\r")))
-             (goto-char (point-max))
-             (insert (car chunks))
-             (dolist (chunk (cdr chunks))
-               (goto-char (point-max))
-               (delete-region (line-beginning-position) (point))
-               (insert chunk)))))))))
+         (process-name (format "ffmpeg-%s" safe-name)))
+    ;; make-process with no :stderr merges stderr into stdout so the filter
+    ;; receives ffmpeg's -stats output (which goes to stderr by default)
+    (make-process
+     :name    process-name
+     :buffer  (format "*%s*" process-name)
+     :command (list "ffmpeg"
+                    "-hide_banner" "-loglevel" "error" "-stats"
+                    "-i" url "-c" "copy" output)
+     ;; ffmpeg uses \r to overwrite the progress line in a terminal;
+     ;; honour that by killing the current line before inserting the new content
+     :filter  (lambda (p s)
+                (when (buffer-live-p (process-buffer p))
+                  (with-current-buffer (process-buffer p)
+                    (let ((chunks (split-string s "\r")))
+                      (goto-char (point-max))
+                      (insert (car chunks))
+                      (dolist (chunk (cdr chunks))
+                        (goto-char (point-max))
+                        (delete-region (line-beginning-position) (point))
+                        (insert chunk)))))))))
 
 (provide 'gg-pirate)
 ;;; gg-pirate.el ends here
