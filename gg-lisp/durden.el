@@ -17,7 +17,7 @@
   :group 'durden)
 
 (defcustom durden-excluded-major-modes
-  '(dired-mode)
+  '()
   "Major modes excluded from `durden-auto-tile'."
   :type '(repeat symbol)
   :group 'durden)
