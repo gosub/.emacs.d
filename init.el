@@ -45,8 +45,8 @@
 (use-package preshell
   :custom
   (preshell-commands-alist
-   '(("pacman update" . "sudo pacman -Syu")
-     ("pacman update (no confirm)" . "sudo pacman -Syu --noconfirm --noprogressbar")
+   '(("pacman safe update" . "sudo pacman -Syu")
+     ("pacman update" . "sudo pacman -Syu --noconfirm --noprogressbar")
      ("pacman list installed" . "pacman -Q")
      ("pacman list installed expliclitly" . "pacman -Qe")
      ("pacman install from package list" . "sudo pacman --needed -S - < /home/gg/.config/pkgs/arch")
