@@ -11,7 +11,7 @@
   :group 'windows)
 
 (defcustom durden-excluded-buffer-names
-  '("*scratch*" "*Messages*")
+  '("*scratch*" "*Messages*" "*Help*" "*Completions*")
   "Buffer names excluded from `durden-auto-tile'."
   :type '(repeat string)
   :group 'durden)
