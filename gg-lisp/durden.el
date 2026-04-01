@@ -1,5 +1,22 @@
 ;;; durden.el --- Window tiler -*- lexical-binding: t; -*-
 
+;;; Commentary:
+
+;; Durden is a window tiler for Emacs.  The name is a play on Tyler Durden,
+;; the character from Fight Club (a tiler that does things its own way).
+;;
+;; Two entry points:
+;;
+;;   `durden-tile': apply a layout described by a compact string grammar.
+;;   `|' separates columns, `-' separates rows within a column.
+;;   For example: "-|" gives two columns with the left one split into two rows;
+;;   "|-" gives two columns with the right one split into two rows.
+;;   Windows are filled intelligently: the current buffer goes first, followed
+;;   by the most recently visited buffers, skipping utility and excluded ones.
+;;
+;;   `durden-auto-tile': automatically tile all main open buffers,
+;;   recursively splitting the largest window along its longer axis.
+
 ;;; Code:
 
 (require 'seq)
