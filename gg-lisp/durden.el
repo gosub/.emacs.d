@@ -3,6 +3,7 @@
 ;;; Code:
 
 (require 'seq)
+(require 'cl-lib)
 
 
 (defgroup durden nil
@@ -29,77 +30,59 @@
 
 ;;; Layout string tiler
 
-(defun durden--apply-layout (window chars)
-  "Split WINDOW according to CHARS (a list of characters).
-Characters are consumed in depth-first order: the first char splits the
-root window, then each resulting sub-window recursively consumes the next
-character.  Returns the list of unconsumed characters."
-  (if (null chars)
-      nil
-    (let ((c (car chars))
-          (rest (cdr chars)))
-      (pcase c
-        (?-
-         ;; Split top / bottom
-         (let ((below (split-window window nil 'below)))
-           (setq rest (durden--apply-layout window rest))
-           (setq rest (durden--apply-layout below rest))
-           rest))
-        (?|
-         ;; Split left / right
-         (let ((right (split-window window nil 'right)))
-           (setq rest (durden--apply-layout window rest))
-           (setq rest (durden--apply-layout right rest))
-           rest))
-        (?=
-         ;; Split into three horizontal strips of equal height
-         (let* ((h (window-total-height window))
-                (third (max 3 (/ h 3)))
-                (mid (split-window window third 'below))
-                (bot (split-window mid   third 'below)))
-           (setq rest (durden--apply-layout window rest))
-           (setq rest (durden--apply-layout mid   rest))
-           (setq rest (durden--apply-layout bot   rest))
-           rest))
-        (?+
-         ;; Split into a 2×2 grid
-         (let* ((right    (split-window window nil 'right))
-                (bot-left (split-window window nil 'below))
-                (bot-right (split-window right  nil 'below)))
-           (setq rest (durden--apply-layout window    rest))
-           (setq rest (durden--apply-layout right     rest))
-           (setq rest (durden--apply-layout bot-left  rest))
-           (setq rest (durden--apply-layout bot-right rest))
-           rest))
-        (_
-         ;; Unknown character: treat this window as a leaf
-         rest)))))
+(defun durden--parse-layout (layout)
+  "Parse LAYOUT into a list of row-counts, one per column.
+`|' separates columns; `-' within a column section adds a row split.
+`=' expands to `--' (3 rows in one column).
+`+' expands to `-|-' (2 columns each split into 2 rows)."
+  (let ((s (replace-regexp-in-string
+            "\\+" "-|-"
+            (replace-regexp-in-string "=" "--" layout))))
+    (mapcar (lambda (col)
+              (1+ (seq-count (lambda (c) (= c ?-)) (string-to-list col))))
+            (split-string s "|"))))
+
+(defun durden--split-equal (window n side)
+  "Split WINDOW into N equal sub-windows along SIDE (\\='right or \\='below).
+Returns a list of N windows in order."
+  (if (<= n 1)
+      (list window)
+    (let* ((total (if (eq side 'right)
+                      (window-total-width window)
+                    (window-total-height window)))
+           (new-win (split-window window (/ total n) side)))
+      (cons window (durden--split-equal new-win (1- n) side)))))
 
 ;;;###autoload
 (defun durden-tile (layout)
-  "Apply LAYOUT to the current frame, replacing all existing windows.
+  "Apply LAYOUT to the frame, replacing all existing windows.
 
-LAYOUT is a string; each character describes how to split one window:
+The grammar is visual: `|' separates columns, `-' within a column section
+separates rows in that column.
 
-  -  split top / bottom
-  |  split left / right
-  =  split into three horizontal strips
-  +  split into a 2×2 grid
-
-Characters are applied in depth-first order.  The first character splits
-the full frame; each resulting sub-window then consumes the next character
-in turn.  Windows that receive no character are left as leaves.
+  |   column separator
+  -   row separator (within a column section)
+  =   shorthand for -- (three equal rows in one column)
+  +   shorthand for -|- (two columns each split into two rows)
 
 Examples:
-  \"-\"   two rows
-  \"|\"   two columns
-  \"|-\"  two columns; left column split into two rows
-  \"-|\"  two rows; top row split into two columns
-  \"||\"  three columns (left column split again)
-  \"+\"   2×2 grid"
+  \"|\"     two equal columns
+  \"-\"     two rows (top / bottom)
+  \"-|\"    two columns; left split into two rows
+  \"|-\"    two columns; right split into two rows
+  \"||\"    three columns
+  \"-|-\"   two columns, each split into two rows  (same as +)
+  \"-||-\"  three columns; leftmost and rightmost each split into two rows
+  \"--|\"   two columns; left split into three rows"
   (interactive "sLayout: ")
   (delete-other-windows)
-  (durden--apply-layout (selected-window) (string-to-list layout)))
+  (let* ((row-counts (durden--parse-layout layout))
+         (col-wins   (durden--split-equal (selected-window)
+                                          (length row-counts)
+                                          'right)))
+    (cl-mapc (lambda (win nrows)
+               (durden--split-equal win nrows 'below))
+             col-wins row-counts)))
 
 
 ;;; Auto-tiler
@@ -127,8 +110,8 @@ Examples:
            (new-win (if (>= w (* 2 h))
                         (split-window window nil 'right)
                       (split-window window nil 'below))))
-      (durden--tile-recursive window   (seq-take buffers half))
-      (durden--tile-recursive new-win  (seq-drop buffers half))))))
+      (durden--tile-recursive window  (seq-take buffers half))
+      (durden--tile-recursive new-win (seq-drop buffers half))))))
 
 ;;;###autoload
 (defun durden-auto-tile ()
