@@ -35,5 +35,8 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
                                 (goto-char (point-max))
                                 (insert line "\n")))))))))
 
+;;;###autoload
+(defalias 'pirate-movie-gg #'movie-pirate-gg)
+
 (provide 'pirate-gg)
 ;;; pirate-gg.el ends here

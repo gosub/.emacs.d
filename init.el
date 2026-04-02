@@ -133,7 +133,7 @@
 
 (use-package pirate-gg
   :defer t
-  :commands (movie-pirate-gg))
+  :commands (movie-pirate-gg pirate-movie-gg))
 
 (use-package durden
   :defer t
