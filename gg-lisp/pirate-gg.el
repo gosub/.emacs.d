@@ -1,17 +1,17 @@
-;;; gg-pirate.el --- Media download utilities -*- lexical-binding: t; -*-
+;;; pirate-gg.el --- Media download utilities -*- lexical-binding: t; -*-
 
-(defvar gg-movie-pirate-destinations
+(defvar movie-pirate-destinations-gg
   '("~/dl/" "/mnt/usb/")
-  "List of destination directories for `gg-movie-pirate'.")
+  "List of destination directories for `movie-pirate-gg'.")
 
-(defun gg-movie-pirate (url name dest)
+(defun movie-pirate-gg (url name dest)
   "Asynchronously download URL to DEST/NAME.mkv using ffmpeg.
 NAME is transformed to lowercase and spaces are replaced with underscores."
   (interactive
    (list
     (read-string "URL: ")
     (read-string "Name: ")
-    (completing-read "Destination: " gg-movie-pirate-destinations nil t)))
+    (completing-read "Destination: " movie-pirate-destinations-gg nil t)))
   (let* ((safe-name (replace-regexp-in-string
                      " +" "_"
                      (downcase name)))
@@ -35,5 +35,5 @@ NAME is transformed to lowercase and spaces are replaced with underscores."
                                 (goto-char (point-max))
                                 (insert line "\n")))))))))
 
-(provide 'gg-pirate)
-;;; gg-pirate.el ends here
+(provide 'pirate-gg)
+;;; pirate-gg.el ends here

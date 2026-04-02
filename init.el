@@ -131,9 +131,9 @@
   :after org
   :commands (org-hugo-new-post))
 
-(use-package gg-pirate
+(use-package pirate-gg
   :defer t
-  :commands (gg-movie-pirate))
+  :commands (movie-pirate-gg))
 
 (use-package durden
   :defer t
