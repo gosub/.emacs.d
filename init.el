@@ -114,9 +114,10 @@
   :bind
   ("C-c d" . gg/insert-current-date))
 
-(use-package gg-inc-at-point
+(use-package inc-at-point-gg
   :bind
-  ("C-c +" . gg/increment-number-at-point))
+  ("C-c +" . inc-at-point-gg)
+  ("C-c -" . dec-at-point-gg))
 
 (use-package gg-workspace
   :bind
