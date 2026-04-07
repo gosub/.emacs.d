@@ -56,7 +56,8 @@
      ("mount usb" . "sudo mount -ouser,umask=0000 /dev/sda1 /mnt/usb")
      ("umount usb" . "sudo umount /mnt/usb/")
      ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs")
-     ("ollama serve" . "ollama serve"))))
+     ("ollama serve" . "ollama serve")
+     ("claude update" . "claude update"))))
 
 (use-package dired-prefab
   :after dired
