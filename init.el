@@ -292,6 +292,15 @@
 (use-package sclang
   :defer t
   :ensure t
+
+  ;; this is needed because its not in elpa or melpa
+  ;; and the elisp is code is not in the root folder
+  ;; of the repo :/
+  :init
+  (if (not (package-installed-p 'sclang))
+      (package-vc-install "https://github.com/emacsmirror/sclang.git"))
+  :load-path "sclang/el"
+
   :after (gg-sclang-aux)
   :commands (sclang-start)
   :custom
