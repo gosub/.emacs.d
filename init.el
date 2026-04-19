@@ -299,7 +299,7 @@
   :init
   (if (not (package-installed-p 'sclang))
       (package-vc-install "https://github.com/emacsmirror/sclang.git"))
-  :load-path "sclang/el"
+  :load-path "elpa/sclang/el"
 
   :after (gg-sclang-aux)
   :commands (sclang-start)
