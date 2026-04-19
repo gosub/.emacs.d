@@ -291,6 +291,7 @@
 
 (use-package sclang
   :defer t
+  :ensure t
   :after (gg-sclang-aux)
   :commands (sclang-start)
   :custom
