@@ -137,6 +137,10 @@
   :defer t
   :commands (movie-pirate-gg pirate-movie-gg))
 
+(use-package crop-gg
+  :defer t
+  :commands (crop-image-gg))
+
 (use-package durden
   :defer t
   :commands (durden-tile durden-auto-tile))
