@@ -7,6 +7,7 @@
 
 (require 'cl-lib)
 (require 'tabulated-list)
+(require 'cdp8-commands)
 
 ;;; Configuration
 
@@ -68,10 +69,6 @@
     (if extra (cdr extra)
       (expand-file-name name (expand-file-name cdp8-binaries-dir)))))
 
-(defun cdp8--binaries ()
-  (append (directory-files (expand-file-name cdp8-binaries-dir) nil "^[^.]")
-          (mapcar #'car cdp8-extra-tools)))
-
 (defun cdp8--wav-refs (cmd)
   "Extract all *.wav filenames mentioned in CMD string."
   (let (refs)
@@ -123,16 +120,24 @@
   (setq tabulated-list-entries (cdp8--entries))
   (tabulated-list-print t))
 
+;;; Command list
+
+(defun cdp8--all-commands ()
+  "Return CDP8 commands plus user-defined extra tool labels."
+  (append cdp8-commands (mapcar #'car cdp8-extra-tools)))
+
 ;;; Help side window
 
-(defun cdp8--show-help (binary-name)
-  "Show CDP8 usage for BINARY-NAME in a side window."
-  (let* ((bin (cdp8--binary-full-path binary-name))
-         (buf (get-buffer-create "*cdp8-help*")))
+(defun cdp8--show-help (spec)
+  "Show usage for SPEC (e.g. \"synth\" or \"synth wave\") in a side window."
+  (let* ((tokens (split-string spec))
+         (bin    (cdp8--binary-full-path (car tokens)))
+         (args   (cdr tokens))
+         (buf    (get-buffer-create "*cdp8-help*")))
     (with-current-buffer buf
       (let ((inhibit-read-only t))
         (erase-buffer)
-        (call-process bin nil t nil)
+        (apply #'call-process bin nil t nil args)
         (special-mode)
         (goto-char (point-min))))
     (display-buffer buf '(display-buffer-in-side-window
@@ -160,21 +165,21 @@
          (type     (intern type-str))
          (input    (when (eq type 'effect)
                      (completing-read "Input wave: " (cdp8--output-waves) nil t)))
-         (binary   (completing-read "Binary: " (cdp8--binaries) nil t))
-         (_        (cdp8--show-help binary))
+         (spec     (completing-read "Command: " (cdp8--all-commands) nil t))
+         (_        (cdp8--show-help spec))
          (next-id  (cdp8--next-id))
          (prefill  (if input
-                       (format "%s %s %s.wav " binary input next-id)
-                     (format "%s %s.wav " binary next-id)))
+                       (format "%s %s %s.wav " spec input next-id)
+                     (format "%s %s.wav " spec next-id)))
          (cmd      (read-string "Command: " prefill)))
     (cdp8--register-node type cmd)))
 
 (defun cdp8-new-effect-from (wave-name)
   "Create a new effect node with WAVE-NAME pre-filled as input."
-  (let* ((binary  (completing-read "Binary: " (cdp8--binaries) nil t))
-         (_       (cdp8--show-help binary))
+  (let* ((spec    (completing-read "Command: " (cdp8--all-commands) nil t))
+         (_       (cdp8--show-help spec))
          (next-id (cdp8--next-id))
-         (prefill (format "%s %s %s.wav " binary wave-name next-id))
+         (prefill (format "%s %s %s.wav " spec wave-name next-id))
          (cmd     (read-string "Command: " prefill)))
     (cdp8--register-node 'effect cmd)))
 
