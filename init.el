@@ -145,6 +145,10 @@
   :defer t
   :commands (durden-tile durden-auto-tile))
 
+(use-package cdp8-mode
+  :defer t
+  :commands (cdp8-session))
+
 (use-package gg-other-win
   :bind ("C-x 4 k" . gg/kill-buffer-and-windows-other-window))
 
