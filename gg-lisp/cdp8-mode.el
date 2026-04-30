@@ -187,11 +187,17 @@
 
 ;;; Node execution
 
+(defun cdp8--prepare-output (node)
+  "Delete the output wave for NODE if it exists (CDP8 refuses to overwrite)."
+  (let ((path (cdp8--wave-path (plist-get node :output))))
+    (when (file-exists-p path) (delete-file path))))
+
 (defun cdp8--run-single (node cdp8-buf)
   "Run NODE asynchronously; update status in CDP8-BUF via sentinel."
   (let* ((id      (plist-get node :id))
          (tokens  (split-string (cdp8--resolve-cmd (plist-get node :cmd))))
          (out-buf (get-buffer-create (format "*cdp8-run: %s*" id))))
+    (with-current-buffer cdp8-buf (cdp8--prepare-output node))
     (with-current-buffer out-buf (erase-buffer))
     (with-current-buffer cdp8-buf
       (cdp8--update-status id 'running)
@@ -241,6 +247,7 @@
            (id      (plist-get node :id))
            (tokens  (split-string (cdp8--resolve-cmd (plist-get node :cmd))))
            (out-buf (get-buffer-create (format "*cdp8-run: %s*" id))))
+      (with-current-buffer cdp8-buf (cdp8--prepare-output node))
       (with-current-buffer out-buf (erase-buffer))
       (with-current-buffer cdp8-buf
         (cdp8--update-status id 'running)
