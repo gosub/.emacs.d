@@ -25,10 +25,21 @@
   :type '(alist :key-type string :value-type string)
   :group 'cdp8)
 
+(defcustom cdp8-default-samplerate 44100
+  "Initial default sample rate for new nodes."
+  :type 'integer :group 'cdp8)
+
+(defcustom cdp8-default-channels 1
+  "Initial default channel count for new nodes."
+  :type 'integer :group 'cdp8)
+
 ;;; Buffer-local session state
 
 (defvar-local cdp8--dir nil "Absolute path of the session directory.")
 (defvar-local cdp8--nodes '() "List of node plists for this session.")
+(defvar-local cdp8--last-sr    nil "Last sample-rate value entered in this session.")
+(defvar-local cdp8--last-chans nil "Last channels value entered in this session.")
+(defvar-local cdp8--last-dur   nil "Last duration value entered in this session.")
 
 ;;; Session file persistence
 
@@ -145,6 +156,107 @@
     (display-buffer buf '(display-buffer-in-side-window
                           (side . right) (window-width . 62)))))
 
+;;; Parameter schema lookup
+
+(defun cdp8--schema-for (spec)
+  "Return the :params list for SPEC, or nil if unregistered."
+  (let ((entry (assoc spec cdp8-param-schemas)))
+    (when entry (plist-get (cdr entry) :params))))
+
+(defun cdp8--last-var (name)
+  "Return the buffer-local last-used variable symbol for parameter NAME, or nil."
+  (pcase name
+    ("sr"    'cdp8--last-sr)
+    ("chans" 'cdp8--last-chans)
+    ("dur"   'cdp8--last-dur)))
+
+(defun cdp8--param-default (param)
+  "Resolve the effective default for PARAM (from last-used, :var, or :default)."
+  (let* ((name (plist-get param :name))
+         (last (cdp8--last-var name))
+         (val  (plist-get param :var)))
+    (or (and last (symbol-value last))
+        (and val  (symbol-value val))
+        (plist-get param :default))))
+
+(defun cdp8--prompt-one (param)
+  "Prompt user for PARAM; return the value."
+  (let* ((prompt  (or (plist-get param :prompt) (plist-get param :name)))
+         (type    (plist-get param :type))
+         (choices (plist-get param :choices))
+         (def     (cdp8--param-default param)))
+    (pcase type
+      ('bool t)
+      ('choice
+       (cond
+        ;; alist of (value . label) → show "label" pick value
+        ((consp (car choices))
+         (let* ((items (mapcar (lambda (c) (format "%s (%s)" (car c) (cdr c)))
+                               choices))
+                (pick (completing-read
+                       (format "%s (default %s): " prompt def)
+                       items nil t nil nil
+                       (format "%s (%s)" def
+                               (cdr (assoc def choices))))))
+           (string-to-number pick)))
+        ;; flat list of values → completing-read on stringified values
+        (t
+         (let ((pick (completing-read
+                      (format "%s [%s]: " prompt def)
+                      (mapcar #'number-to-string choices) nil t nil nil
+                      (number-to-string def))))
+           (string-to-number pick)))))
+      ((or 'integer 'number)
+       (let* ((s (read-string (format "%s [%s]: " prompt def)
+                              nil nil (number-to-string def))))
+         (if (eq type 'integer) (truncate (string-to-number s))
+           (string-to-number s))))
+      (_  ; string fallback
+       (read-string (format "%s [%s]: " prompt def) nil nil
+                    (format "%s" (or def "")))))))
+
+(defun cdp8--remember (param value)
+  "If PARAM has :remember, store VALUE in the matching buffer-local last-used."
+  (when (plist-get param :remember)
+    (let ((sym (cdp8--last-var (plist-get param :name))))
+      (when sym (set sym value)))))
+
+(defun cdp8--format-token (param value)
+  "Format PARAM=VALUE as a command-line token (with flag if applicable)."
+  (let ((flag (plist-get param :flag)))
+    (cond
+     ((and flag (eq (plist-get param :type) 'bool))
+      (when value flag))
+     (flag
+      (format "%s%s" flag value))
+     (t
+      (format "%s" value)))))
+
+(defun cdp8--prompt-params (spec input-wave out-wave)
+  "Drive sequential prompts using the schema for SPEC; return assembled command.
+INPUT-WAVE is the input wave name or nil; OUT-WAVE is the output wave name."
+  (let* ((schema (cdp8--schema-for spec))
+         (tokens (list spec)))
+    (dolist (param schema)
+      (let ((type (plist-get param :type))
+            (name (plist-get param :name)))
+        (pcase type
+          ('wave-in  (when input-wave (push input-wave tokens)))
+          ('wave-out (push out-wave tokens))
+          (_
+           (if (plist-get param :optional)
+               (when (y-or-n-p
+                      (format "Set %s? "
+                              (or (plist-get param :prompt) name)))
+                 (let ((val (cdp8--prompt-one param)))
+                   (cdp8--remember param val)
+                   (let ((tok (cdp8--format-token param val)))
+                     (when tok (push tok tokens)))))
+             (let ((val (cdp8--prompt-one param)))
+               (cdp8--remember param val)
+               (push (cdp8--format-token param val) tokens)))))))
+    (mapconcat #'identity (nreverse tokens) " ")))
+
 ;;; Node creation
 
 (defun cdp8--register-node (type cmd)
@@ -160,6 +272,16 @@
     (cdp8--save)
     (cdp8--refresh)))
 
+(defun cdp8--build-cmd (spec input out-wave)
+  "Build a command string for SPEC; use schema if known, else free-form prompt.
+INPUT is the input wave name (or nil); OUT-WAVE is the output wave filename."
+  (if (cdp8--schema-for spec)
+      (cdp8--prompt-params spec input out-wave)
+    (let ((prefill (if input
+                       (format "%s %s %s " spec input out-wave)
+                     (format "%s %s " spec out-wave))))
+      (read-string "Command: " prefill))))
+
 (defun cdp8-new-node ()
   "Interactively create a new generator or effect node."
   (interactive)
@@ -170,19 +292,17 @@
          (spec     (completing-read "Command: " (cdp8--all-commands) nil t))
          (_        (cdp8--show-help spec))
          (next-id  (cdp8--next-id))
-         (prefill  (if input
-                       (format "%s %s %s.wav " spec input next-id)
-                     (format "%s %s.wav " spec next-id)))
-         (cmd      (read-string "Command: " prefill)))
+         (out-wave (concat next-id ".wav"))
+         (cmd      (cdp8--build-cmd spec input out-wave)))
     (cdp8--register-node type cmd)))
 
 (defun cdp8-new-effect-from (wave-name)
   "Create a new effect node with WAVE-NAME pre-filled as input."
-  (let* ((spec    (completing-read "Command: " (cdp8--all-commands) nil t))
-         (_       (cdp8--show-help spec))
-         (next-id (cdp8--next-id))
-         (prefill (format "%s %s %s.wav " spec wave-name next-id))
-         (cmd     (read-string "Command: " prefill)))
+  (let* ((spec     (completing-read "Command: " (cdp8--all-commands) nil t))
+         (_        (cdp8--show-help spec))
+         (next-id  (cdp8--next-id))
+         (out-wave (concat next-id ".wav"))
+         (cmd      (cdp8--build-cmd spec wave-name out-wave)))
     (cdp8--register-node 'effect cmd)))
 
 ;;; Node execution

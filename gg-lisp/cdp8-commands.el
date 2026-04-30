@@ -562,5 +562,62 @@
     )
   "List of CDP8 \"binary [subcommand]\" strings for completion.")
 
+
+;;; Parameter schema registry
+
+(defvar cdp8-param-schemas
+  '(("synth wave"
+     :params
+     ((:name "mode" :prompt "Mode" :type choice
+       :choices ((1 . "sine") (2 . "square") (3 . "sawtooth") (4 . "ramp"))
+       :default 1)
+      (:name "outfile" :type wave-out)
+      (:name "sr" :prompt "Sample rate" :type integer
+       :choices (48000 44100 32000 22050 16000)
+       :var cdp8-default-samplerate :remember t)
+      (:name "chans" :prompt "Channels" :type integer
+       :choices (1 2 4)
+       :var cdp8-default-channels :remember t)
+      (:name "dur" :prompt "Duration (s)" :type number :default 5.0 :remember t)
+      (:name "freq" :prompt "Frequency (Hz)" :type number :default 440)
+      (:name "amp" :prompt "Amplitude" :type number :default 1.0
+       :flag "-a" :optional t)
+      (:name "tabsize" :prompt "Table size" :type integer :default 256
+       :flag "-t" :optional t)))
+
+    ("synth noise"
+     :params
+     ((:name "outfile" :type wave-out)
+      (:name "sr" :prompt "Sample rate" :type integer
+       :choices (48000 44100 32000 22050 16000)
+       :var cdp8-default-samplerate :remember t)
+      (:name "chans" :prompt "Channels" :type integer :choices (1 2 4)
+       :var cdp8-default-channels :remember t)
+      (:name "dur" :prompt "Duration (s)" :type number :default 5.0 :remember t)
+      (:name "amp" :prompt "Amplitude" :type number :default 1.0
+       :flag "-a" :optional t)))
+
+    ("blur avrg"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "N" :prompt "Channels to average (odd)" :type integer :default 11)))
+
+    ("grain reverse"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "len" :prompt "Max grain spacing (s)" :type number :default 0.1
+       :flag "-b" :optional t)
+      (:name "gate" :prompt "Gate level (0-1)" :type number :default 1.0
+       :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min hole (s)" :type number :default 0.032
+       :flag "-h" :optional t)
+      (:name "ignore-last" :prompt "Ignore last grain" :type bool :default nil
+       :flag "-x" :optional t))))
+  "Per-command parameter schemas.
+Commands not listed fall back to the free-form prompt.")
+
+
 (provide 'cdp8-commands)
 ;;; cdp8-commands.el ends here
