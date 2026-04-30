@@ -36,9 +36,11 @@
   (expand-file-name "cdp8-session.el" cdp8--dir))
 
 (defun cdp8--save ()
-  (with-temp-file (cdp8--session-file)
-    (let ((print-level nil) (print-length nil))
-      (pp cdp8--nodes (current-buffer)))))
+  (let ((nodes cdp8--nodes)
+        (file  (cdp8--session-file)))
+    (with-temp-file file
+      (let ((print-level nil) (print-length nil))
+        (pp nodes (current-buffer))))))
 
 (defun cdp8--load ()
   (let ((f (cdp8--session-file)))
