@@ -268,7 +268,7 @@
     "mton"
     "multimix"
     "multiosc"
-    "multisynth"
+    "multisynth synth"
     "newdelay"
     "newmix"
     "newmorph newmorph"
@@ -1384,7 +1384,8 @@
       (:name "e" :type bool :flag "-e" :optional t)))
     ("housekeep gate"
      :params
-     ((:name "infile" :type wave-in)
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
       (:name "zerocnt" :type number :flag "-z" :optional t)))
     ("housekeep remove"
@@ -1399,8 +1400,22 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "velocity" :type integer :default 50)
-      (:name "density" :type integer :default 50)))
+      (:name "velocity" :prompt "Velocity (speed advance)" :type number :default 1.0)
+      (:name "density" :prompt "Grain overlap density" :type number :default 1.0)
+      (:name "hvelocity" :prompt "High velocity limit" :type number :default 1.0)
+      (:name "hdensity" :prompt "High density limit" :type number :default 1.0)
+      (:name "grainsize" :prompt "Grain size (ms)" :type number :default 50.0)
+      (:name "pitchshift" :prompt "Pitch shift (semitones)" :type number :default 0.0)
+      (:name "amp" :prompt "Amplitude" :type number :default 1.0)
+      (:name "space" :prompt "Spatial position" :type number :default 0.0)
+      (:name "bsplice" :prompt "Begin splice (ms)" :type number :default 5.0)
+      (:name "esplice" :prompt "End splice (ms)" :type number :default 5.0)
+      (:name "hgrainsize" :prompt "High grain size (ms)" :type number :default 50.0)
+      (:name "hpitchshift" :prompt "High pitch shift" :type number :default 0.0)
+      (:name "hamp" :prompt "High amplitude" :type number :default 1.0)
+      (:name "hspace" :prompt "High spatial position" :type number :default 0.0)
+      (:name "hbsplice" :prompt "High begin splice" :type number :default 5.0)
+      (:name "hesplice" :prompt "High end splice" :type number :default 5.0)))
     ("modify scaledpan"
      :params
      ((:name "infile" :type wave-in)
@@ -1472,10 +1487,9 @@
       (:name "expa" :type number)
       (:name "expf" :type number)
       (:name "stagger" :type number :flag "-s" :optional t)))
-    ("multisynth"
+    ("multisynth synth"
      :params
-     ((:name "synth" :type number)
-      (:name "outfile" :type wave-out)
+     ((:name "outfile" :type wave-out)
       (:name "score" :type number)
       (:name "MM" :type number)
       (:name "jitter" :type integer :default 15 :flag "-j" :optional t)
