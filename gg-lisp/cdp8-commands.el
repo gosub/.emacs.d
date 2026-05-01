@@ -990,29 +990,29 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "segdur" :type number)
-      (:name "repets" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)))
+      (:name "segdur" :prompt "Segment duration (s)" :type number :default 0.1)
+      (:name "repets" :prompt "Repetitions of each segment" :type integer :default 2)
+      (:name "s" :prompt "Stay synced to input" :type bool :flag "-s" :optional t)))
     ("extend repetitions"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "timesfile" :type number)
-      (:name "level" :type number)))
+      (:name "timesfile" :prompt "Text file of times (s) at which source plays" :type number :default 1)
+      (:name "level" :prompt "Output level (0-1)" :type number :default 1.0)))
     ("extend sequence"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "sequence-file" :type number)
-      (:name "attenuation" :type number)))
+      (:name "sequence-file" :prompt "File of output-time/semitones/loudness triples" :type number :default 1)
+      (:name "attenuation" :prompt "Overall attenuation on source" :type number :default 1.0)))
     ("extend sequence2"
      :params
-     ((:name "inf1" :type number)
-      (:name "inf2" :type number)
+     ((:name "inf1" :prompt "First input sound file" :type number :default 1)
+      (:name "inf2" :prompt "Second input sound file" :type number :default 1)
       (:name "outfile" :type wave-out)
-      (:name "sequence-file" :type number)
-      (:name "attenuation" :type number)
-      (:name "splice" :type number :flag "-s" :optional t)))
+      (:name "sequence-file" :prompt "Sequence file: midi-pitches line then snd/time/pitch/loud/dur lines" :type number :default 1)
+      (:name "attenuation" :prompt "Overall attenuation on source" :type number :default 1.0)
+      (:name "splice" :prompt "Splice duration (ms)" :type number :default 10.0 :flag "-s" :optional t)))
     ("filter iterated"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1343,7 +1343,7 @@
       (:name "outfile" :type wave-out)))
     ("housekeep bakup"
      :params
-     ((:name "infile1" :type wave-in)
+     ((:name "infile1" :prompt "First input file (more can follow on command line)" :type wave-in)
       (:name "outfile" :type wave-out)))
     ("housekeep batchexpand"
      :params
@@ -1361,25 +1361,25 @@
       (:name "outtextfile" :type wave-out)))
     ("housekeep deglitch"
      :params
-     ((:name "inf" :type number)
-      (:name "outf" :type number)
-      (:name "glitch" :type number)
-      (:name "sil" :type number)
-      (:name "thresh" :type number)
-      (:name "splice" :type number)
-      (:name "window" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)))
+     ((:name "inf" :prompt "Input sound file" :type number :default 1)
+      (:name "outf" :prompt "Output sound file" :type number :default 1)
+      (:name "glitch" :prompt "Max glitch duration (ms)" :type number :default 5.0)
+      (:name "sil" :prompt "Min silence on either side of glitch (ms)" :type number :default 10.0)
+      (:name "thresh" :prompt "Max level of surrounding silence (0-1)" :type number :default 0.01)
+      (:name "splice" :prompt "Splice length to cut out glitch (ms)" :type number :default 5.0)
+      (:name "window" :prompt "Search window length (ms)" :type number :default 50.0)
+      (:name "s" :prompt "Stereo mode" :type bool :flag "-s" :optional t)))
     ("housekeep disk"
      :params
-     ((:name "anyinfile" :type number)))
+     ((:name "anyinfile" :prompt "Any sound file (to determine sample rate for space calc)" :type number :default 1)))
     ("housekeep endclicks"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "gate" :type number)
-      (:name "splicelen" :type number)
-      (:name "b" :type bool :flag "-b" :optional t)
-      (:name "e" :type bool :flag "-e" :optional t)))
+      (:name "gate" :prompt "Level above which signal is accepted (0-1)" :type number :default 0.01)
+      (:name "splicelen" :prompt "Splice length (ms)" :type number :default 10.0)
+      (:name "b" :prompt "Trim start" :type bool :flag "-b" :optional t)
+      (:name "e" :prompt "Trim end" :type bool :flag "-e" :optional t)))
     ("housekeep gate"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1388,12 +1388,12 @@
       (:name "zerocnt" :type number :flag "-z" :optional t)))
     ("housekeep remove"
      :params
-     ((:name "filename" :type number)
-      (:name "a" :type bool :flag "-a" :optional t)))
+     ((:name "filename" :prompt "Base filename whose numbered copies (X_001...) to delete" :type number :default 1)
+      (:name "a" :prompt "Search all possible numbered names" :type bool :flag "-a" :optional t)))
     ("modify findpan"
      :params
      ((:name "infile" :type wave-in)
-      (:name "time" :type number)))
+      (:name "time" :prompt "Time in file to measure stereo pan position (s)" :type number :default 0.0)))
     ("modify sausage"
      :params
      ((:name "infile" :type wave-in)
@@ -1435,24 +1435,24 @@
       (:name "b" :prompt "Balance channel levels" :type bool :flag "-b" :optional t)))
     ("modify spaceform"
      :params
-     ((:name "outpanfile" :type number)
-      (:name "cyclelen" :type number)
-      (:name "width" :type number)
-      (:name "dur" :type number)
-      (:name "quantisation" :type number)
-      (:name "phase" :type number)))
+     ((:name "outpanfile" :prompt "Output pan data file" :type number :default 1)
+      (:name "cyclelen" :prompt "Duration of one pan cycle (s)" :type number :default 1.0)
+      (:name "width" :prompt "Pan width (0=centre, 1=full)" :type number :default 1.0)
+      (:name "dur" :prompt "Duration of output file (s)" :type number :default 4.0)
+      (:name "quantisation" :prompt "Time step between positions (s)" :type number :default 0.01)
+      (:name "phase" :prompt "Start angle (0=left, 360=right)" :type number :default 0.0)))
     ("modify stack"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "transpos" :type number)
-      (:name "count" :type number)
-      (:name "lean" :type number)
-      (:name "atk-offset" :type number)
-      (:name "gain" :type number)
-      (:name "dur" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)
-      (:name "n" :type bool :flag "-n" :optional t)))
+      (:name "transpos" :prompt "Semitone transposition between copies (or file)" :type number :default 7.0)
+      (:name "count" :prompt "Number of copies in stack" :type integer :default 4)
+      (:name "lean" :prompt "Loudness of highest copy relative to lowest" :type number :default 1.0)
+      (:name "atk-offset" :prompt "Time at which attack occurs (s)" :type number :default 0.0)
+      (:name "gain" :prompt "Overall output gain" :type number :default 1.0)
+      (:name "dur" :prompt "Output duration (s)" :type number :default 2.0)
+      (:name "s" :prompt "Stereo spread" :type bool :flag "-s" :optional t)
+      (:name "n" :prompt "No normalisation" :type bool :flag "-n" :optional t)))
     ("morph bridge"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1936,33 +1936,24 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "splicelen" :type number)
-      (:name "noisfrq" :type number)
-      (:name "maxnoise" :type number)
-      (:name "mintone" :type number)
-      (:name "n" :type bool :flag "-n" :optional t)))
-    ("sfedit noisecut"
-     :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
-      (:name "splicelen" :type number)
-      (:name "noisfrq" :type number)
-      (:name "maxnoise" :type number)
-      (:name "mintone" :type number)
-      (:name "n" :type bool :flag "-n" :optional t)))
+      (:name "splicelen" :prompt "Splice duration (ms)" :type number :default 10.0)
+      (:name "noisfrq" :prompt "Frequency above which signal = noise (Hz, try 6000)" :type number :default 6000.0)
+      (:name "maxnoise" :prompt "Max noise segment duration to leave unreplaced (ms)" :type number :default 50.0)
+      (:name "mintone" :prompt "Min non-noise segment duration to retain (ms)" :type number :default 100.0)
+      (:name "n" :prompt "Retain noise rather than non-noise" :type bool :flag "-n" :optional t)))
     ("sfedit randchunks"
      :params
      ((:name "infile" :type wave-in)
-      (:name "chunkcnt" :type number)
-      (:name "minchunk" :type number)
-      (:name "maxchunk" :type number :flag "-m" :optional t)
-      (:name "l" :type bool :flag "-l" :optional t)
-      (:name "s" :type bool :flag "-s" :optional t)))
+      (:name "chunkcnt" :prompt "Number of chunks to cut" :type integer :default 10)
+      (:name "minchunk" :prompt "Minimum chunk length (s)" :type number :default 0.1)
+      (:name "maxchunk" :prompt "Maximum chunk length (s)" :type number :default 0.5 :flag "-m" :optional t)
+      (:name "l" :prompt "List only (do not cut)" :type bool :flag "-l" :optional t)
+      (:name "s" :prompt "Sort chunks by length" :type bool :flag "-s" :optional t)))
     ("sfedit randcuts"
      :params
      ((:name "infile" :type wave-in)
-      (:name "average-chunklen" :type number)
-      (:name "scattering" :type number)))
+      (:name "average-chunklen" :prompt "Average chunk length (s)" :type number :default 0.2)
+      (:name "scattering" :prompt "Length variation (0-8)" :type number :default 2.0)))
     ("sfedit replace"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
