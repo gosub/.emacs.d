@@ -86,7 +86,7 @@
     "distort reverse"
     "distort shuffle"
     "distort telescope"
-    "distortt"
+    "distortt repeat"
     "distrep"
     "distshift"
     "dshift"
@@ -191,7 +191,7 @@
     "grain rerhythm"
     "grain reverse"
     "grain timewarp"
-    "grainex"
+    "grainex extend"
     "hfperm any"
     "hfperm be"
     "hfperm can"
@@ -309,7 +309,7 @@
     "pitchinfo see"
     "pitchinfo zeros"
     "pmodify"
-    "prefix"
+    "prefix silence"
     "progmach"
     "psow chop"
     "psow cutatgrain"
@@ -378,7 +378,7 @@
     "scramble"
     "search"
     "selfsim"
-    "sfecho"
+    "sfecho echo"
     "sfedit cut"
     "sfedit cutend"
     "sfedit cutmany"
@@ -897,10 +897,9 @@
       (:name "cyclecnt" :type number)
       (:name "skipcycles" :type number :flag "-s" :optional t)
       (:name "a" :type bool :flag "-a" :optional t)))
-    ("distortt"
+    ("distortt repeat"
      :params
-     ((:name "repeat" :type number)
-      (:name "infile" :type wave-in)
+     ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
       (:name "gpcnt" :type number)
       (:name "rpt" :type number)
@@ -1297,10 +1296,9 @@
       (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
       (:name "winsize" :type number :flag "-t" :optional t)
       (:name "x" :type bool :flag "-x" :optional t)))
-    ("grainex"
+    ("grainex extend"
      :params
-     ((:name "extend" :type number)
-      (:name "inf" :type number)
+     ((:name "inf" :type wave-in)
       (:name "outf" :type number)
       (:name "wsiz" :type number)
       (:name "trof" :type number)
@@ -1567,10 +1565,9 @@
     ("pitchinfo zeros"
      :params
      ((:name "pitchfile" :type number)))
-    ("prefix"
+    ("prefix silence"
      :params
-     ((:name "silence" :type number)
-      (:name "infile" :type wave-in)
+     ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
       (:name "dur" :type number)))
     ("psow chop"
@@ -1855,10 +1852,9 @@
      :params
      ((:name "sigstart" :type number)
       (:name "infile1" :type wave-in)))
-    ("sfecho"
+    ("sfecho echo"
      :params
-     ((:name "echo" :type number)
-      (:name "infile" :type wave-in)
+     ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
       (:name "delay" :type number)
       (:name "attenuation" :type number)
