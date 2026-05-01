@@ -717,30 +717,30 @@
      ((:name "infile" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "interp" :type number :flag "-i" :optional t)))
+      (:name "interp" :prompt "Degree of amplitude replacement (0-1)" :type number :default 1.0 :flag "-i" :optional t)))
     ("combine diff"
      :params
      ((:name "infile" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "crossover" :type number :flag "-c" :optional t)
-      (:name "a" :type bool :flag "-a" :optional t)))
+      (:name "crossover" :prompt "Amount of 2nd spectrum subtracted (0-1)" :type number :default 1.0 :flag "-c" :optional t)
+      (:name "a" :prompt "Retain sub-zero amplitudes" :type bool :flag "-a" :optional t)))
     ("combine interleave"
      :params
      ((:name "infile" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "leafsize" :type number)))
+      (:name "leafsize" :prompt "Windows per interleaved leaf" :type integer :default 1)))
     ("combine make"
      :params
-     ((:name "pitchfile" :type number)
-      (:name "formantfile" :type number)
+     ((:name "pitchfile" :prompt "Binary pitch data file" :type number :default 1)
+      (:name "formantfile" :prompt "Binary formant data file" :type number :default 1)
       (:name "outfile" :type wave-out)))
     ("combine make2"
      :params
-     ((:name "pitchfile" :type number)
-      (:name "formantfile" :type number)
-      (:name "envfile" :type number)
+     ((:name "pitchfile" :prompt "Binary pitch data file" :type number :default 1)
+      (:name "formantfile" :prompt "Binary formant data file" :type number :default 1)
+      (:name "envfile" :prompt "Binary envelope file (from analysis)" :type number :default 1)
       (:name "outfile" :type wave-out)))
     ("combine max"
      :params
@@ -762,7 +762,7 @@
      ((:name "infile" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "crossover" :type number :flag "-c" :optional t)))
+      (:name "crossover" :prompt "Amount of 2nd spectrum added (0-1)" :type number :default 1.0 :flag "-c" :optional t)))
     ("convert_to_midi"
      :params
      ((:name "frqbrkpnt" :type number)
