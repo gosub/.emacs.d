@@ -1125,14 +1125,14 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "exaggeration" :type number)))
+      (:name "exaggeration" :prompt "Exaggeration (>0 widens troughs, <0 widens peaks)" :type number :default 2.0)))
     ("focus fold"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "lofrq" :type number)
-      (:name "hifrq" :type number)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "lofrq" :prompt "Low frequency of target range (Hz)" :type number :default 100.0)
+      (:name "hifrq" :prompt "High frequency of target range (Hz)" :type number :default 4000.0)
+      (:name "x" :prompt "Fuller spectrum" :type bool :flag "-x" :optional t)))
     ("focus freeze"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1143,12 +1143,12 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "datafile" :type number)))
+      (:name "datafile" :prompt "Data file: time/duration pairs for holds" :type number :default 1)))
     ("focus step"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "timestep" :type number)))
+      (:name "timestep" :prompt "Step duration (must be >= 2 analysis frames, s)" :type number :default 0.05)))
     ("formants see"
      :params
      ((:name "infile" :type wave-in)
@@ -2014,44 +2014,44 @@
     ("spec bare"
      :params
      ((:name "infile" :type wave-in)
-      (:name "pitchfile" :type number)
+      (:name "pitchfile" :prompt "Pitch file extracted from analysis file" :type number :default 1)
       (:name "outfile" :type wave-out)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "x" :prompt "Less body in resulting spectrum" :type bool :flag "-x" :optional t)))
     ("spec cut"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "starttime" :type number)
-      (:name "endtime" :type number)))
+      (:name "starttime" :prompt "Cut start time (s)" :type number :default 0.0)
+      (:name "endtime" :prompt "Cut end time (s)" :type number :default 1.0)))
     ("spec gain"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "gain" :type number)))
+      (:name "gain" :prompt "Gain (>1=amplify, <1=attenuate)" :type number :default 1.0)))
     ("spec gate"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "threshold" :type number)))
+      (:name "threshold" :prompt "Amplitude threshold (0-1)" :type number :default 0.01)))
     ("spec grab"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "time" :type number)))
+      (:name "time" :prompt "Time of analysis window to grab (s)" :type number :default 0.0)))
     ("spec magnify"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "time" :type number)
-      (:name "dur" :type number)))
+      (:name "time" :prompt "Time of analysis window to magnify (s)" :type number :default 0.0)
+      (:name "dur" :prompt "Output duration (s)" :type number :default 1.0)))
     ("specinfo channel"
      :params
      ((:name "infile" :type wave-in)
-      (:name "frq" :type number)))
+      (:name "frq" :prompt "Frequency to look up (Hz)" :type number :default 440.0)))
     ("specinfo frequency"
      :params
      ((:name "infile" :type wave-in)
-      (:name "analysis_channel_number" :type number)))
+      (:name "analysis_channel_number" :prompt "Analysis channel number" :type integer :default 1)))
     ("specinfo level"
      :params
      ((:name "infile" :type wave-in)
@@ -2060,22 +2060,22 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outtextfile" :type wave-out)
-      (:name "time_step" :type number)
-      (:name "fundamental" :type number :flag "-f" :optional t)))
+      (:name "time_step" :prompt "Time step for octave band display (ms)" :type number :default 100.0)
+      (:name "fundamental" :prompt "Fundamental frequency for octave centering (Hz)" :type number :default 110.0 :flag "-f" :optional t)))
     ("specinfo peak"
      :params
      ((:name "infile" :type wave-in)
       (:name "outtextfile" :type wave-out)
-      (:name "cutoff_frq" :type number :flag "-c" :optional t)
-      (:name "timewindow" :type number :flag "-t" :optional t)
-      (:name "frqwindow" :type number :flag "-f" :optional t)
-      (:name "h" :type bool :flag "-h" :optional t)))
+      (:name "cutoff_frq" :prompt "Low frequency cutoff for search (Hz)" :type number :default 100.0 :flag "-c" :optional t)
+      (:name "timewindow" :prompt "Time averaging window (s)" :type number :default 0.1 :flag "-t" :optional t)
+      (:name "frqwindow" :prompt "Frequency averaging window (semitones)" :type number :default 1.0 :flag "-f" :optional t)
+      (:name "h" :prompt "Adjust for ear sensitivity" :type bool :flag "-h" :optional t)))
     ("specinfo print"
      :params
      ((:name "infile" :type wave-in)
       (:name "outtextfile" :type wave-out)
-      (:name "time" :type number)
-      (:name "windowcnt" :type number :flag "-w" :optional t)))
+      (:name "time" :prompt "Time in file to begin printout (s)" :type number :default 0.0)
+      (:name "windowcnt" :prompt "Number of windows to print" :type integer :default 1 :flag "-w" :optional t)))
     ("specinfo windowcnt"
      :params
      ((:name "infile" :type wave-in)))
@@ -2088,30 +2088,30 @@
       (:name "noisgain" :type integer :default 2)))
     ("specnu clean"
      :params
-     ((:name "sigfile" :type number)
-      (:name "noisfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "persist" :type number)
-      (:name "noisgain" :type number)))
+     ((:name "sigfile" :prompt "Signal analysis file" :type number :default 1)
+      (:name "noisfile" :prompt "Noise analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "persist" :prompt "Min time signal must exceed noise to pass (ms, 0-1000)" :type number :default 50.0)
+      (:name "noisgain" :prompt "Noise level multiplier before comparison (1-40)" :type number :default 2.0)))
     ("specnu rand"
      :params
-     ((:name "inanalfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "timescale" :type number :flag "-t" :optional t)
-      (:name "grouping" :type number :flag "-g" :optional t)))
+     ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "timescale" :prompt "Windows to randomise locally (default=all)" :type integer :default 0 :flag "-t" :optional t)
+      (:name "grouping" :prompt "Windows per group (default=1)" :type integer :default 1 :flag "-g" :optional t)))
     ("specnu squeeze"
      :params
-     ((:name "inanalfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "centrefrq" :type number)
-      (:name "squeeze" :type number)))
+     ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "centrefrq" :prompt "Centre frequency for squeezing (Hz)" :type number :default 440.0)
+      (:name "squeeze" :prompt "Squeeze factor (<1)" :type number :default 0.5)))
     ("specnu subtract"
      :params
-     ((:name "sigfile" :type number)
-      (:name "noisfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "persist" :type number)
-      (:name "noisgain" :type number)))
+     ((:name "sigfile" :prompt "Signal analysis file" :type number :default 1)
+      (:name "noisfile" :prompt "Noise analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "persist" :prompt "Min time signal must exceed noise to pass (ms, 0-1000)" :type number :default 50.0)
+      (:name "noisgain" :prompt "Noise level multiplier before comparison (1-40)" :type number :default 2.0)))
     ("specross"
      :params
      ((:name "partials" :type number)
