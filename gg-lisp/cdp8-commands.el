@@ -538,7 +538,7 @@
     "texture tmotifsin"
     "tkusage"
     "tkusage_other"
-    "topantail2"
+    "topantail2 topantail"
     "tostereo tostereo"
     "transit doplfilt"
     "transit doppler"
@@ -638,11 +638,11 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "startpos" :type number)
-      (:name "endpos" :type number)
-      (:name "b" :type bool :flag "-b" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)
-      (:name "N-o" :type number :flag "-o" :optional t)))
+      (:name "startpos" :prompt "Start pan position (azimuth: 0=front, 90=right, 180=back)" :type number :default 0)
+      (:name "endpos" :prompt "End pan position (same as start for fixed pan)" :type number :default 90)
+      (:name "b" :prompt "Write output as horizontal B-format (.amb)" :type bool :flag "-b" :optional t)
+      (:name "x" :prompt "Extra option" :type bool :flag "-x" :optional t)
+      (:name "N-o" :prompt "Orbit speed" :type number :flag "-o" :optional t)))
     ("abfpan2"
      :params
      ((:name "infile" :type wave-in)
@@ -775,10 +775,10 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "d" :type bool :flag "-d" :optional t)
-      (:name "h" :type bool :flag "-h" :optional t)
-      (:name "N-s" :type number :flag "-s" :optional t)
-      (:name "N-t" :type number :flag "-t" :optional t)))
+      (:name "d" :prompt "Apply dither" :type bool :flag "-d" :optional t)
+      (:name "h" :prompt "Write header only" :type bool :flag "-h" :optional t)
+      (:name "N-s" :prompt "Force output sample type (1=16bit int, 2=24bit, etc.)" :type number :flag "-s" :optional t)
+      (:name "N-t" :prompt "Force output file format type N" :type number :flag "-t" :optional t)))
     ("cubicspline"
      :params
      ((:name "datafile" :prompt "Input text file of frq/amp pairs" :type number :default 1)
@@ -795,9 +795,9 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "cyclecnt" :type number)
-      (:name "maxwavelen" :type number :default 0.50 :flag "-m" :optional t)
-      (:name "skipcycles" :type number :flag "-s" :optional t)))
+      (:name "cyclecnt" :prompt "Number of wavecycles to average" :type integer :default 2)
+      (:name "maxwavelen" :prompt "Max wavelen to filter (secs)" :type number :default 0.50 :flag "-m" :optional t)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)))
     ("distort cyclecnt"
      :params
      ((:name "infile" :type wave-in)))
@@ -911,7 +911,8 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "N-d" :type integer :default 10 :flag "-d" :optional t)))
+      (:name "distance" :prompt "Distance between speakers (metres)" :type number :default 2.0 :optional t)
+      (:name "N-d" :prompt "Number of delay taps" :type integer :default 10 :flag "-d" :optional t)))
     ("envel brktoenv"
      :params
      ((:name "inbrkfile" :prompt "Input breakpoint file" :type number :default 1)
@@ -944,10 +945,10 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "startsamp" :type number)
-      (:name "wavelen" :type number)
-      (:name "atkcycles" :type integer :default 32 :flag "-a" :optional t)
-      (:name "decayrate" :type integer :default 48 :flag "-d" :optional t)))
+      (:name "startsamp" :prompt "Sample at which pluck ends (must be at zero crossing)" :type integer :default 0)
+      (:name "wavelen" :prompt "Wavelength of source signal at startsamp (samples)" :type integer :default 100)
+      (:name "atkcycles" :prompt "Wavecycles in pluck attack (2-32767)" :type integer :default 32 :flag "-a" :optional t)
+      (:name "decayrate" :prompt "Decay rate of pluck attack (1-64)" :type integer :default 48 :flag "-d" :optional t)))
     ("envel scaled"
      :params
      ((:name "input_sndfile" :type wave-in)
@@ -1106,21 +1107,21 @@
       (:name "d" :type bool :flag "-d" :optional t)))
     ("filter vfilters"
      :params
-     ((:name "inpitchfile" :type number)
+     ((:name "inpitchfile" :prompt "Text file of MIDI or frequency pitch values" :type number :default 1)
       (:name "outfile" :type wave-out)))
     ("fmdcode"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "layout" :type number)
-      (:name "x" :type bool :flag "-x" :optional t)
-      (:name "w" :type bool :flag "-w" :optional t)))
+      (:name "layout" :prompt "Speaker layout number" :type integer :default 1)
+      (:name "x" :prompt "Unknown extra option" :type bool :flag "-x" :optional t)
+      (:name "w" :prompt "Write plain WAVE format (instead of WAVEX)" :type bool :flag "-w" :optional t)))
     ("focus accu"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "decay" :type number :flag "-d" :optional t)
-      (:name "glis" :type number :flag "-g" :optional t)))
+      (:name "decay" :prompt "Sustained channel decay factor per second (0.001-1.0)" :type number :flag "-d" :optional t)
+      (:name "glis" :prompt "Sustained channel gliss in octaves per second (~-11.7 to 11.7)" :type number :flag "-g" :optional t)))
     ("focus exag"
      :params
      ((:name "infile" :type wave-in)
@@ -1176,43 +1177,43 @@
      ((:name "infile1" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "offset" :type number)
-      (:name "gate2" :type integer :default 1)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "offset" :prompt "Time offset between grain streams (secs)" :type number :default 0.0)
+      (:name "gate2" :prompt "Grain detection gate for file2 (0-1)" :type integer :default 1)
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate for file1 (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grain assess"
      :params
      ((:name "infile" :type wave-in)))
     ("grain count"
      :params
      ((:name "infile" :type wave-in)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grain duplicate"
      :params
      ((:name "infil" :type wave-in)
       (:name "outfil" :type wave-out)
-      (:name "N" :type number)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "N" :prompt "Number of times to duplicate each grain" :type integer :default 2)
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grain find"
      :params
      ((:name "infil" :type wave-in)
-      (:name "out-textfil" :type number)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "out-textfil" :prompt "Output text file for grain times" :type number :default 1)
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grain noise_extend"
      :params
      ((:name "inf" :prompt "Input sound file" :type number :default 1)
@@ -1224,15 +1225,15 @@
       (:name "x" :prompt "Keep only extended noise (discard rest)" :type bool :flag "-x" :optional t)))
     ("grain omit"
      :params
-     ((:name "inf" :type number)
-      (:name "outf" :type number)
-      (:name "keep" :type number)
-      (:name "out-of" :type number)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+     ((:name "inf" :prompt "Input sound file" :type number :default 1)
+      (:name "outf" :prompt "Output sound file" :type number :default 1)
+      (:name "keep" :prompt "Number of grains to keep" :type integer :default 1)
+      (:name "out-of" :prompt "Keep N grains out of this many" :type integer :default 2)
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grain remotif"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1248,12 +1249,12 @@
      :params
      ((:name "infil" :type wave-in)
       (:name "outfil" :type wave-out)
-      (:name "code" :type number)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "code" :prompt "Reorder code string e.g. 'adb:c' (colon required)" :type number :default 1)
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grain repitch"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1269,13 +1270,13 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "timefile" :type number)
-      (:name "offset" :type number)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "timefile" :prompt "Text file of new grain times" :type number :default 1)
+      (:name "offset" :prompt "Time offset applied to repositioned grains (secs)" :type number :default 0.0)
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grain rerhythm"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1291,21 +1292,21 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "timestretch-ratio" :type number)
-      (:name "len" :type number :flag "-b" :optional t)
-      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
-      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
-      (:name "winsize" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "timestretch-ratio" :prompt "Timestretch ratio (>1 = slower)" :type number :default 2.0)
+      (:name "len" :prompt "Block length for grain detection (secs)" :type number :flag "-b" :optional t)
+      (:name "gate" :prompt "Grain detection gate (0-1)" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :prompt "Min silence between grains (secs)" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :prompt "Analysis window size (secs)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Ignore last grain in source" :type bool :flag "-x" :optional t)))
     ("grainex extend"
      :params
      ((:name "inf" :type wave-in)
-      (:name "outf" :type number)
-      (:name "wsiz" :type number)
-      (:name "trof" :type number)
-      (:name "plus" :type number)
-      (:name "stt" :type number)
-      (:name "end" :type number)))
+      (:name "outf" :prompt "Output sound file" :type number :default 1)
+      (:name "wsiz" :prompt "Window size (ms) for grain detection" :type number :default 50.0)
+      (:name "trof" :prompt "Acceptable trough height relative to peaks (0-1)" :type number :default 0.5)
+      (:name "plus" :prompt "Duration to add to source (secs)" :type number :default 1.0)
+      (:name "stt" :prompt "Start time of grain material in source (secs)" :type number :default 0.0)
+      (:name "end" :prompt "End time of grain material in source (secs)" :type number :default 1.0)))
     ("hilite band"
      :params
      ((:name "infile" :type wave-in)
@@ -1419,8 +1420,8 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "pan" :type number)
-      (:name "prescale" :type number :default 0.7 :flag "-p" :optional t)))
+      (:name "pan" :prompt "Pan position (-1=left, 0=centre, 1=right)" :type number :default 0.0)
+      (:name "prescale" :prompt "Prescale level before pan (default 0.7)" :type number :default 0.7 :flag "-p" :optional t)))
     ("modify shudder"
      :params
      ((:name "infile" :type wave-in)
@@ -1489,19 +1490,19 @@
     ("multisynth synth"
      :params
      ((:name "outfile" :type wave-out)
-      (:name "score" :type number)
-      (:name "MM" :type number)
-      (:name "jitter" :type integer :default 15 :flag "-j" :optional t)
-      (:name "ochans" :type number :flag "-o" :optional t)
-      (:name "b" :type bool :flag "-b" :optional t)))
+      (:name "score" :prompt "Score text file (time instrument pitch dur amp fields)" :type number :default 1)
+      (:name "MM" :prompt "Metronome speed (MM, beats per minute)" :type number :default 60)
+      (:name "jitter" :prompt "Random timing jitter in ms" :type integer :default 15 :flag "-j" :optional t)
+      (:name "ochans" :prompt "Number of output channels" :type number :flag "-o" :optional t)
+      (:name "b" :prompt "Write output as B-format" :type bool :flag "-b" :optional t)))
     ("newmix"
      :params
-     ((:name "multichan" :type number)
-      (:name "mixfile" :type number)
+     ((:name "multichan" :prompt "Number of output channels" :type integer :default 2)
+      (:name "mixfile" :prompt "CDP mix file" :type number :default 1)
       (:name "outsndfile" :type wave-out)
-      (:name "START" :type number :flag "-s" :optional t)
-      (:name "END" :type number :flag "-e" :optional t)
-      (:name "ATTENUATION" :type number :flag "-g" :optional t)))
+      (:name "START" :prompt "Mix start time for testing (secs)" :type number :flag "-s" :optional t)
+      (:name "END" :prompt "Mix end time for testing (secs)" :type number :flag "-e" :optional t)
+      (:name "ATTENUATION" :prompt "Overall gain attenuation" :type number :flag "-g" :optional t)))
     ("newscales"
      :params
      ((:name "outfile" :type wave-out)
@@ -1512,9 +1513,9 @@
      ((:name "infile1" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "d" :type bool :flag "-d" :optional t)
-      (:name "f" :type bool :flag "-f" :optional t)
-      (:name "OFFSET" :type number :flag "-o" :optional t)))
+      (:name "d" :prompt "Apply TPDF dither (16bit output only)" :type bool :flag "-d" :optional t)
+      (:name "f" :prompt "Forced mix (ignore level differences)" :type bool :flag "-f" :optional t)
+      (:name "OFFSET" :prompt "Time offset of second file (secs)" :type number :flag "-o" :optional t)))
     ("notchinvert"
      :params
      ((:name "datafile" :prompt "Input frq/amp pairs" :type number :default 1)
@@ -1537,10 +1538,10 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "transpose_file" :type number)
-      (:name "bot" :type number :flag "-b" :optional t)
-      (:name "top" :type number :flag "-t" :optional t)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "transpose_file" :prompt "Text file of transposition values (semitones)" :type number :default 1)
+      (:name "bot" :prompt "Lower pitch limit for transpositions (MIDI)" :type number :flag "-b" :optional t)
+      (:name "top" :prompt "Upper pitch limit for transpositions (MIDI)" :type number :flag "-t" :optional t)
+      (:name "x" :prompt "Don't include original pitch in output" :type bool :flag "-x" :optional t)))
     ("pitch tune"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1705,11 +1706,11 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "points" :type integer :default 1024 :flag "-c" :optional t)
-      (:name "overlap" :type integer :default 3 :flag "-o" :optional t)
-      (:name "dochans" :type number :flag "-d" :optional t)
-      (:name "lochan" :type integer :default 0 :flag "-l" :optional t)
-      (:name "hichan" :type number :flag "-h" :optional t)))
+      (:name "points" :prompt "Analysis points (power of 2, more=better freq resolution)" :type integer :default 1024 :flag "-c" :optional t)
+      (:name "overlap" :prompt "Filter overlap factor (1-4)" :type integer :default 3 :flag "-o" :optional t)
+      (:name "dochans" :prompt "Resynthesize odd (1) or even (2) channels only" :type number :flag "-d" :optional t)
+      (:name "lochan" :prompt "Lowest analysis channel to include" :type integer :default 0 :flag "-l" :optional t)
+      (:name "hichan" :prompt "Highest analysis channel to include" :type number :flag "-h" :optional t)))
     ("pvoc synth"
      :params
      ((:name "infile" :type wave-in)
@@ -1728,24 +1729,24 @@
       (:name "srange" :type number :flag "-s" :optional t)))
     ("repitch fix"
      :params
-     ((:name "pitchfile" :type number :default 0.0)
-      (:name "outpitchfile" :type number)
-      (:name "t1" :type number :flag "-r" :optional t)
-      (:name "t2" :type number :flag "-x" :optional t)
-      (:name "bf" :type number :flag "-l" :optional t)
-      (:name "tf" :type number :flag "-h" :optional t)
-      (:name "N-s" :type number :flag "-s" :optional t)
-      (:name "f1" :type number :flag "-b" :optional t)
-      (:name "f2" :type number :flag "-e" :optional t)
-      (:name "w" :type bool :flag "-w" :optional t)
-      (:name "i" :type bool :flag "-i" :optional t)))
+     ((:name "pitchfile" :prompt "Binary pitch data file (from spec pitch)" :type number :default 0.0)
+      (:name "outpitchfile" :prompt "Output binary pitch data file" :type number :default 1)
+      (:name "t1" :prompt "Start time for pitch removal (secs)" :type number :flag "-r" :optional t)
+      (:name "t2" :prompt "End time for pitch removal (secs)" :type number :flag "-x" :optional t)
+      (:name "bf" :prompt "Remove pitch below this frequency (Hz)" :type number :flag "-l" :optional t)
+      (:name "tf" :prompt "Remove pitch above this frequency (Hz)" :type number :flag "-h" :optional t)
+      (:name "N-s" :prompt "Smooth pitch data N times" :type number :flag "-s" :optional t)
+      (:name "f1" :prompt "Force start frequency (Hz)" :type number :flag "-b" :optional t)
+      (:name "f2" :prompt "Force end frequency (Hz)" :type number :flag "-e" :optional t)
+      (:name "w" :prompt "Remove 2-window glitches (use with -s)" :type bool :flag "-w" :optional t)
+      (:name "i" :prompt "Interpolate through all unpitched windows" :type bool :flag "-i" :optional t)))
     ("repitch generate"
      :params
-     ((:name "outpitchdatafile" :type number)
-      (:name "midipitch-data" :type number)
-      (:name "srate" :type number)
-      (:name "points" :type integer :default 1024 :flag "-c" :optional t)
-      (:name "overlap" :type integer :default 3 :flag "-o" :optional t)))
+     ((:name "outpitchdatafile" :prompt "Output binary pitch data file" :type number :default 1)
+      (:name "midipitch-data" :prompt "Text file of time/MIDI pitch value pairs" :type number :default 1)
+      (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)
+      (:name "points" :prompt "Analysis points (power of 2, default 1024)" :type integer :default 1024 :flag "-c" :optional t)
+      (:name "overlap" :prompt "Filter overlap factor (1-4)" :type integer :default 3 :flag "-o" :optional t)))
     ("repitch insertsil"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1833,36 +1834,36 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "rgain" :type number)
-      (:name "mix" :type number)
-      (:name "rvbtime" :type number)
-      (:name "absorb" :type number)
-      (:name "lpfreq" :type number)
-      (:name "trailertime" :type number)))
+      (:name "rgain" :prompt "Reverb gain (0-1)" :type number :default 0.5)
+      (:name "mix" :prompt "Wet/dry mix (0=dry, 1=wet)" :type number :default 0.3)
+      (:name "rvbtime" :prompt "Reverb time (secs)" :type number :default 1.5)
+      (:name "absorb" :prompt "High-frequency absorption (0-1)" :type number :default 0.5)
+      (:name "lpfreq" :prompt "Low-pass filter cutoff frequency (Hz)" :type number :default 8000)
+      (:name "trailertime" :prompt "Trailer time after input ends (secs)" :type number :default 1.5)))
     ("rmverb"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "rmsize" :type number)
-      (:name "rgain" :type number)
-      (:name "mix" :type number)
-      (:name "fback" :type number)
-      (:name "absorb" :type number)
-      (:name "lpfreq" :type number)
-      (:name "trtime" :type number)))
+      (:name "rmsize" :prompt "Room size (affects delay spacing)" :type number :default 1.0)
+      (:name "rgain" :prompt "Reverb gain (0-1)" :type number :default 0.5)
+      (:name "mix" :prompt "Wet/dry mix (0=dry, 1=wet)" :type number :default 0.3)
+      (:name "fback" :prompt "Feedback amount (0-1)" :type number :default 0.3)
+      (:name "absorb" :prompt "High-frequency absorption (0-1)" :type number :default 0.5)
+      (:name "lpfreq" :prompt "Low-pass filter cutoff frequency (Hz)" :type number :default 8000)
+      (:name "trtime" :prompt "Trailer time after input ends (secs)" :type number :default 1.5)))
     ("search"
      :params
-     ((:name "sigstart" :type number)
+     ((:name "sigstart" :prompt "Signal level threshold to detect start (0-1)" :type number :default 0.01)
       (:name "infile1" :type wave-in)))
     ("sfecho echo"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "delay" :type number)
-      (:name "attenuation" :type number)
-      (:name "totaldur" :type number)
-      (:name "rand" :type number :flag "-r" :optional t)
-      (:name "cutoff" :type integer :default -96 :flag "-c" :optional t)))
+      (:name "delay" :prompt "Echo delay time (secs)" :type number :default 0.5)
+      (:name "attenuation" :prompt "Echo attenuation per repeat (0-1)" :type number :default 0.7)
+      (:name "totaldur" :prompt "Total output duration (secs)" :type number :default 5.0)
+      (:name "rand" :prompt "Random delay variation (0-1)" :type number :flag "-r" :optional t)
+      (:name "cutoff" :prompt "Level cutoff in dB below which echoes are dropped" :type integer :default -96 :flag "-c" :optional t)))
     ("sfedit cut"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1924,9 +1925,9 @@
      :params
      ((:name "infile1" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "splice" :type integer :default 15 :flag "-w" :optional t)
-      (:name "b" :type bool :flag "-b" :optional t)
-      (:name "e" :type bool :flag "-e" :optional t)))
+      (:name "splice" :prompt "Splice length at joins (ms)" :type integer :default 15 :flag "-w" :optional t)
+      (:name "b" :prompt "Apply splice at start of first file" :type bool :flag "-b" :optional t)
+      (:name "e" :prompt "Apply splice at end of last file" :type bool :flag "-e" :optional t)))
     ("sfedit masks"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2074,11 +2075,11 @@
      ((:name "infile" :type wave-in)))
     ("speclean clean"
      :params
-     ((:name "sigfile" :type number)
-      (:name "noisfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "persist" :type number)
-      (:name "noisgain" :type integer :default 2)))
+     ((:name "sigfile" :prompt "Signal analysis file to clean" :type number :default 1)
+      (:name "noisfile" :prompt "Noise sample analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "persist" :prompt "Min time channel must exceed noise to be retained (s)" :type number :default 0.1)
+      (:name "noisgain" :prompt "Noise level multiplier before comparison (default 2)" :type integer :default 2)))
     ("specnu clean"
      :params
      ((:name "sigfile" :prompt "Signal analysis file" :type number :default 1)
@@ -2107,19 +2108,19 @@
       (:name "noisgain" :prompt "Noise level multiplier before comparison (1-40)" :type number :default 2.0)))
     ("specross"
      :params
-     ((:name "partials" :type number)
-      (:name "analfile1" :type number)
-      (:name "analfile2" :type number)
-      (:name "outanalfile" :type number)
-      (:name "tuning" :type number)
-      (:name "minwin" :type number)
-      (:name "signois" :type number)
-      (:name "harmcnt" :type number)
-      (:name "lo" :type number)
-      (:name "ho" :type number)
-      (:name "thresh" :type number)
-      (:name "level" :type number)
-      (:name "interp" :type number)))
+     ((:name "partials" :prompt "Number of partials" :type integer :default 8)
+      (:name "analfile1" :prompt "First analysis file" :type number :default 1)
+      (:name "analfile2" :prompt "Second analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "tuning" :prompt "Tuning reference (Hz)" :type number :default 440.0)
+      (:name "minwin" :prompt "Min windows for partial to be recognised" :type integer :default 2)
+      (:name "signois" :prompt "Signal-to-noise ratio threshold" :type number :default 2.0)
+      (:name "harmcnt" :prompt "Number of harmonics" :type integer :default 8)
+      (:name "lo" :prompt "Lowest frequency to include (Hz)" :type number :default 100.0)
+      (:name "ho" :prompt "Highest frequency to include (Hz)" :type number :default 8000.0)
+      (:name "thresh" :prompt "Amplitude threshold" :type number :default 0.01)
+      (:name "level" :prompt "Output level" :type number :default 1.0)
+      (:name "interp" :prompt "Interpolation factor" :type number :default 1.0)))
     ("spectrum fixed"
      :params
      ((:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
@@ -2145,13 +2146,13 @@
       (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)))
     ("spectstr"
      :params
-     ((:name "stretch" :type number)
-      (:name "time" :type number)
+     ((:name "stretch" :prompt "Mode (1=stretch, 2=pitch-shift)" :type integer :default 1)
+      (:name "time" :prompt "Output duration (secs)" :type number :default 5.0)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "timestretch" :type number)
-      (:name "d-ratio" :type number)
-      (:name "di-rand" :type number)))
+      (:name "timestretch" :prompt "Timestretch factor (>1 = slower)" :type number :default 2.0)
+      (:name "d-ratio" :prompt "Proportion of channels to discohere (0-1)" :type number :default 0.0)
+      (:name "di-rand" :prompt "Frequency randomisation of discohered channels" :type number :default 0.0)))
     ("strange invert"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2179,11 +2180,11 @@
       (:name "step" :prompt "Time between each file entry (s)" :type number :default 1.0)))
     ("submix attenuate"
      :params
-     ((:name "inmixfile" :type number)
-      (:name "outmixfile" :type number)
-      (:name "gainval" :type integer :default 1)
-      (:name "startline" :type integer :default 1 :flag "-s" :optional t)
-      (:name "endline" :type number :flag "-e" :optional t)))
+     ((:name "inmixfile" :prompt "Input mix file" :type number :default 1)
+      (:name "outmixfile" :prompt "Output mix file" :type number :default 1)
+      (:name "gainval" :prompt "Gain value to apply to mix entries" :type number :default 0.5)
+      (:name "startline" :prompt "First mix line to attenuate" :type integer :default 1 :flag "-s" :optional t)
+      (:name "endline" :prompt "Last mix line to attenuate" :type number :flag "-e" :optional t)))
     ("submix balance"
      :params
      ((:name "sndfile1" :prompt "First sound file" :type number :default 1)
@@ -2272,13 +2273,13 @@
      ((:name "mixfile" :prompt "Mix file to validate" :type number :default 1)))
     ("suppress"
      :params
-     ((:name "partials" :type number)
-      (:name "inanal" :type number)
-      (:name "outanal" :type number)
-      (:name "timeslots" :type number)
-      (:name "lofrq" :type number)
-      (:name "hifrq" :type number)
-      (:name "chancnt" :type number)))
+     ((:name "partials" :prompt "Number of partials" :type integer :default 8)
+      (:name "inanal" :prompt "Input analysis file" :type number :default 1)
+      (:name "outanal" :prompt "Output analysis file" :type number :default 1)
+      (:name "timeslots" :prompt "Number of time windows to suppress" :type integer :default 1)
+      (:name "lofrq" :prompt "Lowest frequency of suppression band (Hz)" :type number :default 100.0)
+      (:name "hifrq" :prompt "Highest frequency of suppression band (Hz)" :type number :default 2000.0)
+      (:name "chancnt" :prompt "Number of channels to suppress" :type integer :default 4)))
     ("synth chord"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2355,15 +2356,14 @@
       (:name "notedata" :type number)
       (:name "sndfirst" :type number)
       (:name "sndlast" :type number)))
-    ("topantail2"
+    ("topantail2 topantail"
      :params
-     ((:name "topantail" :type number)
-      (:name "infile" :type wave-in)
+     ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "startgate" :type number)
-      (:name "endgate" :type number)
-      (:name "splicelen" :type number :flag "-s" :optional t)
-      (:name "backtrack" :type number :flag "-b" :optional t)))
+      (:name "startgate" :prompt "Level threshold at start to remove (0-1)" :type number :default 0.01)
+      (:name "endgate" :prompt "Level threshold at end to remove (0-1)" :type number :default 0.01)
+      (:name "splicelen" :prompt "Splice length (ms)" :type number :flag "-s" :optional t)
+      (:name "backtrack" :prompt "Backtrack to earlier splice point (ms)" :type number :flag "-b" :optional t)))
     ("ts oscil"
      :params
      ((:name "indata" :prompt "Text file of numerical values (time-series data)" :type number :default 1)
@@ -2403,29 +2403,29 @@
       (:name "Q" :prompt "Semitone quantise (-Q)" :type bool
        :flag "-Q" :optional t)
       (:name "l" :type bool :flag "-l" :optional t)))
-("bounce bounce"
+    ("bounce bounce"
      :params
      ((:name "inf" :type wave-in)
       (:name "outf" :type wave-out)
-      (:name "count" :type number)
-      (:name "startgap" :type number)
-      (:name "shorten" :type number)
-      (:name "endlevel" :type number)
-      (:name "ewarp" :type number)
-      (:name "min" :type number :flag "-s" :optional t)
-      (:name "e" :type bool :flag "-e" :optional t)
-      (:name "c" :type bool :flag "-c" :optional t)))
+      (:name "count" :prompt "Number of bounces" :type integer :default 5)
+      (:name "startgap" :prompt "Gap before first bounce (0.04-10 secs)" :type number :default 0.5)
+      (:name "shorten" :prompt "Gap reduction multiplier from bounce to bounce" :type number :default 0.8)
+      (:name "endlevel" :prompt "Loudness of last bounce as fraction of source (0-1)" :type number :default 0.1)
+      (:name "ewarp" :prompt "Decay warp (>1=faster at start, <1=slower)" :type number :default 1.0)
+      (:name "min" :prompt "Min duration when shrinking bounced elements" :type number :flag "-s" :optional t)
+      (:name "e" :prompt "Shrink elements by trimming start (default: trim end)" :type bool :flag "-e" :optional t)
+      (:name "c" :prompt "Cut overlapping elements to avoid overlap" :type bool :flag "-c" :optional t)))
     ("brktopi brktopi"
      :params
-     ((:name "pitch-textfile" :type number)
-      (:name "binary-outfile" :type number)))
+     ((:name "pitch-textfile" :prompt "Input text pitch data file" :type number :default 1)
+      (:name "binary-outfile" :prompt "Output binary pitch data file" :type number :default 1)))
     ("caltrain caltrain"
      :params
-     ((:name "inanalfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "blurfact" :type number)
-      (:name "blurabov" :type number)
-      (:name "locut" :type number :flag "-l" :optional t)))
+     ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "blurfact" :prompt "Time over which upper spectrum is blurred (secs)" :type number :default 0.5)
+      (:name "blurabov" :prompt "Frequency above which spectrum is blurred (Hz)" :type number :default 2000.0)
+      (:name "locut" :prompt "Bass cutoff frequency (Hz)" :type number :flag "-l" :optional t)))
     ("cantor set"
      :params
      ((:name "infile" :type wave-in)
@@ -2441,14 +2441,14 @@
      :params
      ((:name "inf" :type wave-in)
       (:name "outf" :type wave-out)
-      (:name "cyclcnts" :type number)
-      (:name "mincycdur" :type number)
-      (:name "chans" :type number)
-      (:name "outdur" :type number)
-      (:name "echo" :type number)
-      (:name "echshift" :type number)
-      (:name "o" :type bool :flag "-o" :optional t)
-      (:name "l" :type bool :flag "-l" :optional t)))
+      (:name "cyclcnts" :prompt "Space-separated list of repeat counts per cyclestream" :type number :default 10)
+      (:name "mincycdur" :prompt "Minimum cycle duration (secs)" :type number :default 0.1)
+      (:name "chans" :prompt "Number of output channels" :type integer :default 1)
+      (:name "outdur" :prompt "Total output duration (secs)" :type number :default 10.0)
+      (:name "echo" :prompt "Echo level (0-1)" :type number :default 0.0)
+      (:name "echshift" :prompt "Echo time shift (secs)" :type number :default 0.0)
+      (:name "o" :prompt "Output channels encircle audience" :type bool :flag "-o" :optional t)
+      (:name "l" :prompt "Loop source" :type bool :flag "-l" :optional t)))
     ("chanphase chanphase"
      :params
      ((:name "infile" :type wave-in)
@@ -2518,8 +2518,8 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "contraction" :type number)
-      (:name "clipsize" :type number)))
+      (:name "contraction" :prompt "Time contraction ratio (>1)" :type number :default 2.0)
+      (:name "clipsize" :prompt "Duration of each retained clip (ms)" :type number :default 50.0)))
     ("envel extract"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2580,18 +2580,18 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "elementsize" :type number)
-      (:name "shoulder" :type number)
-      (:name "tail" :type number :flag "-t" :optional t)))
+      (:name "elementsize" :prompt "Approx element size e.g. syllables (0.001-100 secs)" :type number :default 0.1)
+      (:name "shoulder" :prompt "Rise time to changed level (ms, 20 to elementsize/2)" :type number :default 20.0)
+      (:name "tail" :prompt "Portion of end treated as a whole segment (secs)" :type number :flag "-t" :optional t)))
     ("flutter flutter"
      :params
      ((:name "inf" :type wave-in)
       (:name "outf" :type wave-out)
-      (:name "chanseq" :type number)
-      (:name "freq" :type number)
-      (:name "depth" :type number)
-      (:name "gain" :type number)
-      (:name "r" :type bool :flag "-r" :optional t)))
+      (:name "chanseq" :prompt "Text file of chansets (lists of channel numbers)" :type number :default 1)
+      (:name "freq" :prompt "Flutter frequency (Hz)" :type number :default 4.0)
+      (:name "depth" :prompt "Depth of loudness variation (0-16, 1=troughs near zero)" :type number :default 1.0)
+      (:name "gain" :prompt "Overall gain of loudness variation (0-1)" :type number :default 0.5)
+      (:name "r" :prompt "Random chanset order (default: sequential)" :type bool :flag "-r" :optional t)))
     ("formants put"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2643,11 +2643,11 @@
      :params
      ((:name "inf" :type wave-in)
       (:name "outf" :type wave-out)
-      (:name "grpdiv" :type number)
-      (:name "setdur" :type number)
-      (:name "pitchshift" :type integer :default 0 :flag "-p" :optional t)
-      (:name "durrand" :type number :flag "-d" :optional t)
-      (:name "divrand" :type number :flag "-v" :optional t)))
+      (:name "grpdiv" :prompt "Number of sets to partition analysis channels into" :type integer :default 4)
+      (:name "setdur" :prompt "Duration of each channel set in windows" :type integer :default 10)
+      (:name "pitchshift" :prompt "Pitch shift in semitones" :type integer :default 0 :flag "-p" :optional t)
+      (:name "durrand" :prompt "Random variation of set duration (0-1)" :type number :flag "-d" :optional t)
+      (:name "divrand" :prompt "Random variation of channel grouping (0-1)" :type number :flag "-v" :optional t)))
     ("hfperm delperm"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2698,35 +2698,35 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "frq" :type number)
-      (:name "loc" :type number)
-      (:name "frqrand" :type number)
-      (:name "locrand" :type number)
-      (:name "splice" :type number)
-      (:name "dur" :type number)))
+      (:name "frq" :prompt "Rate of reading source samples (Hz)" :type number :default 5.0)
+      (:name "loc" :prompt "Time position in source to read from (secs)" :type number :default 0.5)
+      (:name "frqrand" :prompt "Random variation of frequency (0-1)" :type number :default 0.0)
+      (:name "locrand" :prompt "Random variation of location (0-1)" :type number :default 0.0)
+      (:name "splice" :prompt "Splice length at zig/zag ends (ms)" :type number :default 5.0)
+      (:name "dur" :prompt "Total output duration (secs)" :type number :default 5.0)))
     ("hover2 hover2"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "frq" :type number)
-      (:name "loc" :type number)
-      (:name "frqrand" :type number)
-      (:name "locrand" :type number)
-      (:name "dur" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)
-      (:name "n" :type bool :flag "-n" :optional t)))
+      (:name "frq" :prompt "Rate of reading source samples (Hz)" :type number :default 5.0)
+      (:name "loc" :prompt "Time position in source to read near (secs)" :type number :default 0.5)
+      (:name "frqrand" :prompt "Random variation of frequency (0-1)" :type number :default 0.0)
+      (:name "locrand" :prompt "Random variation of location (0-1)" :type number :default 0.0)
+      (:name "dur" :prompt "Total output duration (secs)" :type number :default 5.0)
+      (:name "s" :prompt "Output channels encircle audience" :type bool :flag "-s" :optional t)
+      (:name "n" :prompt "No splicing at zig/zag ends" :type bool :flag "-n" :optional t)))
     ("impulse impulse"
      :params
      ((:name "outfile" :type wave-out)
-      (:name "dur" :type number)
-      (:name "pitch" :type number)
-      (:name "chirp" :type number)
-      (:name "slope" :type number)
-      (:name "pkcnt" :type number)
-      (:name "level" :type number)
-      (:name "gap" :type number :flag "-g" :optional t)
-      (:name "srate" :type integer :default 44100 :flag "-s" :optional t)
-      (:name "chans" :type integer :default 1 :flag "-c" :optional t)))
+      (:name "dur" :prompt "Duration of output (secs, 0=single impulse)" :type number :default 5.0)
+      (:name "pitch" :prompt "Pitch of impulse stream (MIDI)" :type number :default 60)
+      (:name "chirp" :prompt "Gliss of impulse (0-30)" :type number :default 0.0)
+      (:name "slope" :prompt "Rise/fall slope (1-20)" :type number :default 5.0)
+      (:name "pkcnt" :prompt "Number of peaks in impulse (1-200)" :type integer :default 1)
+      (:name "level" :prompt "Impulse level (0-1)" :type number :default 0.8)
+      (:name "gap" :prompt "Relative size of silent gap between impulses" :type number :flag "-g" :optional t)
+      (:name "srate" :prompt "Sample rate" :type integer :default 44100 :flag "-s" :optional t)
+      (:name "chans" :prompt "Number of output channels" :type integer :default 1 :flag "-c" :optional t)))
     ("iterfof iterfof"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2784,19 +2784,19 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "silencedata" :type number)
-      (:name "splicelen" :type number)))
+      (:name "silencedata" :prompt "Text file of time-duration pairs for silences to insert" :type number :default 1)
+      (:name "splicelen" :prompt "Splice length (ms)" :type number :default 5.0)))
     ("mchanrev mchanrev"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "gain" :type number :default 0.645654)
-      (:name "roll_off" :type integer :default 1)
-      (:name "size" :type number)
-      (:name "count" :type number)
-      (:name "outchans" :type number)
-      (:name "centre" :type number)
-      (:name "spread" :type number)))
+      (:name "gain" :prompt "Input signal gain (default 0.646)" :type number :default 0.645654)
+      (:name "roll_off" :prompt "Rate of level loss across stadium (default 1)" :type integer :default 1)
+      (:name "size" :prompt "Multiplies avg time between echoes (default 0.1 secs)" :type number :default 1.0)
+      (:name "count" :prompt "Number of stadium echoes (max 1000)" :type integer :default 100)
+      (:name "outchans" :prompt "Number of output channels" :type integer :default 4)
+      (:name "centre" :prompt "Centre position of reverb image (1-N channels)" :type number :default 1.0)
+      (:name "spread" :prompt "Number of output channels over which echoes spread" :type number :default 2.0)))
     ("mchiter iter"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2815,10 +2815,10 @@
      :params
      ((:name "infil1" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "ochandata" :type number)
-      (:name "ochans" :type number)
-      (:name "pregain" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)))
+      (:name "ochandata" :prompt "List of output channel positions for each stereo input" :type number :default 1)
+      (:name "ochans" :prompt "Number of output channels" :type integer :default 8)
+      (:name "pregain" :prompt "Pre-gain applied to each stereo input (0-1)" :type number :default 1.0)
+      (:name "s" :prompt "Shift stereo images half-channel to the right" :type bool :flag "-s" :optional t)))
     ("mton mton"
      :params
      ((:name "infile" :type wave-in)
@@ -2828,9 +2828,9 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "midipitch" :type number)
-      (:name "mix" :type number)
-      (:name "feedback" :type number)))
+      (:name "midipitch" :prompt "Pitch of output (MIDI)" :type number :default 60)
+      (:name "mix" :prompt "Delayed signal mix (0=dry, 1=wet)" :type number :default 0.5)
+      (:name "feedback" :prompt "Feedback amount producing resonance" :type number :default 0.3)))
     ("oneform combine pitchfile"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2877,8 +2877,8 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "windowsize" :type number)
-      (:name "threshold" :type number :flag "-t" :optional t)))
+      (:name "windowsize" :prompt "Window size for locating peaks (ms)" :type number :default 100.0)
+      (:name "threshold" :prompt "Level threshold (0-1) below which peaks are ignored" :type number :flag "-t" :optional t)))
     ("phase phase"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2888,13 +2888,13 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "streams" :type number)
-      (:name "phasfrq" :type number)
-      (:name "shift" :type number)
-      (:name "ochans" :type number)
-      (:name "offset" :type number :flag "-o" :optional t)
-      (:name "s" :type bool :flag "-s" :optional t)
-      (:name "e" :type bool :flag "-e" :optional t)))
+      (:name "streams" :prompt "Number of phase-interacting output streams (2-8)" :type integer :default 2)
+      (:name "phasfrq" :prompt "Packet frequency (Hz) — phase shifts forward then back per packet" :type number :default 1.0)
+      (:name "shift" :prompt "Max phase shift in semitones (0-12)" :type number :default 3.0)
+      (:name "ochans" :prompt "Number of output channels (not more than streams)" :type integer :default 2)
+      (:name "offset" :prompt "Max time offset of most-offset stream (0-500 ms)" :type number :flag "-o" :optional t)
+      (:name "s" :prompt "Output channels encircle audience" :type bool :flag "-s" :optional t)
+      (:name "e" :prompt "Print rounding-error warnings" :type bool :flag "-e" :optional t)))
     ("psow cutatgrain"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2996,9 +2996,9 @@
       (:name "outfile" :type wave-out)))
     ("selfsim selfsim"
      :params
-     ((:name "inanalfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "param" :type number)))
+     ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "param" :prompt "Self-similarity index (1=loudest replaces most similar, 2=also replace 2nd most similar, etc.)" :type integer :default 1)))
     ("silend silend"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -3007,14 +3007,14 @@
       (:name "sildur" :type number)))
     ("specenv specenv"
      :params
-     ((:name "inanalfil1" :type number)
-      (:name "inanalfil2" :type number)
-      (:name "outanalfil" :type number)
-      (:name "windowsize" :type number)
-      (:name "bal" :type number :default 0.0 :flag "-b" :optional t)
-      (:name "p" :type bool :flag "-p" :optional t)
-      (:name "i" :type bool :flag "-i" :optional t)
-      (:name "k" :type bool :flag "-k" :optional t)))
+     ((:name "inanalfil1" :prompt "First analysis file (receives envelope)" :type number :default 1)
+      (:name "inanalfil2" :prompt "Second analysis file (provides envelope)" :type number :default 1)
+      (:name "outanalfil" :prompt "Output analysis file" :type number :default 1)
+      (:name "windowsize" :prompt "Averaging window size (octave steps or channel widths)" :type integer :default 10)
+      (:name "bal" :prompt "Balance of original files in output (0=none, pos=keep file1, neg=keep file2)" :type number :default 0.0 :flag "-b" :optional t)
+      (:name "p" :prompt "Window size counted in octave steps (default: channel widths)" :type bool :flag "-p" :optional t)
+      (:name "i" :prompt "Invert the result" :type bool :flag "-i" :optional t)
+      (:name "k" :prompt "Keep original spectral shape" :type bool :flag "-k" :optional t)))
     ("specfnu specfnu"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -3022,10 +3022,10 @@
       (:name "outfile" :type wave-out)))
     ("specgrids specgrids"
      :params
-     ((:name "analfile1" :type number)
-      (:name "outanalfilesname" :type number)
-      (:name "outfilecnt" :type wave-out)
-      (:name "changrouping" :type number)))
+     ((:name "analfile1" :prompt "Input analysis file" :type number :default 1)
+      (:name "outanalfilesname" :prompt "Base name for output analysis files" :type number :default 1)
+      (:name "outfilecnt" :prompt "Number of output spectral files" :type integer :default 2)
+      (:name "changrouping" :prompt "Adjacent channels per group in output spectra" :type integer :default 1)))
     ("specnu remove"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -3079,10 +3079,13 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "datafile" :type number)
-      (:name "dur" :type number)
-      (:name "segjoins" :type number)
-      (:name "silprop" :type number)))
+      (:name "datafile" :prompt "Text file of element cut times" :type number :default 1)
+      (:name "dur" :prompt "Output duration (secs)" :type number :default 10.0)
+      (:name "segjoins" :prompt "Max number of joined segments as sources (1=elements only)" :type integer :default 1)
+      (:name "silprop" :prompt "Proportion of output that is silence (0-1)" :type number :default 0.2)
+      (:name "silmin" :prompt "Min silence duration (secs)" :type number :default 0.1)
+      (:name "silmax" :prompt "Max silence duration (secs)" :type number :default 1.0)
+      (:name "seed" :prompt "Random seed (same seed = same output)" :type integer :default 1)))
     ("submix crossfade"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -3104,19 +3107,19 @@
      ((:name "infile1" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "chan" :type number :flag "-c" :optional t)))
+      (:name "chan" :prompt "Channel of file1 to subtract from (file2 must be mono)" :type integer :default 1 :flag "-c" :optional t)))
     ("synspline synspline"
      :params
      ((:name "outfile" :type wave-out)
-      (:name "srate" :type number)
-      (:name "dur" :type number)
-      (:name "frq" :type number)
-      (:name "splinecnt" :type number)
-      (:name "interpval" :type number)
-      (:name "seed" :type number)
-      (:name "maxspline" :type number :flag "-s" :optional t)
-      (:name "maxinterp" :type number :flag "-i" :optional t)
-      (:name "n" :type bool :flag "-n" :optional t)))
+      (:name "srate" :prompt "Sample rate" :type integer :default 44100)
+      (:name "dur" :prompt "Duration of output (secs)" :type number :default 5.0)
+      (:name "frq" :prompt "Fundamental frequency (0.001-10000 Hz)" :type number :default 440.0)
+      (:name "splinecnt" :prompt "Random values to smooth per half-wavecycle (0-64)" :type integer :default 4)
+      (:name "interpval" :prompt "Wavecycles over which one shape morphs to next (0-4096)" :type integer :default 16)
+      (:name "seed" :prompt "Random seed (same seed = same output)" :type integer :default 1)
+      (:name "maxspline" :prompt "Max splinecnt for random range (0=off)" :type number :flag "-s" :optional t)
+      (:name "maxinterp" :prompt "Max interpval for random range (0=off)" :type number :flag "-i" :optional t)
+      (:name "n" :prompt "Normalise output" :type bool :flag "-n" :optional t)))
     ("tangent list"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -3219,12 +3222,12 @@
      :params
      ((:name "infil" :type wave-in)
       (:name "outfil" :type wave-out)
-      (:name "start" :type number)
-      (:name "end" :type number)
-      (:name "ochans" :type integer :flag "-o" :optional t)
-      (:name "leftchan" :type integer :flag "-l" :optional t)
-      (:name "rightchan" :type integer :flag "-r" :optional t)
-      (:name "mixlev" :type number :flag "-m" :optional t)))
+      (:name "start" :prompt "Start time of divergence to stereo (secs)" :type number :default 0.5)
+      (:name "end" :prompt "Time of complete stereo (secs, before start = mono-to-stereo reversed)" :type number :default 2.0)
+      (:name "ochans" :prompt "Output channel count (default 2)" :type integer :flag "-o" :optional t)
+      (:name "leftchan" :prompt "Output left channel number (default 1)" :type integer :flag "-l" :optional t)
+      (:name "rightchan" :prompt "Output right channel number (default 2)" :type integer :flag "-r" :optional t)
+      (:name "mixlev" :prompt "Level of each channel when mono (0=auto, 0.5-1.0)" :type number :flag "-m" :optional t)))
     ("transit filtered"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -3271,10 +3274,10 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "frq" :type number)
-      (:name "depth" :type number :default 1)
-      (:name "winsize" :type number)
-      (:name "fineness" :type number)))
+      (:name "frq" :prompt "Tremolo frequency (0-500 Hz)" :type number :default 6.0)
+      (:name "depth" :prompt "Tremolo depth (0-1)" :type number :default 1)
+      (:name "winsize" :prompt "Envelope extraction window size (1-40 ms)" :type number :default 10.0)
+      (:name "fineness" :prompt "Width squeeze of tremolo (integer >= 1)" :type integer :default 1)))
     ("tremolo tremolo"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -3288,20 +3291,20 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "pitch_template" :type number)
-      (:name "focus" :type number :flag "-f" :optional t)
-      (:name "clarity" :type number :flag "-c" :optional t)
-      (:name "trace" :type number :flag "-t" :optional t)
-      (:name "bcut" :type number :flag "-b" :optional t)))
+      (:name "pitch_template" :prompt "Text file of time/MIDI pitch value lines" :type number :default 1)
+      (:name "focus" :prompt "Focus of pitch forcing onto template (0-1, val or brkpnt)" :type number :flag "-f" :optional t)
+      (:name "clarity" :prompt "Clarity: degree to suppress non-template partials (0-1)" :type number :flag "-c" :optional t)
+      (:name "trace" :prompt "Trace: harmonic tracking precision (val or brkpnt)" :type number :flag "-t" :optional t)
+      (:name "bcut" :prompt "Bottom cut frequency (Hz)" :type number :flag "-b" :optional t)))
     ("verges verges"
      :params
      ((:name "inf" :type wave-in)
       (:name "outf" :type wave-out)
-      (:name "times" :type number)
-      (:name "transp" :type number :flag "-t" :optional t)
-      (:name "exp" :type number :flag "-e" :optional t)
-      (:name "dur" :type number :default 100 :flag "-d" :optional t)
-      (:name "n" :type bool :flag "-n" :optional t)))
+      (:name "times" :prompt "Text file listing times of verge attacks" :type number :default 1)
+      (:name "transp" :prompt "Semitone transposition at start of verge (default 5)" :type number :default 5.0 :flag "-t" :optional t)
+      (:name "exp" :prompt "Gliss slope exponent (1-8, higher=faster)" :type number :default 1.0 :flag "-e" :optional t)
+      (:name "dur" :prompt "Duration of glissi in ms (default 100)" :type number :default 100 :flag "-d" :optional t)
+      (:name "n" :prompt "Use exact times given (default: find nearest peak)" :type bool :flag "-n" :optional t)))
     ("chxformat"
      :params
      ((:name "infile" :type wave-in)
