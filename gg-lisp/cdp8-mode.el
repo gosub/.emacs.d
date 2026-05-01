@@ -139,6 +139,29 @@
   "Return CDP8 commands plus user-defined extra tool labels."
   (append cdp8-commands (mapcar #'car cdp8-extra-tools)))
 
+(defun cdp8--wave-effect-commands ()
+  "Return commands that accept at least one wave-in input.
+Commands with no schema are included (they fall back to free-form).
+Commands whose schema has only non-wave params are excluded."
+  (seq-filter
+   (lambda (spec)
+     (let ((schema (cdp8--schema-for spec)))
+       (or (null schema)
+           (seq-some (lambda (p) (eq (plist-get p :type) 'wave-in)) schema))))
+   (cdp8--all-commands)))
+
+(defun cdp8--annotate-command (spec)
+  "Return a short annotation string for SPEC, for use in completing-read."
+  (let ((desc (cdr (assoc spec cdp8-command-descriptions))))
+    (when (and desc (not (string-empty-p desc)))
+      (concat "  " desc))))
+
+(defun cdp8--completing-read-command (prompt commands)
+  "Like completing-read but annotates each command with its description."
+  (let ((completion-extra-properties
+         (list :annotation-function #'cdp8--annotate-command)))
+    (completing-read prompt commands nil t)))
+
 ;;; Help side window
 
 (defun cdp8--show-help (spec)
@@ -347,7 +370,10 @@ INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
          (type     (intern type-str))
          (input    (when (eq type 'effect)
                      (completing-read "Input wave: " (cdp8--output-waves) nil t)))
-         (spec     (completing-read "Command: " (cdp8--all-commands) nil t))
+         (commands (if (eq type 'effect)
+                       (cdp8--wave-effect-commands)
+                     (cdp8--all-commands)))
+         (spec     (cdp8--completing-read-command "Command: " commands))
          (_        (cdp8--show-help spec))
          (next-id  (cdp8--next-id))
          (out-wave (concat next-id ".wav"))
@@ -356,7 +382,8 @@ INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
 
 (defun cdp8-new-effect-from (wave-name)
   "Create a new effect node with WAVE-NAME pre-filled as input."
-  (let* ((spec     (completing-read "Command: " (cdp8--all-commands) nil t))
+  (let* ((spec     (cdp8--completing-read-command
+                    "Command: " (cdp8--wave-effect-commands)))
          (_        (cdp8--show-help spec))
          (next-id  (cdp8--next-id))
          (out-wave (concat next-id ".wav"))
