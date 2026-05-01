@@ -233,18 +233,24 @@ OVERRIDE, when non-nil, is used instead of the schema/last-used default."
      (t
       (format "%s" value)))))
 
-(defun cdp8--prompt-params (spec input-wave out-wave &optional current)
+(defun cdp8--prompt-params (spec input-waves out-wave &optional current)
   "Drive sequential prompts using the schema for SPEC; return assembled command.
-INPUT-WAVE is the input wave name or nil; OUT-WAVE is the output wave name.
-CURRENT is an alist of (name . value) used as defaults when re-editing."
+INPUT-WAVES is a list of input wave names (may be nil or empty); OUT-WAVE is
+the output wave name.  CURRENT is an alist of (name . value) for re-editing."
   (let* ((schema (cdp8--schema-for spec))
-         (tokens (list spec)))
+         (tokens (list spec))
+         (waves  (if (listp input-waves) input-waves (list input-waves))))
     (dolist (param schema)
       (let* ((type     (plist-get param :type))
              (name     (plist-get param :name))
              (override (cdr (assoc name current))))
         (pcase type
-          ('wave-in  (when input-wave (push input-wave tokens)))
+          ('wave-in
+           (if waves
+               (push (pop waves) tokens)
+             (push (read-file-name "Additional input wave: "
+                                   cdp8--dir nil t)
+                   tokens)))
           ('wave-out (push out-wave tokens))
           (_
            (if (plist-get param :optional)
@@ -326,9 +332,9 @@ CURRENT is an alist of (name . value) used as defaults when re-editing."
 
 (defun cdp8--build-cmd (spec input out-wave)
   "Build a command string for SPEC; use schema if known, else free-form prompt.
-INPUT is the input wave name (or nil); OUT-WAVE is the output wave filename."
+INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
   (if (cdp8--schema-for spec)
-      (cdp8--prompt-params spec input out-wave)
+      (cdp8--prompt-params spec (when input (list input)) out-wave)
     (let ((prefill (if input
                        (format "%s %s %s " spec input out-wave)
                      (format "%s %s " spec out-wave))))
@@ -538,12 +544,12 @@ INPUT is the input wave name (or nil); OUT-WAVE is the output wave filename."
     (unless node (user-error "No node at point"))
     (let* ((cmd      (plist-get node :cmd))
            (spec     (cdp8--detect-spec cmd))
-           (input    (car (plist-get node :inputs)))
+           (inputs   (plist-get node :inputs))
            (out-wave (plist-get node :output))
            (new-cmd  (if spec
                          (let ((current (cdp8--parse-cmd-values spec cmd)))
                            (cdp8--show-help spec)
-                           (cdp8--prompt-params spec input out-wave current))
+                           (cdp8--prompt-params spec inputs out-wave current))
                        (read-string "Command: " cmd))))
       (cdp8--update-node-cmd id new-cmd))))
 
