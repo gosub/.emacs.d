@@ -563,10 +563,20 @@
   "List of CDP8 \"binary [subcommand]\" strings for completion.")
 
 
+
 ;;; Parameter schema registry
+;;
+;; The first four entries (synth wave, synth noise, blur avrg, grain reverse)
+;; are hand-curated. Everything below the divider was auto-generated from each
+;; binary's USAGE help line: positional args parsed left-to-right, then any
+;; "[-Xname]" optional flag-args. Defaults are mined from per-parameter
+;; description blocks where present; everything else falls back to :type
+;; number. Mode-dependent commands (those with multiple USAGE lines) are
+;; absent here and use the free-form prompt fallback.
 
 (defvar cdp8-param-schemas
-  '(("synth wave"
+  '(
+    ("synth wave"
      :params
      ((:name "mode" :prompt "Mode" :type choice
        :choices ((1 . "sine") (2 . "square") (3 . "sawtooth") (4 . "ramp"))
@@ -614,9 +624,1686 @@
       (:name "minhole" :prompt "Min hole (s)" :type number :default 0.032
        :flag "-h" :optional t)
       (:name "ignore-last" :prompt "Ignore last grain" :type bool :default nil
-       :flag "-x" :optional t))))
+       :flag "-x" :optional t)))
+
+;; --- auto-generated entries below ---
+    ("abfdcode"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("abfpan"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "startpos" :type number)
+      (:name "endpos" :type number)
+      (:name "b" :type bool :flag "-b" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)
+      (:name "N-o" :type number :flag "-o" :optional t)))
+    ("abfpan2"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "startpos" :type number)
+      (:name "endpos" :type number)
+      (:name "GAIN" :type number :flag "-g" :optional t)
+      (:name "w" :type bool :flag "-w" :optional t)))
+    ("analjoin"
+     :params
+     ((:name "join" :type number)
+      (:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("blur blur"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "blurring" :type number)))
+    ("blur drunk"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "range" :type number)
+      (:name "starttime" :type number)
+      (:name "duration" :type number)
+      (:name "z" :type bool :flag "-z" :optional t)))
+    ("blur noise"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "noise" :type number)))
+    ("blur scatter"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "keep" :type number)
+      (:name "blocksize" :type number :flag "-b" :optional t)
+      (:name "r" :type bool :flag "-r" :optional t)
+      (:name "n" :type bool :flag "-n" :optional t)))
+    ("blur shuffle"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "domain-image" :type number)
+      (:name "grpsize" :type number)))
+    ("blur suppress"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "N" :type number)))
+    ("blur weave"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "weavfile" :type number)))
+    ("channelx"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "chan_no" :type number)
+      (:name "BASENAME" :type number :flag "-o" :optional t)))
+    ("clicknew"
+     :params
+     ((:name "clicks" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "clicktimes_datafile" :type number)
+      (:name "srate" :type number)))
+    ("combine cross"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "interp" :type number :flag "-i" :optional t)))
+    ("combine diff"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "crossover" :type number :flag "-c" :optional t)
+      (:name "a" :type bool :flag "-a" :optional t)))
+    ("combine interleave"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "leafsize" :type number)))
+    ("combine make"
+     :params
+     ((:name "pitchfile" :type number)
+      (:name "formantfile" :type number)
+      (:name "outfile" :type wave-out)))
+    ("combine make2"
+     :params
+     ((:name "pitchfile" :type number)
+      (:name "formantfile" :type number)
+      (:name "envfile" :type number)
+      (:name "outfile" :type wave-out)))
+    ("combine max"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("combine mean"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "lofrq" :type number :flag "-l" :optional t)
+      (:name "hifrq" :type number :flag "-h" :optional t)
+      (:name "chans" :type number :flag "-c" :optional t)
+      (:name "z" :type bool :flag "-z" :optional t)))
+    ("combine sum"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "crossover" :type number :flag "-c" :optional t)))
+    ("convert_to_midi"
+     :params
+     ((:name "frqbrkpnt" :type number)
+      (:name "peakvals" :type number)
+      (:name "datalen" :type number)
+      (:name "staccato" :type number)
+      (:name "outfilename" :type wave-out)
+      (:name "system" :type number)))
+    ("copysfx"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "d" :type bool :flag "-d" :optional t)
+      (:name "h" :type bool :flag "-h" :optional t)
+      (:name "N-s" :type number :flag "-s" :optional t)
+      (:name "N-t" :type number :flag "-t" :optional t)))
+    ("cubicspline"
+     :params
+     ((:name "datafile" :type number)
+      (:name "outdatafile" :type number)
+      (:name "pointcnt" :type number)
+      (:name "srate" :type number)
+      (:name "s" :type bool :flag "-s" :optional t)))
+    ("distmore double"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "mult" :type number)))
+    ("distort average"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "cyclecnt" :type number)
+      (:name "maxwavelen" :type number :default 0.50 :flag "-m" :optional t)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort cyclecnt"
+     :params
+     ((:name "infile" :type wave-in)))
+    ("distort delete"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "cyclecnt" :type number)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort divide"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "N" :type number)
+      (:name "i" :type bool :flag "-i" :optional t)))
+    ("distort fractal"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "scaling" :type number)
+      (:name "loudness" :type number)
+      (:name "pre_attenuation" :type number :flag "-p" :optional t)))
+    ("distort harmonic"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "harmonics-file" :type number)
+      (:name "pre_attenuation" :type number :flag "-p" :optional t)))
+    ("distort interact"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("distort interpolate"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "multiplier" :type number)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort multiply"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "N" :type number)
+      (:name "s" :type bool :flag "-s" :optional t)))
+    ("distort omit"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "A" :type number)
+      (:name "B" :type number)))
+    ("distort pitch"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "octvary" :type number)
+      (:name "cyclelen" :type number :flag "-c" :optional t)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort repeat"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "multiplier" :type number)
+      (:name "cyleccnt" :type number :flag "-c" :optional t)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort repeat2"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "multiplier" :type number)
+      (:name "cyleccnt" :type number :flag "-c" :optional t)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort replace"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "cyclecnt" :type number)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort reverse"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "cyclecnt" :type number)))
+    ("distort shuffle"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "domain-image" :type number)
+      (:name "cylecnt" :type number :flag "-c" :optional t)
+      (:name "skipcycles" :type number :flag "-s" :optional t)))
+    ("distort telescope"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "cyclecnt" :type number)
+      (:name "skipcycles" :type number :flag "-s" :optional t)
+      (:name "a" :type bool :flag "-a" :optional t)))
+    ("distortt"
+     :params
+     ((:name "repeat" :type number)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "gpcnt" :type number)
+      (:name "rpt" :type number)
+      (:name "offset" :type number)
+      (:name "dur" :type number)
+      (:name "t" :type bool :flag "-t" :optional t)))
+    ("dshift"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "N-d" :type integer :default 10 :flag "-d" :optional t)))
+    ("envel brktoenv"
+     :params
+     ((:name "inbrkfile" :type number)
+      (:name "outenvfile" :type number)
+      (:name "wsize" :type number)))
+    ("envel dbtoenv"
+     :params
+     ((:name "db_brkfile" :type number)
+      (:name "outenvfile" :type number)
+      (:name "wsize" :type number)))
+    ("envel dbtogain"
+     :params
+     ((:name "db_brkfile" :type number)
+      (:name "outbrkfile" :type number)))
+    ("envel envtobrk"
+     :params
+     ((:name "inenvfile" :type number)
+      (:name "outbrkfile" :type number)
+      (:name "datareduce" :type number :flag "-d" :optional t)))
+    ("envel envtodb"
+     :params
+     ((:name "inenvfile" :type number)
+      (:name "outbrkfile" :type number)
+      (:name "datareduce" :type number :flag "-d" :optional t)))
+    ("envel gaintodb"
+     :params
+     ((:name "brkfile" :type number)
+      (:name "out_db_brkfile" :type number)))
+    ("envel pluck"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "startsamp" :type number)
+      (:name "wavelen" :type number)
+      (:name "atkcycles" :type integer :default 32 :flag "-a" :optional t)
+      (:name "decayrate" :type integer :default 48 :flag "-d" :optional t)))
+    ("envel scaled"
+     :params
+     ((:name "d" :type number)
+      (:name "input_sndfile" :type wave-in)
+      (:name "imposed-brkfile" :type wave-in)
+      (:name "outsndfile" :type wave-out)))
+    ("envel swell"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "peaktime" :type number)
+      (:name "peaktype" :type number)))
+    ("envel timegrid"
+     :params
+     ((:name "input_sndfile" :type wave-in)
+      (:name "generic_outsndfile_name" :type number)
+      (:name "gridcnt" :type number)
+      (:name "gridwidth" :type number)
+      (:name "splicelen" :type number)))
+    ("envel tremolo"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "frq" :type number)
+      (:name "depth" :type number :default 0.250)
+      (:name "gain" :type number :default 1)))
+    ("envnu expdecay"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "starttime" :type number)
+      (:name "endtime" :type number)))
+    ("extend baktobak"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "join_time" :type number)
+      (:name "splice-length" :type number)))
+    ("extend doublets"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "segdur" :type number)
+      (:name "repets" :type number)
+      (:name "s" :type bool :flag "-s" :optional t)))
+    ("extend repetitions"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "timesfile" :type number)
+      (:name "level" :type number)))
+    ("extend sequence"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "sequence-file" :type number)
+      (:name "attenuation" :type number)))
+    ("extend sequence2"
+     :params
+     ((:name "inf1" :type number)
+      (:name "inf2" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "sequence-file" :type number)
+      (:name "attenuation" :type number)
+      (:name "splice" :type number :flag "-s" :optional t)))
+    ("filter iterated"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "datafile" :type number)
+      (:name "Q" :type number)
+      (:name "gain" :type number)
+      (:name "delay" :type number)
+      (:name "dur" :type number)
+      (:name "prescale" :type number :default 1.0 :flag "-s" :optional t)
+      (:name "rand" :type number :flag "-r" :optional t)
+      (:name "pshift" :type number :flag "-p" :optional t)
+      (:name "ashift" :type number :flag "-a" :optional t)
+      (:name "d" :type bool :flag "-d" :optional t)
+      (:name "i" :type bool :flag "-i" :optional t)
+      (:name "e" :type bool :flag "-e" :optional t)
+      (:name "n" :type bool :flag "-n" :optional t)))
+    ("filter lohi"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "attenuation" :type number)
+      (:name "pass-band" :type number)
+      (:name "stop-band" :type number)
+      (:name "tail" :type number :flag "-t" :optional t)
+      (:name "prescale" :type number :flag "-s" :optional t)))
+    ("filter phasing"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "gain" :type number)
+      (:name "delay" :type number)
+      (:name "tail" :type number :flag "-t" :optional t)
+      (:name "prescale" :type number :default 1.0 :flag "-s" :optional t)
+      (:name "l" :type bool :flag "-l" :optional t)))
+    ("filter sweeping"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "acuity" :type number)
+      (:name "gain" :type number)
+      (:name "lofrq" :type number)
+      (:name "hifrq" :type number)
+      (:name "sweepfrq" :type number)
+      (:name "tail" :type number :flag "-t" :optional t)
+      (:name "phase" :type number :flag "-p" :optional t)))
+    ("filter userbank"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "datafile" :type number)
+      (:name "Q" :type number)
+      (:name "gain" :type number)
+      (:name "tail" :type number :flag "-t" :optional t)
+      (:name "d" :type bool :flag "-d" :optional t)))
+    ("filter variable"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "acuity" :type number)
+      (:name "gain" :type number)
+      (:name "frq" :type number)
+      (:name "tail" :type number :flag "-t" :optional t)))
+    ("filter varibank"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "data" :type number)
+      (:name "Q" :type number)
+      (:name "gain" :type number)
+      (:name "tail" :type number :flag "-t" :optional t)
+      (:name "hcnt" :type integer :default 1 :flag "-h" :optional t)
+      (:name "rolloff" :type number :flag "-r" :optional t)
+      (:name "d" :type bool :flag "-d" :optional t)))
+    ("filter varibank2"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "data" :type number)
+      (:name "Q" :type number)
+      (:name "gain" :type number)
+      (:name "tail" :type number :flag "-t" :optional t)
+      (:name "d" :type bool :flag "-d" :optional t)))
+    ("filter vfilters"
+     :params
+     ((:name "inpitchfile" :type number)
+      (:name "outfile" :type wave-out)))
+    ("fmdcode"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "layout" :type number)
+      (:name "x" :type bool :flag "-x" :optional t)
+      (:name "w" :type bool :flag "-w" :optional t)))
+    ("focus accu"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "decay" :type number :flag "-d" :optional t)
+      (:name "glis" :type number :flag "-g" :optional t)))
+    ("focus exag"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "exaggeration" :type number)))
+    ("focus fold"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "lofrq" :type number)
+      (:name "hifrq" :type number)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("focus freeze"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "datafile" :type number)))
+    ("focus hold"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "datafile" :type number)))
+    ("focus step"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "timestep" :type number)))
+    ("formants see"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outsndfile" :type wave-out)
+      (:name "v" :type bool :flag "-v" :optional t)))
+    ("fractal spectrum"
+     :params
+     ((:name "inf" :type number)
+      (:name "outf" :type number)
+      (:name "shape" :type number)
+      (:name "maxfrac" :type number :flag "-m" :optional t)
+      (:name "str" :type number :flag "-t" :optional t)
+      (:name "warp" :type number :flag "-i" :optional t)
+      (:name "s" :type bool :flag "-s" :optional t)
+      (:name "n" :type bool :flag "-n" :optional t)))
+    ("getcol"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "colno" :type number)
+      (:name "e" :type bool :flag "-e" :optional t)))
+    ("grain align"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "offset" :type number)
+      (:name "gate2" :type integer :default 1)))
+    ("grain assess"
+     :params
+     ((:name "infile" :type wave-in)))
+    ("grain count"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("grain duplicate"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "N" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("grain find"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "out-textfil" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("grain noise_extend"
+     :params
+     ((:name "inf" :type number)
+      (:name "outf" :type number)
+      (:name "duration" :type number)
+      (:name "minfrq" :type number)
+      (:name "mindur" :type number)
+      (:name "maxdur" :type number)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("grain omit"
+     :params
+     ((:name "inf" :type number)
+      (:name "outf" :type number)
+      (:name "keep" :type number)
+      (:name "out-of" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("grain remotif"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "transpmultfile" :type number)))
+    ("grain reorder"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "code" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("grain repitch"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "transpfile" :type number)))
+    ("grain reposition"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "timefile" :type number)
+      (:name "offset" :type number)))
+    ("grain rerhythm"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "multfile" :type number)))
+    ("grain timewarp"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "timestretch-ratio" :type number)))
+    ("grainex"
+     :params
+     ((:name "extend" :type number)
+      (:name "inf" :type number)
+      (:name "outf" :type number)
+      (:name "wsiz" :type number)
+      (:name "trof" :type number)
+      (:name "plus" :type number)
+      (:name "stt" :type number)
+      (:name "end" :type number)))
+    ("hilite band"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "datafile" :type number)))
+    ("hilite bltr"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "blurring" :type number)
+      (:name "tracing" :type number)))
+    ("hilite greq"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "filtfile" :type number)
+      (:name "r" :type bool :flag "-r" :optional t)))
+    ("hilite pluck"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "gain" :type number)))
+    ("hilite vowels"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "vowelfile" :type number)
+      (:name "halfwidth" :type number)
+      (:name "steepness" :type number)
+      (:name "range" :type number)
+      (:name "threshold" :type number)))
+    ("histconv"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("housekeep bakup"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("housekeep batchexpand"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "batch" :type number)
+      (:name "snd1" :type number)
+      (:name "datafile" :type number)
+      (:name "ic" :type number)
+      (:name "oc" :type number)
+      (:name "pc" :type number)))
+    ("housekeep bundle"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outtextfile" :type wave-out)))
+    ("housekeep deglitch"
+     :params
+     ((:name "inf" :type number)
+      (:name "outf" :type number)
+      (:name "glitch" :type number)
+      (:name "sil" :type number)
+      (:name "thresh" :type number)
+      (:name "splice" :type number)
+      (:name "window" :type number)
+      (:name "s" :type bool :flag "-s" :optional t)))
+    ("housekeep disk"
+     :params
+     ((:name "anyinfile" :type number)))
+    ("housekeep endclicks"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "gate" :type number)
+      (:name "splicelen" :type number)
+      (:name "b" :type bool :flag "-b" :optional t)
+      (:name "e" :type bool :flag "-e" :optional t)))
+    ("housekeep gate"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "zerocnt" :type number :flag "-z" :optional t)))
+    ("housekeep remove"
+     :params
+     ((:name "filename" :type number)
+      (:name "a" :type bool :flag "-a" :optional t)))
+    ("modify findpan"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "time" :type number)))
+    ("modify sausage"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "velocity" :type integer :default 50)
+      (:name "density" :type integer :default 50)))
+    ("modify scaledpan"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pan" :type number)
+      (:name "prescale" :type number :default 0.7 :flag "-p" :optional t)))
+    ("modify shudder"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("modify spaceform"
+     :params
+     ((:name "outpanfile" :type number)
+      (:name "cyclelen" :type number)
+      (:name "width" :type number)
+      (:name "dur" :type number)
+      (:name "quantisation" :type number)
+      (:name "phase" :type number)))
+    ("modify stack"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "transpos" :type number)
+      (:name "count" :type number)
+      (:name "lean" :type number)
+      (:name "atk-offset" :type number)
+      (:name "gain" :type number)
+      (:name "dur" :type number)
+      (:name "s" :type bool :flag "-s" :optional t)
+      (:name "n" :type bool :flag "-n" :optional t)))
+    ("morph bridge"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "offset" :type number :default 0.0 :flag "-a" :optional t)
+      (:name "sf2" :type integer :default 0 :flag "-b" :optional t)
+      (:name "sa2" :type integer :default 0 :flag "-c" :optional t)
+      (:name "ef2" :type integer :default 1 :flag "-d" :optional t)
+      (:name "ea2" :type integer :default 1 :flag "-e" :optional t)
+      (:name "start" :type number :default 0.0 :flag "-f" :optional t)
+      (:name "end" :type number :flag "-g" :optional t)))
+    ("morph glide"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "duration" :type number)))
+    ("morph morph"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "as" :type number)
+      (:name "ae" :type number)
+      (:name "fs" :type number)
+      (:name "fe" :type number)
+      (:name "expa" :type number)
+      (:name "expf" :type number)
+      (:name "stagger" :type number :flag "-s" :optional t)))
+    ("multisynth"
+     :params
+     ((:name "synth" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "score" :type number)
+      (:name "MM" :type number)
+      (:name "jitter" :type integer :default 15 :flag "-j" :optional t)
+      (:name "ochans" :type number :flag "-o" :optional t)
+      (:name "b" :type bool :flag "-b" :optional t)))
+    ("newmix"
+     :params
+     ((:name "multichan" :type number)
+      (:name "mixfile" :type number)
+      (:name "outsndfile" :type wave-out)
+      (:name "START" :type number :flag "-s" :optional t)
+      (:name "END" :type number :flag "-e" :optional t)
+      (:name "ATTENUATION" :type number :flag "-g" :optional t)))
+    ("newscales"
+     :params
+     ((:name "outfile" :type wave-out)
+      (:name "datafile" :type number)
+      (:name "spectrumfile" :type number)))
+    ("nmix"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "d" :type bool :flag "-d" :optional t)
+      (:name "f" :type bool :flag "-f" :optional t)
+      (:name "OFFSET" :type number :flag "-o" :optional t)))
+    ("notchinvert"
+     :params
+     ((:name "datafile" :type number)
+      (:name "outdatafile" :type number)
+      (:name "srate" :type number)))
+    ("peakiso"
+     :params
+     ((:name "datafile" :type number)
+      (:name "outdatafile" :type number)
+      (:name "srate" :type number)))
+    ("pitch altharms"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("pitch chord"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "transpose_file" :type number)
+      (:name "bot" :type number :flag "-b" :optional t)
+      (:name "top" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("pitch tune"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pitch_template" :type number)
+      (:name "focus" :type number :flag "-f" :optional t)
+      (:name "clarity" :type number :flag "-c" :optional t)
+      (:name "trace" :type number :flag "-t" :optional t)
+      (:name "bcut" :type number :flag "-b" :optional t)))
+    ("pitchinfo convert"
+     :params
+     ((:name "pitchfile" :type number)
+      (:name "outtextfile" :type wave-out)
+      (:name "I-d" :type number :flag "-d" :optional t)))
+    ("pitchinfo hear"
+     :params
+     ((:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "gain" :type number :flag "-g" :optional t)))
+    ("pitchinfo info"
+     :params
+     ((:name "pitchfile" :type number)))
+    ("pitchinfo zeros"
+     :params
+     ((:name "pitchfile" :type number)))
+    ("prefix"
+     :params
+     ((:name "silence" :type number)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "dur" :type number)))
+    ("psow chop"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "time-grain-pairs" :type number)))
+    ("psow dupl"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "repeat-cnt" :type number)
+      (:name "segcnt" :type number)))
+    ("psow grab"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "time" :type number)
+      (:name "dur" :type number)
+      (:name "segcnt" :type number)
+      (:name "spectrans" :type number)
+      (:name "density" :type number)
+      (:name "rand" :type number)
+      (:name "gain" :type number)))
+    ("psow interp"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "startdur" :type number)
+      (:name "interpdur" :type number)
+      (:name "enddur" :type number)))
+    ("psow locate"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "time" :type number)))
+    ("psow replace"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pbrk1" :type number)
+      (:name "pbrk2" :type number)
+      (:name "grpcnt" :type number)))
+    ("psow space"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("psow split"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "subharmno" :type number)
+      (:name "uptrans" :type number)
+      (:name "balance" :type number)))
+    ("psow stretch"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "timestretch" :type number)
+      (:name "segcnt" :type number)))
+    ("psow strtrans"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "timestretch" :type number)
+      (:name "segcnt" :type number)
+      (:name "trans" :type number)))
+    ("psow sustain"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "pch-brkdata" :type number)
+      (:name "time" :type number)
+      (:name "dur" :type number)
+      (:name "segcnt" :type number)))
+    ("psow sustain2"
+     :params
+     ((:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "start" :type number)
+      (:name "end" :type number)
+      (:name "dur" :type number)
+      (:name "vibfrq" :type number)
+      (:name "vibdepth" :type number)
+      (:name "nudge" :type number)))
+    ("ptobrk"
+     :params
+     ((:name "withzeros" :type number)
+      (:name "binary-pitchfile" :type number)
+      (:name "outtextfile" :type wave-out)
+      (:name "min-pitch-dur" :type number)))
+    ("pvoc anal"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "points" :type integer :default 1024 :flag "-c" :optional t)
+      (:name "overlap" :type integer :default 3 :flag "-o" :optional t)))
+    ("pvoc extract"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "points" :type integer :default 1024 :flag "-c" :optional t)
+      (:name "overlap" :type integer :default 3 :flag "-o" :optional t)
+      (:name "dochans" :type number :flag "-d" :optional t)
+      (:name "lochan" :type integer :default 0 :flag "-l" :optional t)
+      (:name "hichan" :type number :flag "-h" :optional t)))
+    ("pvoc synth"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("repitch analenv"
+     :params
+     ((:name "inanalfile" :type number)
+      (:name "outenvfile" :type number)))
+    ("repitch approx"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "prange" :type number :flag "-p" :optional t)
+      (:name "trange" :type number :flag "-t" :optional t)
+      (:name "srange" :type number :flag "-s" :optional t)))
+    ("repitch fix"
+     :params
+     ((:name "pitchfile" :type number :default 0.0)
+      (:name "outpitchfile" :type number)
+      (:name "t1" :type number :flag "-r" :optional t)
+      (:name "t2" :type number :flag "-x" :optional t)
+      (:name "bf" :type number :flag "-l" :optional t)
+      (:name "tf" :type number :flag "-h" :optional t)
+      (:name "N-s" :type number :flag "-s" :optional t)
+      (:name "f1" :type number :flag "-b" :optional t)
+      (:name "f2" :type number :flag "-e" :optional t)
+      (:name "w" :type bool :flag "-w" :optional t)
+      (:name "i" :type bool :flag "-i" :optional t)))
+    ("repitch generate"
+     :params
+     ((:name "outpitchdatafile" :type number)
+      (:name "midipitch-data" :type number)
+      (:name "srate" :type number)
+      (:name "points" :type integer :default 1024 :flag "-c" :optional t)
+      (:name "overlap" :type integer :default 3 :flag "-o" :optional t)))
+    ("repitch insertsil"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "silence-data" :type number)))
+    ("repitch insertzeros"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "zeros-data" :type number)))
+    ("repitch invert"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "map" :type number)
+      (:name "meanpch" :type number :flag "-m" :optional t)
+      (:name "bot" :type integer :default 0 :flag "-b" :optional t)
+      (:name "top" :type integer :default 127 :flag "-t" :optional t)))
+    ("repitch noisetosil"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("repitch pchshift"
+     :params
+     ((:name "pitchfile" :type number)
+      (:name "outpitchfile" :type number)
+      (:name "transposition" :type number)))
+    ("repitch pchtotext"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("repitch pitchtosil"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("repitch quantise"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "q-set" :type number)
+      (:name "o" :type bool :flag "-o" :optional t)))
+    ("repitch randomise"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "maxinterval" :type number)
+      (:name "timestep" :type number)
+      (:name "slew" :type number :flag "-s" :optional t)))
+    ("repitch smooth"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "timeframe" :type number)
+      (:name "meanpch" :type number :flag "-p" :optional t)
+      (:name "h" :type bool :flag "-h" :optional t)))
+    ("repitch synth"
+     :params
+     ((:name "binarypitchfile" :type number)
+      (:name "outanalfile" :type number)
+      (:name "harmonics-data" :type number)))
+    ("repitch vibrato"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "vibfreq" :type number)
+      (:name "vibrange" :type number)))
+    ("repitch vowels"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "vowel-data" :type number)
+      (:name "halfwidth" :type number)
+      (:name "curve" :type number)
+      (:name "pk_range" :type number)
+      (:name "fweight" :type number)
+      (:name "foffset" :type number)))
+    ("reverb"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "rgain" :type number)
+      (:name "mix" :type number)
+      (:name "rvbtime" :type number)
+      (:name "absorb" :type number)))
+    ("rmverb"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "rmsize" :type number)
+      (:name "rgain" :type number)
+      (:name "mix" :type number)
+      (:name "fback" :type number)
+      (:name "absorb" :type number)
+      (:name "lpfreq" :type number)
+      (:name "trtime" :type number)))
+    ("search"
+     :params
+     ((:name "sigstart" :type number)
+      (:name "infile1" :type wave-in)))
+    ("sfecho"
+     :params
+     ((:name "echo" :type number)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "delay" :type number)
+      (:name "attenuation" :type number)
+      (:name "totaldur" :type number)
+      (:name "rand" :type number :flag "-r" :optional t)
+      (:name "cutoff" :type integer :default -96 :flag "-c" :optional t)))
+    ("sfedit cut"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "start" :type number)
+      (:name "end" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)))
+    ("sfedit cutend"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "length" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)))
+    ("sfedit cutmany"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "cuttimes" :type number)
+      (:name "splice" :type number)))
+    ("sfedit excise"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "start" :type number)
+      (:name "end" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)))
+    ("sfedit excises"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "excisefile" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)))
+    ("sfedit insert"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "insert" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "time" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)
+      (:name "level" :type number :default 1.0 :flag "-l" :optional t)
+      (:name "o" :type bool :flag "-o" :optional t)))
+    ("sfedit insil"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "time" :type number)
+      (:name "duration" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)
+      (:name "o" :type bool :flag "-o" :optional t)
+      (:name "s" :type bool :flag "-s" :optional t)))
+    ("sfedit join"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)
+      (:name "b" :type bool :flag "-b" :optional t)
+      (:name "e" :type bool :flag "-e" :optional t)))
+    ("sfedit masks"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "excisefile" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)))
+    ("sfedit noisecut"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "splicelen" :type number)
+      (:name "noisfrq" :type number)
+      (:name "maxnoise" :type number)
+      (:name "mintone" :type number)
+      (:name "n" :type bool :flag "-n" :optional t)))
+    ("sfedit noisecut"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "splicelen" :type number)
+      (:name "noisfrq" :type number)
+      (:name "maxnoise" :type number)
+      (:name "mintone" :type number)
+      (:name "n" :type bool :flag "-n" :optional t)))
+    ("sfedit randchunks"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "chunkcnt" :type number)
+      (:name "minchunk" :type number)
+      (:name "maxchunk" :type number :flag "-m" :optional t)
+      (:name "l" :type bool :flag "-l" :optional t)
+      (:name "s" :type bool :flag "-s" :optional t)))
+    ("sfedit randcuts"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "average-chunklen" :type number)
+      (:name "scattering" :type number)))
+    ("sfedit replace"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "insert" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "time" :type number)
+      (:name "endtime" :type number)
+      (:name "splice" :type integer :default 15 :flag "-w" :optional t)
+      (:name "level" :type number :default 1.0 :flag "-l" :optional t)))
+    ("sfedit syllables"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infil" :type wave-in)
+      (:name "outfil" :type wave-out)
+      (:name "cuttimes" :type number)
+      (:name "dovetail" :type number)
+      (:name "splice" :type number)
+      (:name "p" :type bool :flag "-p" :optional t)))
+    ("sfedit zcut"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "start" :type number)
+      (:name "end" :type number)))
+    ("sfedit zcuts"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "cuttimes" :type number)))
+    ("sfprops"
+     :params
+     ((:name "infile" :type wave-in)))
+    ("smooth"
+     :params
+     ((:name "datafile" :type number)
+      (:name "outdatafile" :type number)
+      (:name "pointcnt" :type number)
+      (:name "srate" :type number)
+      (:name "s" :type bool :flag "-s" :optional t)))
+    ("spec bare"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "pitchfile" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "x" :type bool :flag "-x" :optional t)))
+    ("spec cut"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "starttime" :type number)
+      (:name "endtime" :type number)))
+    ("spec gain"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "gain" :type number)))
+    ("spec gate"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "threshold" :type number)))
+    ("spec grab"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "time" :type number)))
+    ("spec magnify"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "time" :type number)
+      (:name "dur" :type number)))
+    ("specinfo channel"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "frq" :type number)))
+    ("specinfo frequency"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "analysis_channel_number" :type number)))
+    ("specinfo level"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outsndfile" :type wave-out)))
+    ("specinfo octvu"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outtextfile" :type wave-out)
+      (:name "time_step" :type number)
+      (:name "fundamental" :type number :flag "-f" :optional t)))
+    ("specinfo peak"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outtextfile" :type wave-out)
+      (:name "cutoff_frq" :type number :flag "-c" :optional t)
+      (:name "timewindow" :type number :flag "-t" :optional t)
+      (:name "frqwindow" :type number :flag "-f" :optional t)
+      (:name "h" :type bool :flag "-h" :optional t)))
+    ("specinfo print"
+     :params
+     ((:name "infile" :type wave-in)
+      (:name "outtextfile" :type wave-out)
+      (:name "time" :type number)
+      (:name "windowcnt" :type number :flag "-w" :optional t)))
+    ("specinfo windowcnt"
+     :params
+     ((:name "infile" :type wave-in)))
+    ("speclean clean"
+     :params
+     ((:name "sigfile" :type number)
+      (:name "noisfile" :type number)
+      (:name "outanalfile" :type number)
+      (:name "persist" :type number)
+      (:name "noisgain" :type integer :default 2)))
+    ("specnu clean"
+     :params
+     ((:name "sigfile" :type number)
+      (:name "noisfile" :type number)
+      (:name "outanalfile" :type number)
+      (:name "persist" :type number)
+      (:name "noisgain" :type number)))
+    ("specnu rand"
+     :params
+     ((:name "inanalfile" :type number)
+      (:name "outanalfile" :type number)
+      (:name "timescale" :type number :flag "-t" :optional t)
+      (:name "grouping" :type number :flag "-g" :optional t)))
+    ("specnu squeeze"
+     :params
+     ((:name "inanalfile" :type number)
+      (:name "outanalfile" :type number)
+      (:name "centrefrq" :type number)
+      (:name "squeeze" :type number)))
+    ("specnu subtract"
+     :params
+     ((:name "sigfile" :type number)
+      (:name "noisfile" :type number)
+      (:name "outanalfile" :type number)
+      (:name "persist" :type number)
+      (:name "noisgain" :type number)))
+    ("specross"
+     :params
+     ((:name "partials" :type number)
+      (:name "analfile1" :type number)
+      (:name "analfile2" :type number)
+      (:name "outanalfile" :type number)))
+    ("spectrum fixed"
+     :params
+     ((:name "outanalfile" :type number)
+      (:name "datafile" :type number)
+      (:name "pointcnt" :type number)
+      (:name "srate" :type number)
+      (:name "dur" :type number)
+      (:name "H-h" :type number :flag "-h" :optional t)
+      (:name "B-b" :type number :flag "-b" :optional t)
+      (:name "F-f" :type number :flag "-f" :optional t)
+      (:name "R-r" :type number :flag "-r" :optional t)
+      (:name "S-s" :type number :flag "-s" :optional t)
+      (:name "A-a" :type number :flag "-a" :optional t)
+      (:name "T-t" :type number :flag "-t" :optional t)
+      (:name "W-w" :type number :flag "-w" :optional t)
+      (:name "M-m" :type number :flag "-m" :optional t)
+      (:name "d" :type bool :flag "-d" :optional t)))
+    ("spectrum format"
+     :params
+     ((:name "outdatafile" :type number)
+      (:name "indatafile" :type number)
+      (:name "pointcnt" :type number)
+      (:name "srate" :type number)))
+    ("spectstr"
+     :params
+     ((:name "stretch" :type number)
+      (:name "time" :type number)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "timestretch" :type number)
+      (:name "d-ratio" :type number)
+      (:name "di-rand" :type number)))
+    ("strange invert"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)))
+    ("stretch spectrum"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "frq_divide" :type number)
+      (:name "maxstretch" :type number)
+      (:name "exponent" :type number)
+      (:name "depth" :type number :flag "-d" :optional t)))
+    ("submix addtomix"
+     :params
+     ((:name "mixfile" :type number)
+      (:name "sndfile1" :type number)
+      (:name "outfile" :type wave-out)))
+    ("submix atstep"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outmixfile" :type number)
+      (:name "step" :type number)))
+    ("submix attenuate"
+     :params
+     ((:name "inmixfile" :type number)
+      (:name "outmixfile" :type number)
+      (:name "gainval" :type integer :default 1)
+      (:name "startline" :type integer :default 1 :flag "-s" :optional t)
+      (:name "endline" :type number :flag "-e" :optional t)))
+    ("submix balance"
+     :params
+     ((:name "sndfile1" :type number)
+      (:name "sndfile2" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "balance" :type number :flag "-k" :optional t)
+      (:name "start" :type number :flag "-b" :optional t)
+      (:name "end" :type number :flag "-e" :optional t)))
+    ("submix dummy"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "mixfile" :type number)))
+    ("submix faders"
+     :params
+     ((:name "inf1" :type number)
+      (:name "inf2" :type number)
+      (:name "outf" :type number)
+      (:name "balance-data" :type number)
+      (:name "envelope-data" :type number)))
+    ("submix inbetween2"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outname" :type number)
+      (:name "count" :type number)
+      (:name "cutoff" :type number)))
+    ("submix interleave"
+     :params
+     ((:name "sndfile1" :type number)
+      (:name "sndfile2" :type number)
+      (:name "outfile" :type wave-out)))
+    ("submix merge"
+     :params
+     ((:name "sndfile1" :type number)
+      (:name "sndfile2" :type number)
+      (:name "outfile" :type wave-out)
+      (:name "stagger" :type number :flag "-s" :optional t)
+      (:name "skip" :type number :flag "-j" :optional t)
+      (:name "skew" :type number :flag "-k" :optional t)
+      (:name "start" :type number :flag "-b" :optional t)
+      (:name "end" :type number :flag "-e" :optional t)))
+    ("submix mergemany"
+     :params
+     ((:name "sndfile1" :type number)
+      (:name "sndfile2" :type number)
+      (:name "outfile" :type wave-out)))
+    ("submix mix"
+     :params
+     ((:name "mixfile" :type number)
+      (:name "outsndfile" :type wave-out)
+      (:name "START" :type number :flag "-s" :optional t)
+      (:name "END" :type number :flag "-e" :optional t)
+      (:name "ATTENUATION" :type number :flag "-g" :optional t)
+      (:name "a" :type bool :flag "-a" :optional t)))
+    ("submix model"
+     :params
+     ((:name "mixfile" :type number)
+      (:name "sndfile1" :type number)
+      (:name "outfile" :type wave-out)))
+    ("submix ongrid"
+     :params
+     ((:name "infil1" :type wave-in)
+      (:name "infil2" :type wave-in)
+      (:name "outmixfile" :type number)
+      (:name "gridfile" :type number)))
+    ("submix pan"
+     :params
+     ((:name "inmixfile" :type number)
+      (:name "outmixfile" :type number)
+      (:name "pan" :type number)))
+    ("submix sync"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "intextfile" :type number)
+      (:name "outmixfile" :type number)))
+    ("submix syncattack"
+     :params
+     ((:name "intextfile" :type number)
+      (:name "outmixfile" :type number)
+      (:name "div" :type number :flag "-w" :optional t)
+      (:name "p" :type bool :flag "-p" :optional t)))
+    ("submix test"
+     :params
+     ((:name "mixfile" :type number)))
+    ("suppress"
+     :params
+     ((:name "partials" :type number)
+      (:name "inanal" :type number)
+      (:name "outanal" :type number)
+      (:name "timeslots" :type number)
+      (:name "lofrq" :type number)
+      (:name "hifrq" :type number)
+      (:name "chancnt" :type number)))
+    ("synth chord"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "outfile" :type wave-out)
+      (:name "datafile" :type number)
+      (:name "sr" :type number)
+      (:name "chans" :type number)
+      (:name "dur" :type number)
+      (:name "amp" :type number :flag "-a" :optional t)
+      (:name "tabsize" :type number :flag "-t" :optional t)))
+    ("synth silence"
+     :params
+     ((:name "outfile" :type wave-out)
+      (:name "sr" :type number)
+      (:name "chans" :type number)
+      (:name "dur" :type number)))
+    ("synth spectra"
+     :params
+     ((:name "outfilename" :type wave-out)
+      (:name "dur" :type number)
+      (:name "frq" :type number)
+      (:name "spread" :type number)
+      (:name "max-foc" :type number)
+      (:name "min-foc" :type number)))
+    ("texture motifs"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "notedata" :type number)
+      (:name "outdur" :type number)
+      (:name "packing" :type number)))
+    ("texture motifsin"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "notedata" :type number)
+      (:name "outdur" :type number)
+      (:name "packing" :type number)))
+    ("texture simple"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "notedata" :type number)
+      (:name "outdur" :type number)
+      (:name "packing" :type number)
+      (:name "scatter" :type number)))
+    ("texture timed"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "notedata" :type number)
+      (:name "outdur" :type number)
+      (:name "skiptime" :type number)))
+    ("texture tmotifs"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "notedata" :type number)
+      (:name "outdur" :type number)
+      (:name "skip" :type number)))
+    ("texture tmotifsin"
+     :params
+     ((:name "mode" :prompt "Mode" :type integer :default 1)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "notedata" :type number)
+      (:name "sndfirst" :type number)
+      (:name "sndlast" :type number)))
+    ("topantail2"
+     :params
+     ((:name "topantail" :type number)
+      (:name "infile" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "startgate" :type number)
+      (:name "endgate" :type number)
+      (:name "splicelen" :type number :flag "-s" :optional t)
+      (:name "backtrack" :type number :flag "-b" :optional t)))
+    ("ts oscil"
+     :params
+     ((:name "indata" :type number)
+      (:name "outsnd" :type wave-out)
+      (:name "downsample" :type number)
+      (:name "maxdur" :type number :flag "-d" :optional t)
+      (:name "c" :type bool :flag "-c" :optional t)
+      (:name "f" :type bool :flag "-f" :optional t)))
+    ("ts trace"
+     :params
+     ((:name "indata" :type number)
+      (:name "outsnd" :type wave-out)
+      (:name "harmdata" :type number)
+      (:name "tstr" :type number)
+      (:name "frq" :type number)
+      (:name "hrange" :type number)
+      (:name "maxdur" :type number :flag "-d" :optional t)
+      (:name "c" :type bool :flag "-c" :optional t)
+      (:name "f" :type bool :flag "-f" :optional t)))
+    ("tsconvert"
+     :params
+     ((:name "indata" :type number)
+      (:name "outdata" :type number)
+      (:name "min" :type number)
+      (:name "max" :type number)
+      (:name "maxoutdur" :type number :flag "-m" :optional t)
+      (:name "l" :type bool :flag "-l" :optional t)))
+    )
   "Per-command parameter schemas.
 Commands not listed fall back to the free-form prompt.")
+
 
 
 (provide 'cdp8-commands)
