@@ -1309,13 +1309,13 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "datafile" :type number)))
+      (:name "datafile" :prompt "Data file: lofrq hifrq bitflag [amp1 amp2 transpose] lines" :type number :default 1)))
     ("hilite bltr"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "blurring" :type number)
-      (:name "tracing" :type number)))
+      (:name "blurring" :prompt "Windows to time-average over" :type integer :default 5)
+      (:name "tracing" :prompt "Loudest channels to retain per window" :type integer :default 10)))
     ("hilite greq"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1327,16 +1327,16 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "gain" :type number)))
+      (:name "gain" :prompt "Amplitude gain for newly prominent components" :type number :default 1.0)))
     ("hilite vowels"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "vowelfile" :type number)
-      (:name "halfwidth" :type number)
-      (:name "steepness" :type number)
-      (:name "range" :type number)
-      (:name "threshold" :type number)))
+      (:name "vowelfile" :prompt "File of time/vowel pairs (ee i e ai a ar o or oa u oo xx x)" :type number :default 1)
+      (:name "halfwidth" :prompt "Formant peak half-width (fraction of centre freq, 0.01-10)" :type number :default 0.1)
+      (:name "steepness" :prompt "Formant peak steepness" :type number :default 1.0)
+      (:name "range" :prompt "Frequency range of formant influence" :type number :default 1.0)
+      (:name "threshold" :prompt "Amplitude threshold below which formants suppressed" :type number :default 0.0)))
     ("histconv"
      :params
      ((:name "infile" :type wave-in)
@@ -1551,20 +1551,20 @@
       (:name "bcut" :type number :flag "-b" :optional t)))
     ("pitchinfo convert"
      :params
-     ((:name "pitchfile" :type number)
+     ((:name "pitchfile" :prompt "Binary pitch data file" :type number :default 1)
       (:name "outtextfile" :type wave-out)
-      (:name "I-d" :type number :flag "-d" :optional t)))
+      (:name "I-d" :prompt "Acceptable pitch error for data reduction (semitones, >0)" :type number :default 0.25 :flag "-d" :optional t)))
     ("pitchinfo hear"
      :params
-     ((:name "pitchfile" :type number)
+     ((:name "pitchfile" :prompt "Binary pitch data file" :type number :default 1)
       (:name "outfile" :type wave-out)
-      (:name "gain" :type number :flag "-g" :optional t)))
+      (:name "gain" :prompt "Gain (>0)" :type number :default 1.0 :flag "-g" :optional t)))
     ("pitchinfo info"
      :params
-     ((:name "pitchfile" :type number)))
+     ((:name "pitchfile" :prompt "Binary pitch data file" :type number :default 1)))
     ("pitchinfo zeros"
      :params
-     ((:name "pitchfile" :type number)))
+     ((:name "pitchfile" :prompt "Binary pitch data file" :type number :default 1)))
     ("prefix silence"
      :params
      ((:name "infile" :type wave-in)
@@ -1714,8 +1714,8 @@
       (:name "outfile" :type wave-out)))
     ("repitch analenv"
      :params
-     ((:name "inanalfile" :type number)
-      (:name "outenvfile" :type number)))
+     ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
+      (:name "outenvfile" :prompt "Output envelope file" :type number :default 1)))
     ("repitch approx"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1771,9 +1771,9 @@
       (:name "outfile" :type wave-out)))
     ("repitch pchshift"
      :params
-     ((:name "pitchfile" :type number)
-      (:name "outpitchfile" :type number)
-      (:name "transposition" :type number)))
+     ((:name "pitchfile" :prompt "Binary pitch data file" :type number :default 1)
+      (:name "outpitchfile" :prompt "Output pitch data file" :type number :default 1)
+      (:name "transposition" :prompt "Transposition in semitones" :type number :default 0.0)))
     ("repitch pchtotext"
      :params
      ((:name "infile" :type wave-in)
@@ -1807,9 +1807,9 @@
       (:name "h" :type bool :flag "-h" :optional t)))
     ("repitch synth"
      :params
-     ((:name "binarypitchfile" :type number)
-      (:name "outanalfile" :type number)
-      (:name "harmonics-data" :type number)))
+     ((:name "binarypitchfile" :prompt "Binary pitch data file" :type number :default 1)
+      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "harmonics-data" :prompt "List of harmonic amplitudes (0-1, one per line)" :type number :default 1)))
     ("repitch vibrato"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1821,12 +1821,12 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "vowel-data" :type number)
-      (:name "halfwidth" :type number)
-      (:name "curve" :type number)
-      (:name "pk_range" :type number)
-      (:name "fweight" :type number)
-      (:name "foffset" :type number)))
+      (:name "vowel-data" :prompt "Vowel string or file of time/vowel pairs" :type number :default 1)
+      (:name "halfwidth" :prompt "Formant half-width (fraction of centre freq, 0.01-10)" :type number :default 0.1)
+      (:name "curve" :prompt "Formant peak curve shape" :type number :default 1.0)
+      (:name "pk_range" :prompt "Formant peak range" :type number :default 1.0)
+      (:name "fweight" :prompt "Formant frequency weighting" :type number :default 1.0)
+      (:name "foffset" :prompt "Formant frequency offset (Hz)" :type number :default 0.0)))
     ("reverb"
      :params
      ((:name "infile" :type wave-in)
