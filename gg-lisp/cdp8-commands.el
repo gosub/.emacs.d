@@ -801,6 +801,7 @@
     ("distort cyclecnt"
      :params
      ((:name "infile" :type wave-in)))
+
     ("distort delete"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -812,21 +813,21 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "N" :type number)
-      (:name "i" :type bool :flag "-i" :optional t)))
+      (:name "N" :prompt "Divider (integer 2-16)" :type integer :default 2)
+      (:name "i" :prompt "Inverse (multiply instead)" :type bool :flag "-i" :optional t)))
     ("distort fractal"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "scaling" :type number)
-      (:name "loudness" :type number)
-      (:name "pre_attenuation" :type number :flag "-p" :optional t)))
+      (:name "scaling" :prompt "Scale division (int, 2 to srate/2)" :type integer :default 4)
+      (:name "loudness" :prompt "Loudness of scaled component (rel. 1.0)" :type number :default 1.0)
+      (:name "pre_attenuation" :prompt "Pre-attenuation applied to input" :type number :default 1.0 :flag "-p" :optional t)))
     ("distort harmonic"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "harmonics-file" :type number)
-      (:name "pre_attenuation" :type number :flag "-p" :optional t)))
+      (:name "harmonics-file" :prompt "Breakpoint file: harmonic_no/amplitude pairs" :type number :default 1)
+      (:name "pre_attenuation" :prompt "Pre-attenuation applied to input" :type number :default 1.0 :flag "-p" :optional t)))
     ("distort interact"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -837,75 +838,75 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "multiplier" :type number)
-      (:name "skipcycles" :type number :flag "-s" :optional t)))
+      (:name "multiplier" :prompt "Repeat multiplier (integer)" :type integer :default 2)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)))
     ("distort multiply"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "N" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)))
+      (:name "N" :prompt "Multiplier (integer 2-16)" :type integer :default 2)
+      (:name "s" :prompt "Skip cycles" :type bool :flag "-s" :optional t)))
     ("distort omit"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "A" :type number)
-      (:name "B" :type number)))
+      (:name "A" :prompt "Keep every Ath cycle (must be < B)" :type integer :default 1)
+      (:name "B" :prompt "Group size B (A < B)" :type integer :default 2)))
     ("distort pitch"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "octvary" :type number)
-      (:name "cyclelen" :type number :flag "-c" :optional t)
-      (:name "skipcycles" :type number :flag "-s" :optional t)))
+      (:name "octvary" :prompt "Max transposition in octaves (up or down)" :type number :default 1.0)
+      (:name "cyclelen" :prompt "Max cycles between transposition values (>1)" :type integer :default 4 :flag "-c" :optional t)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)))
     ("distort repeat"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "multiplier" :type number)
-      (:name "cyleccnt" :type number :flag "-c" :optional t)
-      (:name "skipcycles" :type number :flag "-s" :optional t)))
+      (:name "multiplier" :prompt "Repeat multiplier (integer)" :type integer :default 2)
+      (:name "cyleccnt" :prompt "Wavecycles per repeated group" :type integer :default 1 :flag "-c" :optional t)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)))
     ("distort repeat2"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "multiplier" :type number)
-      (:name "cyleccnt" :type number :flag "-c" :optional t)
-      (:name "skipcycles" :type number :flag "-s" :optional t)))
+      (:name "multiplier" :prompt "Repeat multiplier (integer)" :type integer :default 2)
+      (:name "cyleccnt" :prompt "Wavecycles per repeated group" :type integer :default 1 :flag "-c" :optional t)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)))
     ("distort replace"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "cyclecnt" :type number)
-      (:name "skipcycles" :type number :flag "-s" :optional t)))
+      (:name "cyclecnt" :prompt "Cycles in group (strongest replaces others)" :type integer :default 4)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)))
     ("distort reverse"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "cyclecnt" :type number)))
+      (:name "cyclecnt" :prompt "Wavecycles per reversed group (>0)" :type integer :default 4)))
     ("distort shuffle"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "domain-image" :type number)
-      (:name "cylecnt" :type number :flag "-c" :optional t)
-      (:name "skipcycles" :type number :flag "-s" :optional t)))
+      (:name "domain-image" :prompt "Domain-image permutation string e.g. abc-bca" :type number :default 1)
+      (:name "cylecnt" :prompt "Wavecycles per group" :type integer :default 1 :flag "-c" :optional t)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)))
     ("distort telescope"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "cyclecnt" :type number)
-      (:name "skipcycles" :type number :flag "-s" :optional t)
-      (:name "a" :type bool :flag "-a" :optional t)))
+      (:name "cyclecnt" :prompt "Wavecycles in telescoping group" :type integer :default 4)
+      (:name "skipcycles" :prompt "Wavecycles to skip at start" :type integer :default 0 :flag "-s" :optional t)
+      (:name "a" :prompt "Anti-telescope (expand instead)" :type bool :flag "-a" :optional t)))
     ("distortt repeat"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "gpcnt" :type number)
-      (:name "rpt" :type number)
-      (:name "offset" :type number)
-      (:name "dur" :type number)
-      (:name "t" :type bool :flag "-t" :optional t)))
+      (:name "gpcnt" :prompt "Wavesets per repeated group" :type integer :default 1)
+      (:name "rpt" :prompt "Repetitions per group" :type integer :default 2)
+      (:name "offset" :prompt "Time to skip before start (ms)" :type number :default 0.0)
+      (:name "dur" :prompt "Required output duration (s)" :type number :default 1.0)
+      (:name "t" :prompt "Telescope: skip wavesets to match input size" :type bool :flag "-t" :optional t)))
     ("dshift"
      :params
      ((:name "infile" :type wave-in)
