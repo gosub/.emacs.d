@@ -663,44 +663,44 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "blurring" :type number)))
+      (:name "blurring" :prompt "Windows to time-average over" :type integer :default 5)))
     ("blur drunk"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "range" :type number)
-      (:name "starttime" :type number)
-      (:name "duration" :type number)
-      (:name "z" :type bool :flag "-z" :optional t)))
+      (:name "range" :prompt "Max step in windows for drunken walk" :type integer :default 4)
+      (:name "starttime" :prompt "Time to begin walk (s)" :type number :default 0.0)
+      (:name "duration" :prompt "Required output duration (s)" :type number :default 1.0)
+      (:name "z" :prompt "Zero-phase output" :type bool :flag "-z" :optional t)))
     ("blur noise"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "noise" :type number)))
+      (:name "noise" :prompt "Noise level (0=none, 1=saturated)" :type number :default 0.1)))
     ("blur scatter"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "keep" :type number)
-      (:name "blocksize" :type number :flag "-b" :optional t)
-      (:name "r" :type bool :flag "-r" :optional t)
-      (:name "n" :type bool :flag "-n" :optional t)))
+      (:name "keep" :prompt "Spectral blocks to keep per window" :type integer :default 4)
+      (:name "blocksize" :prompt "Frequency range per block (channels)" :type integer :default 1 :flag "-b" :optional t)
+      (:name "r" :prompt "Randomise block count (1 to keep)" :type bool :flag "-r" :optional t)
+      (:name "n" :prompt "Turn off normalisation" :type bool :flag "-n" :optional t)))
     ("blur shuffle"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "domain-image" :type number)
-      (:name "grpsize" :type number)))
+      (:name "domain-image" :prompt "Permutation string e.g. abc-abbabcc" :type number :default 1)
+      (:name "grpsize" :prompt "Windows per group" :type integer :default 4)))
     ("blur suppress"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "N" :type number)))
+      (:name "N" :prompt "Loudest partials to suppress per window" :type integer :default 4)))
     ("blur weave"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "weavfile" :type number)))
+      (:name "weavfile" :prompt "Weave file (list of integer window steps)" :type number :default 1)))
     ("channelx"
      :params
      ((:name "infile" :type wave-in)
