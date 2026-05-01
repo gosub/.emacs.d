@@ -914,32 +914,32 @@
       (:name "N-d" :type integer :default 10 :flag "-d" :optional t)))
     ("envel brktoenv"
      :params
-     ((:name "inbrkfile" :type number)
-      (:name "outenvfile" :type number)
-      (:name "wsize" :type number)))
+     ((:name "inbrkfile" :prompt "Input breakpoint file" :type number :default 1)
+      (:name "outenvfile" :prompt "Output envelope file" :type number :default 1)
+      (:name "wsize" :prompt "Envelope window size (ms, 5-filelen)" :type number :default 50.0)))
     ("envel dbtoenv"
      :params
-     ((:name "db_brkfile" :type number)
-      (:name "outenvfile" :type number)
-      (:name "wsize" :type number)))
+     ((:name "db_brkfile" :prompt "Input breakpoint file (dB values)" :type number :default 1)
+      (:name "outenvfile" :prompt "Output envelope file" :type number :default 1)
+      (:name "wsize" :prompt "Envelope window size (ms)" :type number :default 50.0)))
     ("envel dbtogain"
      :params
-     ((:name "db_brkfile" :type number)
-      (:name "outbrkfile" :type number)))
+     ((:name "db_brkfile" :prompt "Input breakpoint file (dB values)" :type number :default 1)
+      (:name "outbrkfile" :prompt "Output breakpoint file (gain values)" :type number :default 1)))
     ("envel envtobrk"
      :params
-     ((:name "inenvfile" :type number)
-      (:name "outbrkfile" :type number)
-      (:name "datareduce" :type number :flag "-d" :optional t)))
+     ((:name "inenvfile" :prompt "Input binary envelope file" :type number :default 1)
+      (:name "outbrkfile" :prompt "Output breakpoint file" :type number :default 1)
+      (:name "datareduce" :prompt "Data reduction (0-1, less=more points)" :type number :default 0.5 :flag "-d" :optional t)))
     ("envel envtodb"
      :params
-     ((:name "inenvfile" :type number)
-      (:name "outbrkfile" :type number)
-      (:name "datareduce" :type number :flag "-d" :optional t)))
+     ((:name "inenvfile" :prompt "Input binary envelope file" :type number :default 1)
+      (:name "outbrkfile" :prompt "Output breakpoint file (dB values)" :type number :default 1)
+      (:name "datareduce" :prompt "Data reduction (0-1, less=more points)" :type number :default 0.5 :flag "-d" :optional t)))
     ("envel gaintodb"
      :params
-     ((:name "brkfile" :type number)
-      (:name "out_db_brkfile" :type number)))
+     ((:name "brkfile" :prompt "Input breakpoint file (gain values)" :type number :default 1)
+      (:name "out_db_brkfile" :prompt "Output breakpoint file (dB values)" :type number :default 1)))
     ("envel pluck"
      :params
      ((:name "infile" :type wave-in)
@@ -950,23 +950,22 @@
       (:name "decayrate" :type integer :default 48 :flag "-d" :optional t)))
     ("envel scaled"
      :params
-     ((:name "d" :type number)
-      (:name "input_sndfile" :type wave-in)
-      (:name "imposed-brkfile" :type wave-in)
+     ((:name "input_sndfile" :type wave-in)
+      (:name "imposed-brkfile" :prompt "Envelope breakpoint file (time-scaled to sound)" :type number :default 1)
       (:name "outsndfile" :type wave-out)))
     ("envel swell"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "peaktime" :type number)
-      (:name "peaktype" :type number)))
+      (:name "peaktime" :prompt "Time of peak amplitude (s)" :type number :default 0.5)
+      (:name "peaktype" :prompt "Curve type: 0=linear 1=exponential" :type integer :default 1)))
     ("envel timegrid"
      :params
      ((:name "input_sndfile" :type wave-in)
-      (:name "generic_outsndfile_name" :type number)
-      (:name "gridcnt" :type number)
-      (:name "gridwidth" :type number)
-      (:name "splicelen" :type number)))
+      (:name "generic_outsndfile_name" :prompt "Output filename base (numbered files generated)" :type number :default 1)
+      (:name "gridcnt" :prompt "Number of grids (output files)" :type integer :default 4)
+      (:name "gridwidth" :prompt "Grid window duration (s)" :type number :default 0.1)
+      (:name "splicelen" :prompt "Splice length (ms)" :type number :default 10.0)))
     ("envel tremolo"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
