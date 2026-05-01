@@ -633,7 +633,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "x" :type bool :flag "-x" :optional t)))
+      (:name "x" :prompt "Write WAVE_EX (Quad) format output" :type bool :flag "-x" :optional t)))
     ("abfpan"
      :params
      ((:name "infile" :type wave-in)
@@ -655,7 +655,7 @@
        :flag "-p" :optional t)))
     ("analjoin"
      :params
-     ((:name "join" :type number)
+     ((:name "join" :prompt "Join point (window number)" :type integer :default 1)
       (:name "infile1" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)))
@@ -704,14 +704,14 @@
     ("channelx"
      :params
      ((:name "infile" :type wave-in)
-      (:name "chan_no" :type number)
-      (:name "BASENAME" :type number :flag "-o" :optional t)))
+      (:name "chan_no" :prompt "Channel number to extract" :type integer :default 1)
+      (:name "BASENAME" :prompt "Output base name (default=infilename_cN)" :type number :default 1 :flag "-o" :optional t)))
     ("clicknew"
      :params
-     ((:name "clicks" :type number)
+     ((:name "clicks" :prompt "Number of clicks" :type integer :default 4)
       (:name "outfile" :type wave-out)
-      (:name "clicktimes_datafile" :type number)
-      (:name "srate" :type number)))
+      (:name "clicktimes_datafile" :prompt "Text file of click times (s)" :type number :default 1)
+      (:name "srate" :prompt "Sample rate (44100/48000/etc)" :type integer :default 44100)))
     ("combine cross"
      :params
      ((:name "infile" :type wave-in)
@@ -765,12 +765,12 @@
       (:name "crossover" :prompt "Amount of 2nd spectrum added (0-1)" :type number :default 1.0 :flag "-c" :optional t)))
     ("convert_to_midi"
      :params
-     ((:name "frqbrkpnt" :type number)
-      (:name "peakvals" :type number)
-      (:name "datalen" :type number)
-      (:name "staccato" :type number)
+     ((:name "frqbrkpnt" :prompt "File of time/frq pairs for note starts/ends" :type number :default 1)
+      (:name "peakvals" :prompt "File of note levels (0-1)" :type number :default 1)
+      (:name "datalen" :prompt "Number of peaks" :type integer :default 1)
+      (:name "staccato" :prompt "Staccato factor" :type number :default 1.0)
       (:name "outfilename" :type wave-out)
-      (:name "system" :type number)))
+      (:name "system" :prompt "MIDI system type" :type integer :default 1)))
     ("copysfx"
      :params
      ((:name "infile" :type wave-in)
@@ -781,16 +781,16 @@
       (:name "N-t" :type number :flag "-t" :optional t)))
     ("cubicspline"
      :params
-     ((:name "datafile" :type number)
-      (:name "outdatafile" :type number)
-      (:name "pointcnt" :type number)
-      (:name "srate" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)))
+     ((:name "datafile" :prompt "Input text file of frq/amp pairs" :type number :default 1)
+      (:name "outdatafile" :prompt "Output smoothed data file" :type number :default 1)
+      (:name "pointcnt" :prompt "Analysis points per window" :type integer :default 1024)
+      (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)
+      (:name "s" :prompt "Smooth by spectral density" :type bool :flag "-s" :optional t)))
     ("distmore double"
      :params
      ((:name "infil" :type wave-in)
       (:name "outfil" :type wave-out)
-      (:name "mult" :type number)))
+      (:name "mult" :prompt "Octave step up (1-4)" :type integer :default 1)))
     ("distort average"
      :params
      ((:name "infile" :type wave-in)
@@ -978,8 +978,8 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "starttime" :type number)
-      (:name "endtime" :type number)))
+      (:name "starttime" :prompt "Decay start time (s)" :type number :default 0.0)
+      (:name "endtime" :prompt "Decay end time (s, or beyond file end)" :type number :default 1.0)))
     ("extend baktobak"
      :params
      ((:name "infile" :type wave-in)
@@ -1153,23 +1153,24 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outsndfile" :type wave-out)
-      (:name "v" :type bool :flag "-v" :optional t)))
+      (:name "v" :prompt "Display formant-band parameter info" :type bool :flag "-v" :optional t)))
     ("fractal spectrum"
      :params
-     ((:name "inf" :type number)
-      (:name "outf" :type number)
-      (:name "shape" :type number)
-      (:name "maxfrac" :type number :flag "-m" :optional t)
-      (:name "str" :type number :flag "-t" :optional t)
-      (:name "warp" :type number :flag "-i" :optional t)
-      (:name "s" :type bool :flag "-s" :optional t)
-      (:name "n" :type bool :flag "-n" :optional t)))
+     ((:name "inf" :prompt "Input analysis file" :type number :default 1)
+      (:name "outf" :prompt "Output analysis file" :type number :default 1)
+      (:name "shape" :prompt "Fractal shape file (transposition over time)" :type number :default 1)
+      (:name "maxfrac" :prompt "Max fractal depth" :type number :default 1.0 :flag "-m" :optional t)
+      (:name "str" :prompt "Spectral stretch" :type number :default 1.0 :flag "-t" :optional t)
+      (:name "warp" :prompt "Spectral warp" :type number :default 1.0 :flag "-i" :optional t)
+      (:name "s" :prompt "Sum all fractal levels" :type bool :flag "-s" :optional t)
+      (:name "n" :prompt "Normalise output" :type bool :flag "-n" :optional t)))
     ("getcol"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "colno" :type number)
-      (:name "e" :type bool :flag "-e" :optional t)))
+      (:name "colno" :prompt "Column number to extract" :type number :default 1)
+      (:name "skiplines" :prompt "Lines to skip at start of file" :type integer :default 0 :optional t)
+      (:name "e" :prompt "Ignore CSound 'e'/'s' lines and ';' comments" :type bool :flag "-e" :optional t)))
     ("grain align"
      :params
      ((:name "infile1" :type wave-in)
@@ -1471,7 +1472,7 @@
      ((:name "infile" :type wave-in)
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "duration" :type number)))
+      (:name "duration" :prompt "Output duration (s)" :type number :default 2.0)))
     ("morph morph"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1504,8 +1505,8 @@
     ("newscales"
      :params
      ((:name "outfile" :type wave-out)
-      (:name "datafile" :type number)
-      (:name "spectrumfile" :type number)))
+      (:name "datafile" :prompt "Text file of frq/amp pairs defining note events" :type number :default 1)
+      (:name "spectrumfile" :prompt "Text file of harmonic-no/amplitude pairs" :type number :default 1)))
     ("nmix"
      :params
      ((:name "infile1" :type wave-in)
@@ -1516,14 +1517,15 @@
       (:name "OFFSET" :type number :flag "-o" :optional t)))
     ("notchinvert"
      :params
-     ((:name "datafile" :type number)
-      (:name "outdatafile" :type number)
-      (:name "srate" :type number)))
+     ((:name "datafile" :prompt "Input frq/amp pairs" :type number :default 1)
+      (:name "outdatafile" :prompt "Output frq/amp pairs (notches inverted)" :type number :default 1)
+      (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)))
     ("peakiso"
      :params
-     ((:name "datafile" :type number)
-      (:name "outdatafile" :type number)
-      (:name "srate" :type number)))
+     ((:name "datafile" :prompt "Text file of frq/amp pairs" :type number :default 1)
+      (:name "outdatafile" :prompt "Output file of isolated peaks (frq/amp)" :type number :default 1)
+      (:name "srate" :prompt "Sample rate" :type number :default 44100)
+      (:name "minnotch" :prompt "Min notch depth qualifying as peak-separator (0-1)" :type number :default 0.1 :optional t)))
     ("pitch altharms"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1569,7 +1571,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "dur" :type number)))
+      (:name "dur" :prompt "Duration of silence to add (secs)" :type number :default 1.0)))
     ("psow chop"
      :params
      ((:name "infile" :type wave-in)
@@ -1688,10 +1690,10 @@
       (:name "nudge" :prompt "Move grain position by N zero-crossings" :type integer :default 0)))
     ("ptobrk"
      :params
-     ((:name "withzeros" :type number)
-      (:name "binary-pitchfile" :type number)
+     ((:name "withzeros" :prompt "Include unpitched markers (0=no, 1=yes)" :type integer :default 0)
+      (:name "binary-pitchfile" :prompt "Binary pitch data file" :type number :default 1)
       (:name "outtextfile" :type wave-out)
-      (:name "min-pitch-dur" :type number)))
+      (:name "min-pitch-dur" :prompt "Min stretch of pitchdata to include (ms)" :type number :default 10.0)))
     ("pvoc anal"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1997,11 +1999,11 @@
        :flag "-r" :optional t)))
     ("smooth"
      :params
-     ((:name "datafile" :type number)
-      (:name "outdatafile" :type number)
-      (:name "pointcnt" :type number)
-      (:name "srate" :type number)
-      (:name "s" :type bool :flag "-s" :optional t)))
+     ((:name "datafile" :prompt "Input text file of frq/amp pairs" :type number :default 1)
+      (:name "outdatafile" :prompt "Output smoothed data file" :type number :default 1)
+      (:name "pointcnt" :prompt "Analysis points per window" :type integer :default 1024)
+      (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)
+      (:name "s" :prompt "Smooth by spectral density" :type bool :flag "-s" :optional t)))
     ("spec bare"
      :params
      ((:name "infile" :type wave-in)
@@ -2451,7 +2453,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "channel" :type number)))
+      (:name "channel" :prompt "Channel number to invert" :type integer :default 1)))
     ("clip clip"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2462,7 +2464,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "constriction" :type number)))
+      (:name "constriction" :prompt "Percentage deletion of zero-level areas (0-100+)" :type number :default 50.0)))
     ("crystal rotate"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2821,7 +2823,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "outchans" :type number)))
+      (:name "outchans" :prompt "Number of output channels" :type integer :default 4)))
     ("newdelay newdelay"
      :params
      ((:name "infile" :type wave-in)
@@ -2863,7 +2865,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "pair" :type number)))
+      (:name "pair" :prompt "Channel numbers of pair to extract e.g. 1 2" :type integer :default 1)))
     ("partition partition"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2958,8 +2960,8 @@
     ("repair repair"
      :params
      ((:name "infiles" :type wave-in)
-      (:name "generic-outfilename" :type number)
-      (:name "channels" :type number)))
+      (:name "generic-outfilename" :prompt "Generic output filename (base name)" :type number :default 1)
+      (:name "channels" :prompt "Number of channels in output" :type integer :default 2)))
     ("repitch combine"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
