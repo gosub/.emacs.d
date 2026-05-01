@@ -1214,13 +1214,13 @@
       (:name "x" :type bool :flag "-x" :optional t)))
     ("grain noise_extend"
      :params
-     ((:name "inf" :type number)
-      (:name "outf" :type number)
-      (:name "duration" :type number)
-      (:name "minfrq" :type number)
-      (:name "mindur" :type number)
-      (:name "maxdur" :type number)
-      (:name "x" :type bool :flag "-x" :optional t)))
+     ((:name "inf" :prompt "Input sound file" :type number :default 1)
+      (:name "outf" :prompt "Output sound file" :type number :default 1)
+      (:name "duration" :prompt "Duration of noise portion in output (s)" :type number :default 1.0)
+      (:name "minfrq" :prompt "Lowest frequency accepted as noise (Hz, try 6000)" :type number :default 6000.0)
+      (:name "mindur" :prompt "Minimum signal duration acceptable as noise source (ms)" :type number :default 10.0)
+      (:name "maxdur" :prompt "Maximum signal duration acceptable as noise source (s)" :type number :default 0.1)
+      (:name "x" :prompt "Keep only extended noise (discard rest)" :type bool :flag "-x" :optional t)))
     ("grain omit"
      :params
      ((:name "inf" :type number)
@@ -2120,11 +2120,11 @@
       (:name "interp" :type number)))
     ("spectrum fixed"
      :params
-     ((:name "outanalfile" :type number)
-      (:name "datafile" :type number)
-      (:name "pointcnt" :type number)
-      (:name "srate" :type number)
-      (:name "dur" :type number)
+     ((:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "datafile" :prompt "Text file of frq/amp pairs (peaks +, troughs -, zero=envelope)" :type number :default 1)
+      (:name "pointcnt" :prompt "Analysis points per window" :type integer :default 1024)
+      (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)
+      (:name "dur" :prompt "Duration (s)" :type number :default 1.0)
       (:name "H-h" :type number :flag "-h" :optional t)
       (:name "B-b" :type number :flag "-b" :optional t)
       (:name "F-f" :type number :flag "-f" :optional t)
@@ -2137,10 +2137,10 @@
       (:name "d" :type bool :flag "-d" :optional t)))
     ("spectrum format"
      :params
-     ((:name "outdatafile" :type number)
-      (:name "indatafile" :type number)
-      (:name "pointcnt" :type number)
-      (:name "srate" :type number)))
+     ((:name "outdatafile" :prompt "Output data file (frq/amp peaks/troughs/envelope)" :type number :default 1)
+      (:name "indatafile" :prompt "Input text data file (frq/amp pairs, frq increasing)" :type number :default 1)
+      (:name "pointcnt" :prompt "Analysis points per window" :type integer :default 1024)
+      (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)))
     ("spectstr"
      :params
      ((:name "stretch" :type number)
@@ -2290,20 +2290,20 @@
     ("synth silence"
      :params
      ((:name "outfile" :type wave-out)
-      (:name "sr" :type number)
-      (:name "chans" :type number)
-      (:name "dur" :type number)))
+      (:name "sr" :prompt "Sample rate (48000/44100/32000/24000/22050/16000)" :type integer :default 44100)
+      (:name "chans" :prompt "Channels (1/2/4)" :type integer :default 1)
+      (:name "dur" :prompt "Duration (s)" :type number :default 1.0)))
     ("synth spectra"
      :params
      ((:name "outfilename" :type wave-out)
-      (:name "dur" :type number)
-      (:name "frq" :type number)
-      (:name "spread" :type number)
-      (:name "max-foc" :type number)
-      (:name "min-foc" :type number)
-      (:name "timevar" :type number)
-      (:name "srate" :type number)
-      (:name "p" :type bool :flag "-p" :optional t)))
+      (:name "dur" :prompt "Duration (s)" :type number :default 2.0)
+      (:name "frq" :prompt "Centre frequency (Hz)" :type number :default 440.0)
+      (:name "spread" :prompt "Band width (Hz or transposition ratio)" :type number :default 100.0)
+      (:name "max-foc" :prompt "Max focus/concentration (0-1)" :type number :default 1.0)
+      (:name "min-foc" :prompt "Min focus (0-1)" :type number :default 0.0)
+      (:name "timevar" :prompt "Time variation degree (0-1)" :type number :default 0.5)
+      (:name "srate" :prompt "Sample rate" :type integer :default 44100)
+      (:name "p" :prompt "Stereo output" :type bool :flag "-p" :optional t)))
     ("texture motifs"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2364,23 +2364,23 @@
       (:name "backtrack" :type number :flag "-b" :optional t)))
     ("ts oscil"
      :params
-     ((:name "indata" :type number)
+     ((:name "indata" :prompt "Text file of numerical values (time-series data)" :type number :default 1)
       (:name "outsnd" :type wave-out)
-      (:name "downsample" :type number)
-      (:name "maxdur" :type number :flag "-d" :optional t)
-      (:name "c" :type bool :flag "-c" :optional t)
-      (:name "f" :type bool :flag "-f" :optional t)))
+      (:name "downsample" :prompt "Downward transposition in octaves (0-16)" :type integer :default 4)
+      (:name "maxdur" :prompt "Max output duration (s, 1-600)" :type number :default 10.0 :flag "-d" :optional t)
+      (:name "c" :prompt "Cubic spline interpolation (default linear)" :type bool :flag "-c" :optional t)
+      (:name "f" :prompt "Force duration to maxdur by looping input" :type bool :flag "-f" :optional t)))
     ("ts trace"
      :params
-     ((:name "indata" :type number)
+     ((:name "indata" :prompt "Text file of numerical values (time-series data)" :type number :default 1)
       (:name "outsnd" :type wave-out)
-      (:name "harmdata" :type number)
-      (:name "tstr" :type number)
-      (:name "frq" :type number)
-      (:name "hrange" :type number)
-      (:name "maxdur" :type number :flag "-d" :optional t)
-      (:name "c" :type bool :flag "-c" :optional t)
-      (:name "f" :type bool :flag "-f" :optional t)))
+      (:name "harmdata" :prompt "Text file: harmonic-number/amplitude pairs (or 0 for sine)" :type number :default 1)
+      (:name "tstr" :prompt "Time stretch (1-10000)" :type number :default 100.0)
+      (:name "frq" :prompt "Fundamental frequency (Hz)" :type number :default 440.0)
+      (:name "hrange" :prompt "Harmonic range" :type number :default 8.0)
+      (:name "maxdur" :prompt "Max output duration (s, 1-600)" :type number :default 10.0 :flag "-d" :optional t)
+      (:name "c" :prompt "Cubic spline interpolation (default linear)" :type bool :flag "-c" :optional t)
+      (:name "f" :prompt "Force duration to maxdur by looping input" :type bool :flag "-f" :optional t)))
     ("tsconvert"
      :params
      ((:name "indata" :type number)
