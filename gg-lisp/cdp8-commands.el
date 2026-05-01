@@ -2175,15 +2175,15 @@
       (:name "depth" :type number :flag "-d" :optional t)))
     ("submix addtomix"
      :params
-     ((:name "mixfile" :type number)
-      (:name "sndfile1" :type number)
+     ((:name "mixfile" :prompt "Existing mix file" :type number :default 1)
+      (:name "sndfile1" :prompt "Sound file to add at max level" :type number :default 1)
       (:name "outfile" :type wave-out)))
     ("submix atstep"
      :params
      ((:name "infile1" :type wave-in)
       (:name "infile2" :type wave-in)
-      (:name "outmixfile" :type number)
-      (:name "step" :type number)))
+      (:name "outmixfile" :prompt "Output mix file" :type number :default 1)
+      (:name "step" :prompt "Time between each file entry (s)" :type number :default 1.0)))
     ("submix attenuate"
      :params
      ((:name "inmixfile" :type number)
@@ -2193,12 +2193,12 @@
       (:name "endline" :type number :flag "-e" :optional t)))
     ("submix balance"
      :params
-     ((:name "sndfile1" :type number)
-      (:name "sndfile2" :type number)
+     ((:name "sndfile1" :prompt "First sound file" :type number :default 1)
+      (:name "sndfile2" :prompt "Second sound file" :type number :default 1)
       (:name "outfile" :type wave-out)
-      (:name "balance" :type number :flag "-k" :optional t)
-      (:name "start" :type number :flag "-b" :optional t)
-      (:name "end" :type number :flag "-e" :optional t)))
+      (:name "balance" :prompt "Relative level of file1 (0-1)" :type number :default 0.5 :flag "-k" :optional t)
+      (:name "start" :prompt "Start time (s)" :type number :default 0.0 :flag "-b" :optional t)
+      (:name "end" :prompt "End time (s)" :type number :default 0.0 :flag "-e" :optional t)))
     ("submix dummy"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2207,62 +2207,62 @@
       (:name "mixfile" :type number)))
     ("submix faders"
      :params
-     ((:name "inf1" :type number)
-      (:name "inf2" :type number)
-      (:name "outf" :type number)
-      (:name "balance-data" :type number)
-      (:name "envelope-data" :type number)))
+     ((:name "inf1" :prompt "First input sound file" :type number :default 1)
+      (:name "inf2" :prompt "Second input sound file" :type number :default 1)
+      (:name "outf" :prompt "Output sound file" :type number :default 1)
+      (:name "balance-data" :prompt "Balance data file (time + relative levels)" :type number :default 1)
+      (:name "envelope-data" :prompt "Envelope data file" :type number :default 1)))
     ("submix inbetween2"
      :params
      ((:name "infile1" :type wave-in)
       (:name "infile2" :type wave-in)
-      (:name "outname" :type number)
-      (:name "count" :type number)
-      (:name "cutoff" :type number)))
+      (:name "outname" :prompt "Generic output name base (outname001 etc)" :type number :default 1)
+      (:name "count" :prompt "Number of interpolated output files" :type integer :default 4)
+      (:name "cutoff" :prompt "Frequency cutoff for cycle detection (Hz)" :type number :default 1000.0)))
     ("submix interleave"
      :params
-     ((:name "sndfile1" :type number)
-      (:name "sndfile2" :type number)
+     ((:name "sndfile1" :prompt "First mono input file" :type number :default 1)
+      (:name "sndfile2" :prompt "Second mono input file" :type number :default 1)
       (:name "outfile" :type wave-out)))
     ("submix merge"
      :params
-     ((:name "sndfile1" :type number)
-      (:name "sndfile2" :type number)
+     ((:name "sndfile1" :prompt "First sound file" :type number :default 1)
+      (:name "sndfile2" :prompt "Second sound file" :type number :default 1)
       (:name "outfile" :type wave-out)
-      (:name "stagger" :type number :flag "-s" :optional t)
-      (:name "skip" :type number :flag "-j" :optional t)
-      (:name "skew" :type number :flag "-k" :optional t)
-      (:name "start" :type number :flag "-b" :optional t)
-      (:name "end" :type number :flag "-e" :optional t)))
+      (:name "stagger" :prompt "Stagger: delay before 2nd file enters (s)" :type number :default 0.0 :flag "-s" :optional t)
+      (:name "skip" :prompt "Skip into 2nd file before mixing (s)" :type number :default 0.0 :flag "-j" :optional t)
+      (:name "skew" :prompt "Level skew: 1st file gain over 2nd" :type number :default 1.0 :flag "-k" :optional t)
+      (:name "start" :prompt "Start mix at time (s)" :type number :default 0.0 :flag "-b" :optional t)
+      (:name "end" :prompt "End mix at time (s)" :type number :default 0.0 :flag "-e" :optional t)))
     ("submix mergemany"
      :params
-     ((:name "sndfile1" :type number)
-      (:name "sndfile2" :type number)
+     ((:name "sndfile1" :prompt "First sound file" :type number :default 1)
+      (:name "sndfile2" :prompt "Second sound file" :type number :default 1)
       (:name "outfile" :type wave-out)))
     ("submix mix"
      :params
-     ((:name "mixfile" :type number)
+     ((:name "mixfile" :prompt "Mix data file" :type number :default 1)
       (:name "outsndfile" :type wave-out)
-      (:name "START" :type number :flag "-s" :optional t)
-      (:name "END" :type number :flag "-e" :optional t)
-      (:name "ATTENUATION" :type number :flag "-g" :optional t)
-      (:name "a" :type bool :flag "-a" :optional t)))
+      (:name "START" :prompt "Start time in mix (s)" :type number :default 0.0 :flag "-s" :optional t)
+      (:name "END" :prompt "End time in mix (s)" :type number :default 0.0 :flag "-e" :optional t)
+      (:name "ATTENUATION" :prompt "Overall gain" :type number :default 1.0 :flag "-g" :optional t)
+      (:name "a" :prompt "Alternative mix mode" :type bool :flag "-a" :optional t)))
     ("submix model"
      :params
-     ((:name "mixfile" :type number)
-      (:name "sndfile1" :type number)
+     ((:name "mixfile" :prompt "Existing mix file to use as template" :type number :default 1)
+      (:name "sndfile1" :prompt "First replacement sound file" :type number :default 1)
       (:name "outfile" :type wave-out)))
     ("submix ongrid"
      :params
      ((:name "infil1" :type wave-in)
       (:name "infil2" :type wave-in)
-      (:name "outmixfile" :type number)
-      (:name "gridfile" :type number)))
+      (:name "outmixfile" :prompt "Output mix file" :type number :default 1)
+      (:name "gridfile" :prompt "Grid file (list of entry times)" :type number :default 1)))
     ("submix pan"
      :params
-     ((:name "inmixfile" :type number)
-      (:name "outmixfile" :type number)
-      (:name "pan" :type number)))
+     ((:name "inmixfile" :prompt "Input mix file" :type number :default 1)
+      (:name "outmixfile" :prompt "Output mix file" :type number :default 1)
+      (:name "pan" :prompt "Pan position (0=left, 0.5=centre, 1=right)" :type number :default 0.5)))
     ("submix sync"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2270,13 +2270,13 @@
       (:name "outmixfile" :type number)))
     ("submix syncattack"
      :params
-     ((:name "intextfile" :type number)
-      (:name "outmixfile" :type number)
-      (:name "div" :type number :flag "-w" :optional t)
-      (:name "p" :type bool :flag "-p" :optional t)))
+     ((:name "intextfile" :prompt "Text file (list of sndfiles or existing mixfile)" :type number :default 1)
+      (:name "outmixfile" :prompt "Output mix file" :type number :default 1)
+      (:name "div" :prompt "Window shortening factor (2/4/8/16/32)" :type integer :default 2 :flag "-w" :optional t)
+      (:name "p" :prompt "Preserve original timing" :type bool :flag "-p" :optional t)))
     ("submix test"
      :params
-     ((:name "mixfile" :type number)))
+     ((:name "mixfile" :prompt "Mix file to validate" :type number :default 1)))
     ("suppress"
      :params
      ((:name "partials" :type number)
