@@ -623,6 +623,8 @@
        :flag "-l" :optional t)
       (:name "minhole" :prompt "Min hole (s)" :type number :default 0.032
        :flag "-h" :optional t)
+      (:name "winsize" :prompt "Tracking window (ms, 0=off)" :type number :default 0.0
+       :flag "-t" :optional t)
       (:name "ignore-last" :prompt "Ignore last grain" :type bool :default nil
        :flag "-x" :optional t)))
 
@@ -648,7 +650,9 @@
       (:name "startpos" :type number)
       (:name "endpos" :type number)
       (:name "GAIN" :type number :flag "-g" :optional t)
-      (:name "w" :type bool :flag "-w" :optional t)))
+      (:name "w" :type bool :flag "-w" :optional t)
+      (:name "p" :prompt "9-channel periphonic (-p)" :type bool
+       :flag "-p" :optional t)))
     ("analjoin"
      :params
      ((:name "join" :type number)
@@ -1173,7 +1177,12 @@
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)
       (:name "offset" :type number)
-      (:name "gate2" :type integer :default 1)))
+      (:name "gate2" :type integer :default 1)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
     ("grain assess"
      :params
      ((:name "infile" :type wave-in)))
@@ -1229,7 +1238,12 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "transpmultfile" :type number)))
+      (:name "transpmultfile" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
     ("grain reorder"
      :params
      ((:name "infil" :type wave-in)
@@ -1245,24 +1259,44 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "transpfile" :type number)))
+      (:name "transpfile" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
     ("grain reposition"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
       (:name "timefile" :type number)
-      (:name "offset" :type number)))
+      (:name "offset" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
     ("grain rerhythm"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "multfile" :type number)))
+      (:name "multfile" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
     ("grain timewarp"
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "timestretch-ratio" :type number)))
+      (:name "timestretch-ratio" :type number)
+      (:name "len" :type number :flag "-b" :optional t)
+      (:name "gate" :type integer :default 1 :flag "-l" :optional t)
+      (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
+      (:name "winsize" :type number :flag "-t" :optional t)
+      (:name "x" :type bool :flag "-x" :optional t)))
     ("grainex"
      :params
      ((:name "extend" :type number)
@@ -1917,7 +1951,13 @@
       (:name "cuttimes" :type number)))
     ("sfprops"
      :params
-     ((:name "infile" :type wave-in)))
+     ((:name "infile" :type wave-in)
+      (:name "c" :prompt "Print channel count (-c)" :type bool
+       :flag "-c" :optional t)
+      (:name "d" :prompt "Print duration (-d)" :type bool
+       :flag "-d" :optional t)
+      (:name "r" :prompt "Print sample rate (-r)" :type bool
+       :flag "-r" :optional t)))
     ("smooth"
      :params
      ((:name "datafile" :type number)
@@ -2298,12 +2338,23 @@
       (:name "outdata" :type number)
       (:name "min" :type number)
       (:name "max" :type number)
+      (:name "minstep" :prompt "Compact: min step (-c)" :type number
+       :flag "-c" :optional t)
+      (:name "dur" :prompt "Brkpnt total duration (-d)" :type number
+       :flag "-d" :optional t)
+      (:name "times" :prompt "Brkpnt times count (-f)" :type number
+       :flag "-f" :optional t)
       (:name "maxoutdur" :type number :flag "-m" :optional t)
+      (:name "r" :prompt "Round to integers (-r)" :type bool
+       :flag "-r" :optional t)
+      (:name "q" :prompt "Quarter-tone quantise (-q)" :type bool
+       :flag "-q" :optional t)
+      (:name "Q" :prompt "Semitone quantise (-Q)" :type bool
+       :flag "-Q" :optional t)
       (:name "l" :type bool :flag "-l" :optional t)))
     )
   "Per-command parameter schemas.
 Commands not listed fall back to the free-form prompt.")
-
 
 
 (provide 'cdp8-commands)
