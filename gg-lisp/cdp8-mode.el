@@ -179,12 +179,13 @@
         (and val  (symbol-value val))
         (plist-get param :default))))
 
-(defun cdp8--prompt-one (param)
-  "Prompt user for PARAM; return the value."
+(defun cdp8--prompt-one (param &optional override)
+  "Prompt user for PARAM; return the value.
+OVERRIDE, when non-nil, is used instead of the schema/last-used default."
   (let* ((prompt  (or (plist-get param :prompt) (plist-get param :name)))
          (type    (plist-get param :type))
          (choices (plist-get param :choices))
-         (def     (cdp8--param-default param)))
+         (def     (or override (cdp8--param-default param))))
     (pcase type
       ('bool t)
       ('choice
@@ -232,27 +233,30 @@
      (t
       (format "%s" value)))))
 
-(defun cdp8--prompt-params (spec input-wave out-wave)
+(defun cdp8--prompt-params (spec input-wave out-wave &optional current)
   "Drive sequential prompts using the schema for SPEC; return assembled command.
-INPUT-WAVE is the input wave name or nil; OUT-WAVE is the output wave name."
+INPUT-WAVE is the input wave name or nil; OUT-WAVE is the output wave name.
+CURRENT is an alist of (name . value) used as defaults when re-editing."
   (let* ((schema (cdp8--schema-for spec))
          (tokens (list spec)))
     (dolist (param schema)
-      (let ((type (plist-get param :type))
-            (name (plist-get param :name)))
+      (let* ((type     (plist-get param :type))
+             (name     (plist-get param :name))
+             (override (cdr (assoc name current))))
         (pcase type
           ('wave-in  (when input-wave (push input-wave tokens)))
           ('wave-out (push out-wave tokens))
           (_
            (if (plist-get param :optional)
                (when (y-or-n-p
-                      (format "Set %s? "
-                              (or (plist-get param :prompt) name)))
-                 (let ((val (cdp8--prompt-one param)))
+                      (format "Set %s%s? "
+                              (or (plist-get param :prompt) name)
+                              (if override " (currently set)" "")))
+                 (let ((val (cdp8--prompt-one param override)))
                    (cdp8--remember param val)
                    (let ((tok (cdp8--format-token param val)))
                      (when tok (push tok tokens)))))
-             (let ((val (cdp8--prompt-one param)))
+             (let ((val (cdp8--prompt-one param override)))
                (cdp8--remember param val)
                (push (cdp8--format-token param val) tokens)))))))
     (mapconcat #'identity (nreverse tokens) " ")))
@@ -271,6 +275,54 @@ INPUT-WAVE is the input wave name or nil; OUT-WAVE is the output wave name."
     (setq cdp8--nodes (append cdp8--nodes (list node)))
     (cdp8--save)
     (cdp8--refresh)))
+
+(defun cdp8--detect-spec (cmd)
+  "Return the schema spec at the start of CMD, or nil if none matches."
+  (let ((tokens (split-string cmd)))
+    (or (and (>= (length tokens) 2)
+             (let ((s (concat (nth 0 tokens) " " (nth 1 tokens))))
+               (when (cdp8--schema-for s) s)))
+        (and tokens
+             (let ((s (car tokens)))
+               (when (cdp8--schema-for s) s))))))
+
+(defun cdp8--parse-cmd-values (spec cmd)
+  "Parse CMD against SPEC's schema; return alist of (param-name . value)."
+  (let* ((all     (split-string cmd))
+         (toks    (nthcdr (length (split-string spec)) all))
+         (schema  (cdp8--schema-for spec))
+         result)
+    (dolist (param schema)
+      (let ((type (plist-get param :type))
+            (flag (plist-get param :flag))
+            (name (plist-get param :name)))
+        (cond
+         ((memq type '(wave-in wave-out))
+          (when (and toks (string-suffix-p ".wav" (car toks)))
+            (setq toks (cdr toks))))
+         (flag
+          (let ((m (cl-find-if (lambda (tok) (string-prefix-p flag tok)) toks)))
+            (when m
+              (setq toks (delete m toks))
+              (let ((val-str (substring m (length flag))))
+                (push (cons name
+                            (cond
+                             ((eq type 'bool) t)
+                             ((string-empty-p val-str) t)
+                             ((eq type 'integer) (truncate (string-to-number val-str)))
+                             (t (string-to-number val-str))))
+                      result)))))
+         (t
+          (when toks
+            (let ((val-str (car toks)))
+              (push (cons name
+                          (pcase type
+                            ('integer (truncate (string-to-number val-str)))
+                            ((or 'number 'choice) (string-to-number val-str))
+                            (_ val-str)))
+                    result))
+            (setq toks (cdr toks)))))))
+    (nreverse result)))
 
 (defun cdp8--build-cmd (spec input out-wave)
   "Build a command string for SPEC; use schema if known, else free-form prompt.
@@ -458,30 +510,51 @@ INPUT is the input wave name (or nil); OUT-WAVE is the output wave filename."
 
 ;;; Node editing and deletion
 
+(defun cdp8--update-node-cmd (id new-cmd)
+  "Replace ID's :cmd with NEW-CMD, re-derive inputs/output, mark pending."
+  (let* ((wavs    (cdp8--wav-refs new-cmd))
+         (new-out (car (last wavs)))
+         (new-ins (butlast wavs)))
+    (setq cdp8--nodes
+          (mapcar (lambda (n)
+                    (if (string= (plist-get n :id) id)
+                        `(:id ,id
+                          :type   ,(plist-get n :type)
+                          :tool   ,(plist-get n :tool)
+                          :cmd    ,new-cmd
+                          :inputs ,new-ins
+                          :output ,(or new-out (plist-get n :output))
+                          :status pending)
+                      n))
+                  cdp8--nodes))
+    (cdp8--save)
+    (cdp8--refresh)))
+
 (defun cdp8-edit-node ()
-  "Edit the command for the node at point and mark it pending."
+  "Edit the node at point via schema prompts, falling back to free-form."
   (interactive)
   (let* ((id   (tabulated-list-get-id))
          (node (cdp8--node-by-id id)))
     (unless node (user-error "No node at point"))
-    (let* ((new-cmd (read-string "Command: " (plist-get node :cmd)))
-           (wavs    (cdp8--wav-refs new-cmd))
-           (new-out (or (car (last wavs)) (plist-get node :output)))
-           (new-ins (butlast wavs)))
-      (setq cdp8--nodes
-            (mapcar (lambda (n)
-                      (if (string= (plist-get n :id) id)
-                          `(:id ,id
-                            :type   ,(plist-get n :type)
-                            :tool   ,(plist-get n :tool)
-                            :cmd    ,new-cmd
-                            :inputs ,new-ins
-                            :output ,new-out
-                            :status pending)
-                        n))
-                    cdp8--nodes))
-      (cdp8--save)
-      (cdp8--refresh))))
+    (let* ((cmd      (plist-get node :cmd))
+           (spec     (cdp8--detect-spec cmd))
+           (input    (car (plist-get node :inputs)))
+           (out-wave (plist-get node :output))
+           (new-cmd  (if spec
+                         (let ((current (cdp8--parse-cmd-values spec cmd)))
+                           (cdp8--show-help spec)
+                           (cdp8--prompt-params spec input out-wave current))
+                       (read-string "Command: " cmd))))
+      (cdp8--update-node-cmd id new-cmd))))
+
+(defun cdp8-edit-cmd ()
+  "Edit the raw command line of the node at point."
+  (interactive)
+  (let* ((id   (tabulated-list-get-id))
+         (node (cdp8--node-by-id id)))
+    (unless node (user-error "No node at point"))
+    (let ((new-cmd (read-string "Command: " (plist-get node :cmd))))
+      (cdp8--update-node-cmd id new-cmd))))
 
 (defun cdp8-delete-node ()
   "Delete the node at point, optionally deleting its wave file."
@@ -523,6 +596,7 @@ Use `cdp8-session' to open a session in a directory.
   (define-key cdp8-mode-map (kbd "r")   #'cdp8-run-node)
   (define-key cdp8-mode-map (kbd "R")   #'cdp8-run-all)
   (define-key cdp8-mode-map (kbd "e")   #'cdp8-edit-node)
+  (define-key cdp8-mode-map (kbd "E")   #'cdp8-edit-cmd)
   (define-key cdp8-mode-map (kbd "d")   #'cdp8-delete-node)
   (define-key cdp8-mode-map (kbd "g")   #'cdp8-refresh)
   (define-key cdp8-mode-map (kbd "q")   #'quit-window))
