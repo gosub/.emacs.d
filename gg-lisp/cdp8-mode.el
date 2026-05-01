@@ -41,6 +41,22 @@
 (defvar-local cdp8--last-chans nil "Last channels value entered in this session.")
 (defvar-local cdp8--last-dur   nil "Last duration value entered in this session.")
 
+;;; Output-type system
+
+(defconst cdp8--type-meta
+  '((wave       . (:prefix "a" :ext ".wav"))
+    (spectral   . (:prefix "s" :ext ".ana"))
+    (pitch      . (:prefix "p" :ext ".frq"))
+    (breakpoint . (:prefix "b" :ext ".brk"))
+    (envelope   . (:prefix "e" :ext ".env")))
+  "Metadata for each CDP8 output type.")
+
+(defun cdp8--type-prefix (output-type)
+  (or (plist-get (cdr (assq output-type cdp8--type-meta)) :prefix) "a"))
+
+(defun cdp8--type-ext (output-type)
+  (or (plist-get (cdr (assq output-type cdp8--type-meta)) :ext) ".wav"))
+
 ;;; Session file persistence
 
 (defun cdp8--session-file ()
@@ -62,12 +78,13 @@
 
 ;;; Node and binary utilities
 
-(defun cdp8--next-id ()
-  "Return the next free wave ID (a1, a2, ...)."
-  (let ((ids (mapcar (lambda (n) (plist-get n :id)) cdp8--nodes))
-        (n 1))
-    (while (member (format "a%d" n) ids) (cl-incf n))
-    (format "a%d" n)))
+(defun cdp8--next-id (&optional output-type)
+  "Return the next free ID for OUTPUT-TYPE (default wave: a1, a2, …)."
+  (let* ((prefix (cdp8--type-prefix (or output-type 'wave)))
+         (ids    (mapcar (lambda (n) (plist-get n :id)) cdp8--nodes))
+         (n      1))
+    (while (member (format "%s%d" prefix n) ids) (cl-incf n))
+    (format "%s%d" prefix n)))
 
 (defun cdp8--output-waves ()
   "List of :output values of all existing nodes."
@@ -77,29 +94,35 @@
   (cl-find id cdp8--nodes
            :key (lambda (n) (plist-get n :id)) :test #'string=))
 
+(defun cdp8--node-by-output (output)
+  (cl-find output cdp8--nodes
+           :key (lambda (n) (plist-get n :output)) :test #'string=))
+
 (defun cdp8--binary-full-path (name)
   (let ((extra (assoc name cdp8-extra-tools)))
     (if extra (cdr extra)
       (expand-file-name name (expand-file-name cdp8-binaries-dir)))))
 
-(defun cdp8--wav-refs (cmd)
-  "Extract all *.wav filenames mentioned in CMD string."
+(defun cdp8--file-refs (cmd)
+  "Extract all CDP8 data filenames mentioned in CMD string."
   (let (refs)
     (with-temp-buffer
       (insert cmd)
       (goto-char (point-min))
-      (while (re-search-forward "\\([[:alnum:]_./-]+\\.wav\\)" nil t)
+      (while (re-search-forward
+              "\\([[:alnum:]_./-]+\\.\\(?:wav\\|ana\\|frq\\|brk\\|env\\)\\)"
+              nil t)
         (push (match-string 1) refs)))
     (nreverse refs)))
 
 (defun cdp8--resolve-cmd (cmd)
-  "Expand the binary and all .wav references in CMD to absolute paths."
+  "Expand the binary and all CDP8 data file references in CMD to absolute paths."
   (let* ((tokens (split-string cmd))
          (binary (car tokens))
          (full   (cdp8--binary-full-path binary)))
     (mapconcat
      (lambda (tok)
-       (if (string-suffix-p ".wav" tok)
+       (if (string-match-p "\\.\\(?:wav\\|ana\\|frq\\|brk\\|env\\)$" tok)
            (expand-file-name tok cdp8--dir)
          tok))
      (cons full (cdr tokens)) " ")))
@@ -139,16 +162,21 @@
   "Return CDP8 commands plus user-defined extra tool labels."
   (append cdp8-commands (mapcar #'car cdp8-extra-tools)))
 
-(defun cdp8--wave-effect-commands ()
-  "Return commands that accept at least one wave-in input.
-Commands with no schema are included (they fall back to free-form).
-Commands whose schema has only non-wave params are excluded."
-  (seq-filter
-   (lambda (spec)
-     (let ((schema (cdp8--schema-for spec)))
-       (or (null schema)
-           (seq-some (lambda (p) (eq (plist-get p :type) 'wave-in)) schema))))
-   (cdp8--all-commands)))
+(defun cdp8--effect-commands-for (output-type)
+  "Return commands that accept at least one input of OUTPUT-TYPE.
+Commands with no schema are included (free-form fallback).
+Commands whose schema has no matching input param are excluded."
+  (let ((in-type (pcase output-type
+                   ('spectral   'spectral-in)
+                   ('pitch      'pitch-in)
+                   ('breakpoint 'breakpoint-in)
+                   (_           'wave-in))))
+    (seq-filter
+     (lambda (spec)
+       (let ((schema (cdp8--schema-for spec)))
+         (or (null schema)
+             (seq-some (lambda (p) (eq (plist-get p :type) in-type)) schema))))
+     (cdp8--all-commands))))
 
 (defun cdp8--annotate-command (spec)
   "Return a short annotation string for SPEC, for use in completing-read."
@@ -185,6 +213,11 @@ Commands whose schema has only non-wave params are excluded."
   "Return the :params list for SPEC, or nil if unregistered."
   (let ((entry (assoc spec cdp8-param-schemas)))
     (when entry (plist-get (cdr entry) :params))))
+
+(defun cdp8--output-type-for (spec)
+  "Return the :output-type symbol for SPEC (defaults to `wave')."
+  (let ((entry (assoc spec cdp8-param-schemas)))
+    (or (and entry (plist-get (cdr entry) :output-type)) 'wave)))
 
 (defun cdp8--last-var (name)
   "Return the buffer-local last-used variable symbol for parameter NAME, or nil."
@@ -268,13 +301,13 @@ the output wave name.  CURRENT is an alist of (name . value) for re-editing."
              (name     (plist-get param :name))
              (override (cdr (assoc name current))))
         (pcase type
-          ('wave-in
+          ((or 'wave-in 'spectral-in 'pitch-in 'breakpoint-in 'envelope-in)
            (if waves
                (push (pop waves) tokens)
-             (push (read-file-name "Additional input wave: "
-                                   cdp8--dir nil t)
+             (push (read-file-name "Additional input: " cdp8--dir nil t)
                    tokens)))
-          ('wave-out (push out-wave tokens))
+          ((or 'wave-out 'spectral-out 'pitch-out 'breakpoint-out 'envelope-out)
+           (push out-wave tokens))
           (_
            (if (plist-get param :optional)
                (when (y-or-n-p
@@ -292,15 +325,18 @@ the output wave name.  CURRENT is an alist of (name . value) for re-editing."
 
 ;;; Node creation
 
-(defun cdp8--register-node (type cmd)
-  "Build a node plist from TYPE and CMD, append to session, save, refresh."
-  (let* ((wavs   (cdp8--wav-refs cmd))
-         (output (or (car (last wavs)) (concat (cdp8--next-id) ".wav")))
-         (id     (file-name-sans-extension output))
-         (inputs (butlast wavs))
-         (node   `(:id ,id :type ,type :tool cdp8
-                   :cmd ,cmd :inputs ,inputs
-                   :output ,output :status pending)))
+(defun cdp8--register-node (spec type cmd)
+  "Build a node plist from SPEC, TYPE, and CMD; append to session."
+  (let* ((refs     (cdp8--file-refs cmd))
+         (out-type (cdp8--output-type-for spec))
+         (output   (or (car (last refs))
+                       (let ((id (cdp8--next-id out-type)))
+                         (concat id (cdp8--type-ext out-type)))))
+         (id       (file-name-sans-extension output))
+         (inputs   (butlast refs))
+         (node     `(:id ,id :type ,type :tool cdp8 :output-type ,out-type
+                     :cmd ,cmd :inputs ,inputs
+                     :output ,output :status pending)))
     (setq cdp8--nodes (append cdp8--nodes (list node)))
     (cdp8--save)
     (cdp8--refresh)))
@@ -326,8 +362,11 @@ the output wave name.  CURRENT is an alist of (name . value) for re-editing."
             (flag (plist-get param :flag))
             (name (plist-get param :name)))
         (cond
-         ((memq type '(wave-in wave-out))
-          (when (and toks (string-suffix-p ".wav" (car toks)))
+         ((memq type '(wave-in wave-out spectral-in spectral-out
+                       pitch-in pitch-out breakpoint-in breakpoint-out
+                       envelope-in envelope-out))
+          (when (and toks (string-match-p "\\.\\(?:wav\\|ana\\|frq\\|brk\\|env\\)$"
+                                          (car toks)))
             (setq toks (cdr toks))))
          (flag
           (let ((m (cl-find-if (lambda (tok) (string-prefix-p flag tok)) toks)))
@@ -366,29 +405,37 @@ INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
 (defun cdp8-new-node ()
   "Interactively create a new generator or effect node."
   (interactive)
-  (let* ((type-str (completing-read "Type: " '("generator" "effect") nil t))
-         (type     (intern type-str))
-         (input    (when (eq type 'effect)
-                     (completing-read "Input wave: " (cdp8--output-waves) nil t)))
-         (commands (if (eq type 'effect)
-                       (cdp8--wave-effect-commands)
-                     (cdp8--all-commands)))
-         (spec     (cdp8--completing-read-command "Command: " commands))
-         (_        (cdp8--show-help spec))
-         (next-id  (cdp8--next-id))
-         (out-wave (concat next-id ".wav"))
-         (cmd      (cdp8--build-cmd spec input out-wave)))
-    (cdp8--register-node type cmd)))
+  (let* ((type-str   (completing-read "Type: " '("generator" "effect") nil t))
+         (type       (intern type-str))
+         (input-wave (when (eq type 'effect)
+                       (completing-read "Input: " (cdp8--output-waves) nil t)))
+         (src-type   (if input-wave
+                         (or (plist-get (cdp8--node-by-output input-wave) :output-type)
+                             'wave)
+                       'wave))
+         (commands   (if (eq type 'effect)
+                         (cdp8--effect-commands-for src-type)
+                       (cdp8--all-commands)))
+         (spec       (cdp8--completing-read-command "Command: " commands))
+         (_          (cdp8--show-help spec))
+         (out-type   (cdp8--output-type-for spec))
+         (next-id    (cdp8--next-id out-type))
+         (out-file   (concat next-id (cdp8--type-ext out-type)))
+         (cmd        (cdp8--build-cmd spec input-wave out-file)))
+    (cdp8--register-node spec type cmd)))
 
-(defun cdp8-new-effect-from (wave-name)
-  "Create a new effect node with WAVE-NAME pre-filled as input."
-  (let* ((spec     (cdp8--completing-read-command
-                    "Command: " (cdp8--wave-effect-commands)))
-         (_        (cdp8--show-help spec))
-         (next-id  (cdp8--next-id))
-         (out-wave (concat next-id ".wav"))
-         (cmd      (cdp8--build-cmd spec wave-name out-wave)))
-    (cdp8--register-node 'effect cmd)))
+(defun cdp8-new-effect-from (src-file)
+  "Create a new effect node with SRC-FILE pre-filled as input."
+  (let* ((src-node  (cdp8--node-by-output src-file))
+         (src-type  (or (and src-node (plist-get src-node :output-type)) 'wave))
+         (commands  (cdp8--effect-commands-for src-type))
+         (spec      (cdp8--completing-read-command "Command: " commands))
+         (_         (cdp8--show-help spec))
+         (out-type  (cdp8--output-type-for spec))
+         (next-id   (cdp8--next-id out-type))
+         (out-file  (concat next-id (cdp8--type-ext out-type)))
+         (cmd       (cdp8--build-cmd spec src-file out-file)))
+    (cdp8--register-node spec 'effect cmd)))
 
 ;;; Node execution
 
@@ -521,43 +568,52 @@ INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
         (cdp8--view-image out (file-name-nondirectory path))
       (message "CDP8: spectrogram generation failed"))))
 
-(defun cdp8-wave-actions ()
-  "Dispatch wave actions (play/waveform/spectrogram/new-effect) for node at point."
+(defun cdp8-node-actions ()
+  "Dispatch actions for the node at point (type-aware)."
   (interactive)
   (let ((node (cdp8--node-by-id (tabulated-list-get-id))))
     (unless node (user-error "No node at point"))
-    (let* ((wave (plist-get node :output))
-           (path (cdp8--wave-path wave)))
+    (let* ((out-file (plist-get node :output))
+           (out-type (or (plist-get node :output-type) 'wave))
+           (path     (cdp8--wave-path out-file)))
       (unless (file-exists-p path)
-        (user-error "Wave %s not found; run the node first" wave))
-      (let ((key (read-key
-                  (format "[p]lay [w]aveform [s]pectrogram [n]ew effect [q]uit  (%s)"
-                          wave))))
-        (pcase key
-          (?p (cdp8--play path))
-          (?w (cdp8--waveform path))
-          (?s (cdp8--spectrogram path))
-          (?n (cdp8-new-effect-from wave))
-          (?q nil)
-          (_  (message "Unknown key")))))))
+        (user-error "%s not found; run the node first" out-file))
+      (if (eq out-type 'wave)
+          (let ((key (read-key
+                      (format "[p]lay [w]aveform [s]pectrogram [n]ew effect [q]uit  (%s)"
+                              out-file))))
+            (pcase key
+              (?p (cdp8--play path))
+              (?w (cdp8--waveform path))
+              (?s (cdp8--spectrogram path))
+              (?n (cdp8-new-effect-from out-file))
+              (?q nil)
+              (_  (message "Unknown key"))))
+        (let ((key (read-key
+                    (format "[n]ew effect [q]uit  (%s %s)" out-type out-file))))
+          (pcase key
+            (?n (cdp8-new-effect-from out-file))
+            (?q nil)
+            (_  (message "Unknown key"))))))))
 
 ;;; Node editing and deletion
 
 (defun cdp8--update-node-cmd (id new-cmd)
   "Replace ID's :cmd with NEW-CMD, re-derive inputs/output, mark pending."
-  (let* ((wavs    (cdp8--wav-refs new-cmd))
-         (new-out (car (last wavs)))
-         (new-ins (butlast wavs)))
+  (let* ((refs    (cdp8--file-refs new-cmd))
+         (new-out (car (last refs)))
+         (new-ins (butlast refs)))
     (setq cdp8--nodes
           (mapcar (lambda (n)
                     (if (string= (plist-get n :id) id)
                         `(:id ,id
-                          :type   ,(plist-get n :type)
-                          :tool   ,(plist-get n :tool)
-                          :cmd    ,new-cmd
-                          :inputs ,new-ins
-                          :output ,(or new-out (plist-get n :output))
-                          :status pending)
+                          :type        ,(plist-get n :type)
+                          :tool        ,(plist-get n :tool)
+                          :output-type ,(plist-get n :output-type)
+                          :cmd         ,new-cmd
+                          :inputs      ,new-ins
+                          :output      ,(or new-out (plist-get n :output))
+                          :status      pending)
                       n))
                   cdp8--nodes))
     (cdp8--save)
@@ -625,7 +681,7 @@ Use `cdp8-session' to open a session in a directory.
   (setq tabulated-list-sort-key '("ID" . nil))
   (tabulated-list-init-header)
   (define-key cdp8-mode-map (kbd "n")   #'cdp8-new-node)
-  (define-key cdp8-mode-map (kbd "RET") #'cdp8-wave-actions)
+  (define-key cdp8-mode-map (kbd "RET") #'cdp8-node-actions)
   (define-key cdp8-mode-map (kbd "r")   #'cdp8-run-node)
   (define-key cdp8-mode-map (kbd "R")   #'cdp8-run-all)
   (define-key cdp8-mode-map (kbd "e")   #'cdp8-edit-node)

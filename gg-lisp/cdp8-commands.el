@@ -608,9 +608,10 @@
        :flag "-a" :optional t)))
 
     ("blur avrg"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "N" :prompt "Channels to average (odd)" :type integer :default 11)))
 
     ("grain reverse"
@@ -660,46 +661,53 @@
       (:name "infile2" :type wave-in)
       (:name "outfile" :type wave-out)))
     ("blur blur"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "blurring" :prompt "Windows to time-average over" :type integer :default 5)))
     ("blur drunk"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "range" :prompt "Max step in windows for drunken walk" :type integer :default 4)
       (:name "starttime" :prompt "Time to begin walk (s)" :type number :default 0.0)
       (:name "duration" :prompt "Required output duration (s)" :type number :default 1.0)
       (:name "z" :prompt "Zero-phase output" :type bool :flag "-z" :optional t)))
     ("blur noise"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "noise" :prompt "Noise level (0=none, 1=saturated)" :type number :default 0.1)))
     ("blur scatter"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "keep" :prompt "Spectral blocks to keep per window" :type integer :default 4)
       (:name "blocksize" :prompt "Frequency range per block (channels)" :type integer :default 1 :flag "-b" :optional t)
       (:name "r" :prompt "Randomise block count (1 to keep)" :type bool :flag "-r" :optional t)
       (:name "n" :prompt "Turn off normalisation" :type bool :flag "-n" :optional t)))
     ("blur shuffle"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "domain-image" :prompt "Permutation string e.g. abc-abbabcc" :type number :default 1)
       (:name "grpsize" :prompt "Windows per group" :type integer :default 4)))
     ("blur suppress"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "N" :prompt "Loudest partials to suppress per window" :type integer :default 4)))
     ("blur weave"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "weavfile" :prompt "Weave file (list of integer window steps)" :type number :default 1)))
     ("channelx"
      :params
@@ -1117,38 +1125,44 @@
       (:name "x" :prompt "Unknown extra option" :type bool :flag "-x" :optional t)
       (:name "w" :prompt "Write plain WAVE format (instead of WAVEX)" :type bool :flag "-w" :optional t)))
     ("focus accu"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "decay" :prompt "Sustained channel decay factor per second (0.001-1.0)" :type number :flag "-d" :optional t)
       (:name "glis" :prompt "Sustained channel gliss in octaves per second (~-11.7 to 11.7)" :type number :flag "-g" :optional t)))
     ("focus exag"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "exaggeration" :prompt "Exaggeration (>0 widens troughs, <0 widens peaks)" :type number :default 2.0)))
     ("focus fold"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "lofrq" :prompt "Low frequency of target range (Hz)" :type number :default 100.0)
       (:name "hifrq" :prompt "High frequency of target range (Hz)" :type number :default 4000.0)
       (:name "x" :prompt "Fuller spectrum" :type bool :flag "-x" :optional t)))
     ("focus freeze"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "datafile" :type number)))
     ("focus hold"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "datafile" :prompt "Data file: time/duration pairs for holds" :type number :default 1)))
     ("focus step"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "timestep" :prompt "Step duration (must be >= 2 analysis frames, s)" :type number :default 0.05)))
     ("formants see"
      :params
@@ -1308,32 +1322,37 @@
       (:name "stt" :prompt "Start time of grain material in source (secs)" :type number :default 0.0)
       (:name "end" :prompt "End time of grain material in source (secs)" :type number :default 1.0)))
     ("hilite band"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "datafile" :prompt "Data file: lofrq hifrq bitflag [amp1 amp2 transpose] lines" :type number :default 1)))
     ("hilite bltr"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "blurring" :prompt "Windows to time-average over" :type integer :default 5)
       (:name "tracing" :prompt "Loudest channels to retain per window" :type integer :default 10)))
     ("hilite greq"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "filtfile" :type number)
       (:name "r" :type bool :flag "-r" :optional t)))
     ("hilite pluck"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "gain" :prompt "Amplitude gain for newly prominent components" :type number :default 1.0)))
     ("hilite vowels"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "vowelfile" :prompt "File of time/vowel pairs (ee i e ai a ar o or oa u oo xx x)" :type number :default 1)
       (:name "halfwidth" :prompt "Formant peak half-width (fraction of centre freq, 0.01-10)" :type number :default 0.1)
       (:name "steepness" :prompt "Formant peak steepness" :type number :default 1.0)
@@ -1696,15 +1715,16 @@
       (:name "outtextfile" :type wave-out)
       (:name "min-pitch-dur" :prompt "Min stretch of pitchdata to include (ms)" :type number :default 10.0)))
     ("pvoc anal"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "outfile" :type spectral-out)
       (:name "points" :type integer :default 1024 :flag "-c" :optional t)
       (:name "overlap" :type integer :default 3 :flag "-o" :optional t)))
     ("pvoc extract"
      :params
-     ((:name "infile" :type wave-in)
+     ((:name "infile" :type spectral-in)
       (:name "outfile" :type wave-out)
       (:name "points" :prompt "Analysis points (power of 2, more=better freq resolution)" :type integer :default 1024 :flag "-c" :optional t)
       (:name "overlap" :prompt "Filter overlap factor (1-4)" :type integer :default 3 :flag "-o" :optional t)
@@ -1713,7 +1733,7 @@
       (:name "hichan" :prompt "Highest analysis channel to include" :type number :flag "-h" :optional t)))
     ("pvoc synth"
      :params
-     ((:name "infile" :type wave-in)
+     ((:name "infile" :type spectral-in)
       (:name "outfile" :type wave-out)))
     ("repitch analenv"
      :params
@@ -2006,74 +2026,88 @@
       (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)
       (:name "s" :prompt "Smooth by spectral density" :type bool :flag "-s" :optional t)))
     ("spec bare"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
+     ((:name "infile" :type spectral-in)
       (:name "pitchfile" :prompt "Pitch file extracted from analysis file" :type number :default 1)
-      (:name "outfile" :type wave-out)
+      (:name "outfile" :type spectral-out)
       (:name "x" :prompt "Less body in resulting spectrum" :type bool :flag "-x" :optional t)))
     ("spec cut"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "starttime" :prompt "Cut start time (s)" :type number :default 0.0)
       (:name "endtime" :prompt "Cut end time (s)" :type number :default 1.0)))
     ("spec gain"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "gain" :prompt "Gain (>1=amplify, <1=attenuate)" :type number :default 1.0)))
     ("spec gate"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "threshold" :prompt "Amplitude threshold (0-1)" :type number :default 0.01)))
     ("spec grab"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "time" :prompt "Time of analysis window to grab (s)" :type number :default 0.0)))
     ("spec magnify"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "time" :prompt "Time of analysis window to magnify (s)" :type number :default 0.0)
       (:name "dur" :prompt "Output duration (s)" :type number :default 1.0)))
     ("specinfo channel"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
+     ((:name "infile" :type spectral-in)
       (:name "frq" :prompt "Frequency to look up (Hz)" :type number :default 440.0)))
     ("specinfo frequency"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
+     ((:name "infile" :type spectral-in)
       (:name "analysis_channel_number" :prompt "Analysis channel number" :type integer :default 1)))
     ("specinfo level"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outsndfile" :type wave-out)))
+     ((:name "infile" :type spectral-in)
+      (:name "outsndfile" :type spectral-out)))
     ("specinfo octvu"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outtextfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outtextfile" :type spectral-out)
       (:name "time_step" :prompt "Time step for octave band display (ms)" :type number :default 100.0)
       (:name "fundamental" :prompt "Fundamental frequency for octave centering (Hz)" :type number :default 110.0 :flag "-f" :optional t)))
     ("specinfo peak"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outtextfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outtextfile" :type spectral-out)
       (:name "cutoff_frq" :prompt "Low frequency cutoff for search (Hz)" :type number :default 100.0 :flag "-c" :optional t)
       (:name "timewindow" :prompt "Time averaging window (s)" :type number :default 0.1 :flag "-t" :optional t)
       (:name "frqwindow" :prompt "Frequency averaging window (semitones)" :type number :default 1.0 :flag "-f" :optional t)
       (:name "h" :prompt "Adjust for ear sensitivity" :type bool :flag "-h" :optional t)))
     ("specinfo print"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)
-      (:name "outtextfile" :type wave-out)
+     ((:name "infile" :type spectral-in)
+      (:name "outtextfile" :type spectral-out)
       (:name "time" :prompt "Time in file to begin printout (s)" :type number :default 0.0)
       (:name "windowcnt" :prompt "Number of windows to print" :type integer :default 1 :flag "-w" :optional t)))
     ("specinfo windowcnt"
+     :output-type spectral
      :params
-     ((:name "infile" :type wave-in)))
+     ((:name "infile" :type spectral-in)))
     ("speclean clean"
+     :output-type spectral
      :params
      ((:name "sigfile" :prompt "Signal analysis file to clean" :type number :default 1)
       (:name "noisfile" :prompt "Noise sample analysis file" :type number :default 1)
@@ -2081,6 +2115,7 @@
       (:name "persist" :prompt "Min time channel must exceed noise to be retained (s)" :type number :default 0.1)
       (:name "noisgain" :prompt "Noise level multiplier before comparison (default 2)" :type integer :default 2)))
     ("specnu clean"
+     :output-type spectral
      :params
      ((:name "sigfile" :prompt "Signal analysis file" :type number :default 1)
       (:name "noisfile" :prompt "Noise analysis file" :type number :default 1)
@@ -2088,18 +2123,21 @@
       (:name "persist" :prompt "Min time signal must exceed noise to pass (ms, 0-1000)" :type number :default 50.0)
       (:name "noisgain" :prompt "Noise level multiplier before comparison (1-40)" :type number :default 2.0)))
     ("specnu rand"
+     :output-type spectral
      :params
      ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
       (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
       (:name "timescale" :prompt "Windows to randomise locally (default=all)" :type integer :default 0 :flag "-t" :optional t)
       (:name "grouping" :prompt "Windows per group (default=1)" :type integer :default 1 :flag "-g" :optional t)))
     ("specnu squeeze"
+     :output-type spectral
      :params
      ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
       (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
       (:name "centrefrq" :prompt "Centre frequency for squeezing (Hz)" :type number :default 440.0)
       (:name "squeeze" :prompt "Squeeze factor (<1)" :type number :default 0.5)))
     ("specnu subtract"
+     :output-type spectral
      :params
      ((:name "sigfile" :prompt "Signal analysis file" :type number :default 1)
       (:name "noisfile" :prompt "Noise analysis file" :type number :default 1)
@@ -2107,6 +2145,7 @@
       (:name "persist" :prompt "Min time signal must exceed noise to pass (ms, 0-1000)" :type number :default 50.0)
       (:name "noisgain" :prompt "Noise level multiplier before comparison (1-40)" :type number :default 2.0)))
     ("specross"
+     :output-type spectral
      :params
      ((:name "partials" :prompt "Number of partials" :type integer :default 8)
       (:name "analfile1" :prompt "First analysis file" :type number :default 1)
@@ -2122,6 +2161,7 @@
       (:name "level" :prompt "Output level" :type number :default 1.0)
       (:name "interp" :prompt "Interpolation factor" :type number :default 1.0)))
     ("spectrum fixed"
+     :output-type spectral
      :params
      ((:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
       (:name "datafile" :prompt "Text file of frq/amp pairs (peaks +, troughs -, zero=envelope)" :type number :default 1)
@@ -2139,17 +2179,19 @@
       (:name "M-m" :type number :flag "-m" :optional t)
       (:name "d" :type bool :flag "-d" :optional t)))
     ("spectrum format"
+     :output-type spectral
      :params
      ((:name "outdatafile" :prompt "Output data file (frq/amp peaks/troughs/envelope)" :type number :default 1)
       (:name "indatafile" :prompt "Input text data file (frq/amp pairs, frq increasing)" :type number :default 1)
       (:name "pointcnt" :prompt "Analysis points per window" :type integer :default 1024)
       (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)))
     ("spectstr"
+     :output-type spectral
      :params
      ((:name "stretch" :prompt "Mode (1=stretch, 2=pitch-shift)" :type integer :default 1)
       (:name "time" :prompt "Output duration (secs)" :type number :default 5.0)
-      (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "timestretch" :prompt "Timestretch factor (>1 = slower)" :type number :default 2.0)
       (:name "d-ratio" :prompt "Proportion of channels to discohere (0-1)" :type number :default 0.0)
       (:name "di-rand" :prompt "Frequency randomisation of discohered channels" :type number :default 0.0)))
@@ -3638,17 +3680,19 @@
       (:name "min" :type number)
       (:name "srt" :type number)))
     ("hilite filter"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "frq1" :type number)
       (:name "Q" :type number)))
     ("hilite trace"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "N" :type number)))
     ("housekeep chans"
      :params
@@ -3965,6 +4009,7 @@
       (:name "skiptime" :type number)
       (:name "noisgain" :type integer :default 2 :flag "-g" :optional t)))
     ("specanal specanal"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "inf" :type number)
