@@ -985,8 +985,8 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "join_time" :type number)
-      (:name "splice-length" :type number)))
+      (:name "join_time" :prompt "Join cut time (s)" :type number :default 0.015)
+      (:name "splice-length" :prompt "Splice length (ms)" :type number :default 15.0)))
     ("extend doublets"
      :params
      ((:name "infile" :type wave-in)
@@ -1410,7 +1410,16 @@
     ("modify shudder"
      :params
      ((:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)))
+      (:name "outfile" :type wave-out)
+      (:name "starttime" :prompt "Start time (s)" :type number :default 0.0)
+      (:name "frq" :prompt "Shudder frequency (Hz)" :type number :default 6.0)
+      (:name "scatter" :prompt "Time scatter (0-1)" :type number :default 1.0)
+      (:name "stereo_spread" :prompt "Stereo spread (0-1)" :type number :default 1.0)
+      (:name "mindepth" :prompt "Min depth (0-1)" :type number :default 0.0)
+      (:name "maxdepth" :prompt "Max depth (0-1)" :type number :default 1.0)
+      (:name "minwidth" :prompt "Min event width (s)" :type number :default 0.02)
+      (:name "maxwidth" :prompt "Max event width (s)" :type number :default 0.2)
+      (:name "b" :prompt "Balance channel levels" :type bool :flag "-b" :optional t)))
     ("modify spaceform"
      :params
      ((:name "outpanfile" :type number)
@@ -1575,6 +1584,17 @@
       (:name "density" :type number)
       (:name "rand" :type number)
       (:name "gain" :type number)))
+    ("psow interleave"
+     :params
+     ((:name "infile1" :type wave-in)
+      (:name "infile2" :type wave-in)
+      (:name "outfile" :type wave-out)
+      (:name "pbrk1" :type number)
+      (:name "pbrk2" :type number)
+      (:name "grplen" :type number)
+      (:name "bias" :type number)
+      (:name "bal" :type number)
+      (:name "weight" :type number)))
     ("psow interp"
      :params
      ((:name "infile1" :type wave-in)
@@ -1582,7 +1602,11 @@
       (:name "outfile" :type wave-out)
       (:name "startdur" :type number)
       (:name "interpdur" :type number)
-      (:name "enddur" :type number)))
+      (:name "enddur" :type number)
+      (:name "vibfrq" :type number)
+      (:name "vibdepth" :type number)
+      (:name "tremfrq" :type number)
+      (:name "tremdepth" :type number)))
     ("psow locate"
      :params
      ((:name "infil" :type wave-in)
@@ -1599,7 +1623,12 @@
     ("psow space"
      :params
      ((:name "infile1" :type wave-in)
-      (:name "outfile" :type wave-out)))
+      (:name "outfile" :type wave-out)
+      (:name "pitch-brkpnt-data" :type number)
+      (:name "subno" :type number)
+      (:name "separation" :type number)
+      (:name "balance" :type number)
+      (:name "hisuppress" :type number)))
     ("psow split"
      :params
      ((:name "infile1" :type wave-in)
@@ -1630,7 +1659,12 @@
       (:name "pch-brkdata" :type number)
       (:name "time" :type number)
       (:name "dur" :type number)
-      (:name "segcnt" :type number)))
+      (:name "segcnt" :type number)
+      (:name "vibfrq" :type number)
+      (:name "vibdepth" :type number)
+      (:name "transpos" :type number)
+      (:name "gain" :type number)
+      (:name "s" :type bool :flag "-s" :optional t)))
     ("psow sustain2"
      :params
      ((:name "infil" :type wave-in)
@@ -1789,7 +1823,9 @@
       (:name "rgain" :type number)
       (:name "mix" :type number)
       (:name "rvbtime" :type number)
-      (:name "absorb" :type number)))
+      (:name "absorb" :type number)
+      (:name "lpfreq" :type number)
+      (:name "trailertime" :type number)))
     ("rmverb"
      :params
      ((:name "infile" :type wave-in)
@@ -2071,7 +2107,16 @@
      ((:name "partials" :type number)
       (:name "analfile1" :type number)
       (:name "analfile2" :type number)
-      (:name "outanalfile" :type number)))
+      (:name "outanalfile" :type number)
+      (:name "tuning" :type number)
+      (:name "minwin" :type number)
+      (:name "signois" :type number)
+      (:name "harmcnt" :type number)
+      (:name "lo" :type number)
+      (:name "ho" :type number)
+      (:name "thresh" :type number)
+      (:name "level" :type number)
+      (:name "interp" :type number)))
     ("spectrum fixed"
      :params
      ((:name "outanalfile" :type number)
@@ -2254,7 +2299,10 @@
       (:name "frq" :type number)
       (:name "spread" :type number)
       (:name "max-foc" :type number)
-      (:name "min-foc" :type number)))
+      (:name "min-foc" :type number)
+      (:name "timevar" :type number)
+      (:name "srate" :type number)
+      (:name "p" :type bool :flag "-p" :optional t)))
     ("texture motifs"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
