@@ -87,8 +87,13 @@
     (format "%s%d" prefix n)))
 
 (defun cdp8--output-waves ()
-  "List of :output values of all existing nodes."
-  (mapcar (lambda (n) (plist-get n :output)) cdp8--nodes))
+  "List of :output values of all nodes; done nodes listed first."
+  (let ((done    (cl-remove-if-not (lambda (n) (eq (plist-get n :status) 'done))
+                                   cdp8--nodes))
+        (pending (cl-remove-if     (lambda (n) (eq (plist-get n :status) 'done))
+                                   cdp8--nodes)))
+    (mapcar (lambda (n) (plist-get n :output))
+            (append done pending))))
 
 (defun cdp8--node-by-id (id)
   (cl-find id cdp8--nodes
@@ -143,6 +148,16 @@
 
 ;;; Tabulated list rendering
 
+(defun cdp8--status-display (node)
+  "Return a display string for NODE's status, including file size when done."
+  (let* ((status (plist-get node :status))
+         (path   (expand-file-name (or (plist-get node :output) "") cdp8--dir))
+         (attrs  (and (eq status 'done) (file-attributes path)))
+         (size   (and attrs (file-attribute-size attrs))))
+    (if size
+        (format "done %s" (file-size-human-readable size))
+      (symbol-name status))))
+
 (defun cdp8--entries ()
   (mapcar (lambda (node)
             (list (plist-get node :id)
@@ -152,7 +167,7 @@
                    (plist-get node :cmd)
                    (mapconcat #'identity (plist-get node :inputs) " ")
                    (plist-get node :output)
-                   (symbol-name (plist-get node :status)))))
+                   (cdp8--status-display node))))
           cdp8--nodes))
 
 (defun cdp8--refresh ()
@@ -483,12 +498,20 @@ INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
       (read-string "Command: " prefill))))
 
 (defun cdp8-new-node ()
-  "Interactively create a new generator or effect node."
+  "Interactively create a new generator or effect node.
+When the node at point has status done, it is offered as the default input."
   (interactive)
-  (let* ((type-str   (completing-read "Type: " '("generator" "effect") nil t))
+  (let* (;; detect a ready node at point as a smart default input
+         (at-node    (cdp8--node-by-id (tabulated-list-get-id)))
+         (at-done    (and at-node (eq (plist-get at-node :status) 'done)))
+         (at-output  (and at-done (plist-get at-node :output)))
+         (type-str   (completing-read "Type [generator/effect]: "
+                                      '("effect" "generator") nil t
+                                      (if at-done "effect" "generator")))
          (type       (intern type-str))
          (input-wave (when (eq type 'effect)
-                       (completing-read "Input: " (cdp8--output-waves) nil t)))
+                       (completing-read "Input: " (cdp8--output-waves) nil t
+                                        at-output)))
          (src-type   (if input-wave
                          (or (plist-get (cdp8--node-by-output input-wave) :output-type)
                              'wave)
@@ -742,6 +765,18 @@ INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
       (cdp8--save)
       (cdp8--refresh))))
 
+;;; Mark pending
+
+(defun cdp8-mark-pending ()
+  "Reset the node at point to pending so it will be re-run by R."
+  (interactive)
+  (let ((id (tabulated-list-get-id)))
+    (unless id (user-error "No node at point"))
+    (cdp8--update-status id 'pending)
+    (cdp8--save)
+    (cdp8--refresh)
+    (message "CDP8: %s marked pending" id)))
+
 ;;; Audio import
 
 (defun cdp8--register-source (fname)
@@ -871,6 +906,7 @@ Use `cdp8-import' (i) to bring in audio from YouTube or a local file.
   (define-key cdp8-mode-map (kbd "R")   #'cdp8-run-all)
   (define-key cdp8-mode-map (kbd "e")   #'cdp8-edit-node)
   (define-key cdp8-mode-map (kbd "E")   #'cdp8-edit-cmd)
+  (define-key cdp8-mode-map (kbd "M")   #'cdp8-mark-pending)
   (define-key cdp8-mode-map (kbd "d")   #'cdp8-delete-node)
   (define-key cdp8-mode-map (kbd "g")   #'cdp8-refresh)
   (define-key cdp8-mode-map (kbd "q")   #'quit-window))

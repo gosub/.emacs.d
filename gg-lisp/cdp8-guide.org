@@ -157,9 +157,16 @@ The =pvoc anal= / =pvoc synth= pair wraps any chain of =.ana= effects.
 
 ** Iterating and branching
 
-Nodes are not modified in place — re-editing creates a new version.  To
-branch (try a different parameter on the same source):
+The Status column shows =done 42K= (file size) for completed nodes, so you
+can see at a glance whether a node produced a reasonable output.
 
+To re-run a node with the same parameters (e.g. after changing source):
+press =M= to mark it pending, then =r= or =R=.
+
+To try different parameters: press =e= to re-prompt; current values are
+shown as defaults so you only change what you want.
+
+To branch (try a different effect on the same source):
 1. Press =RET= on the source node → =n= new effect
 2. Select the same effect with different parameters
 3. Both effect nodes point to the same input; run each independently
@@ -664,14 +671,15 @@ Each SoX step is a schema-driven node via =n= after =cdp8-sox-setup=.
 
 | Key   | Action |
 |-------+--------|
-| =n=   | New node (generator or effect) |
+| =n=   | New node; defaults to effect/input from node at point when it is done |
 | =i=   | Import audio: =y= YouTube / =f= local file |
 | =RET= | Node actions: play / waveform / spectrogram / new effect |
 | =p=   | Play node output immediately (no menu) |
 | =r=   | Run node at point |
 | =R=   | Run all pending nodes in dependency order |
-| =e=   | Re-edit node parameters via schema prompts |
+| =e=   | Re-edit node parameters via schema prompts (current values as defaults) |
 | =E=   | Edit node raw command string |
+| =M=   | Mark node as pending (re-queue for =R= without re-editing) |
 | =d=   | Delete node (prompts to delete output file too) |
 | =g=   | Refresh display |
 | =q=   | Quit window |
