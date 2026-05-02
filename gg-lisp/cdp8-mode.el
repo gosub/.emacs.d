@@ -258,14 +258,16 @@ OVERRIDE, when non-nil, is used instead of the schema/last-used default."
            (string-to-number pick)))
         ;; flat list of values → completing-read on stringified values
         (t
-         (let ((pick (completing-read
-                      (format "%s [%s]: " prompt def)
-                      (mapcar #'number-to-string choices) nil t nil nil
-                      (number-to-string def))))
+         (let* ((def-str (if def (number-to-string def) ""))
+                (pick    (completing-read
+                          (format "%s [%s]: " prompt def)
+                          (mapcar #'number-to-string choices) nil t nil nil
+                          def-str)))
            (string-to-number pick)))))
       ((or 'integer 'number)
-       (let* ((s (read-string (format "%s [%s]: " prompt def)
-                              nil nil (number-to-string def))))
+       (let* ((def-str (if def (number-to-string def) ""))
+              (s       (read-string (format "%s [%s]: " prompt def)
+                                    nil nil def-str)))
          (if (eq type 'integer) (truncate (string-to-number s))
            (string-to-number s))))
       (_  ; string fallback
