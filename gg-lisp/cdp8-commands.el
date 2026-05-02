@@ -1127,7 +1127,7 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "data" :type number)
+      (:name "data" :type data-file)
       (:name "Q" :type number)
       (:name "gain" :type number)
       (:name "tail" :type number :flag "-t" :optional t)
@@ -1139,7 +1139,7 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infil" :type wave-in)
       (:name "outfil" :type wave-out)
-      (:name "data" :type number)
+      (:name "data" :type data-file)
       (:name "Q" :type number)
       (:name "gain" :type number)
       (:name "tail" :type number :flag "-t" :optional t)
@@ -1285,7 +1285,7 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "transpmultfile" :type number)
+      (:name "transpmultfile" :type breakpoint-file)
       (:name "len" :type number :flag "-b" :optional t)
       (:name "gate" :type integer :default 1 :flag "-l" :optional t)
       (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
@@ -1306,7 +1306,7 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "transpfile" :type number)
+      (:name "transpfile" :type breakpoint-file)
       (:name "len" :type number :flag "-b" :optional t)
       (:name "gate" :type integer :default 1 :flag "-l" :optional t)
       (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
@@ -1328,7 +1328,7 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "multfile" :type number)
+      (:name "multfile" :type data-file)
       (:name "len" :type number :flag "-b" :optional t)
       (:name "gate" :type integer :default 1 :flag "-l" :optional t)
       (:name "minhole" :type number :default 0.032 :flag "-h" :optional t)
@@ -1836,13 +1836,13 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "silence-data" :type number)))
+      (:name "silence-data" :type data-file)))
     ("repitch insertzeros"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "zeros-data" :type number)))
+      (:name "zeros-data" :type data-file)))
     ("repitch invert"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -2710,7 +2710,7 @@
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
-      (:name "fmntfile" :type number)
+      (:name "fmntfile" :type data-file)
       (:name "outfile" :type wave-out)
       (:name "i" :type bool :flag "-i" :optional t)
       (:name "lof" :type number :flag "-l" :optional t)
@@ -3082,13 +3082,13 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "pitchfile" :type pitch-in)
       (:name "pitchfile2" :prompt "Second pitch data file" :type pitch-in)
-      (:name "outtransposfile" :type number)))
+      (:name "outtransposfile" :type breakpoint-file)))
     ("repitch combineb"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "pitchfile" :type pitch-in)
       (:name "pitchfile2" :prompt "Second pitch data file" :type pitch-in)
-      (:name "outtbrkfile" :type number)
+      (:name "outtbrkfile" :type breakpoint-file)
       (:name "I-d" :type number :flag "-d" :optional t)))
     ("repitch getpitch"
      :params
@@ -3285,7 +3285,7 @@
     ("tangent sequence"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "file1" :type number)
+      (:name "file1" :type data-file)
       (:name "file2" :type data-file)
       (:name "outf" :type wave-out)
       (:name "dur" :type number)
@@ -3560,7 +3560,7 @@
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "outf" :type number)
-      (:name "userenv" :type number)
+      (:name "userenv" :type envelope-in)
       (:name "wsize" :type number)
       (:name "total-dur" :type number)
       (:name "cell-dur" :type number)
@@ -3690,7 +3690,7 @@
       (:name "outf" :type number)
       (:name "fofinf" :type number)
       (:name "pbrk" :type breakpoint-file)
-      (:name "env" :type number)
+      (:name "env" :type envelope-in)
       (:name "gain" :type number)
       (:name "n" :type bool :flag "-n" :optional t)))
     ("fofex extract"
@@ -3912,7 +3912,7 @@
     ("newmorph newmorph2"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "analfileA" :type number)
+      (:name "analfileA" :type spectral-in)
       (:name "outtextfile" :type wave-out)
       (:name "peakcnt" :type number)))
     ("pitch octmove"
@@ -3975,7 +3975,7 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "fi" :type number)
       (:name "fo" :type number)
-      (:name "env" :type number)
+      (:name "env" :type envelope-in)
       (:name "cnt" :type number)
       (:name "minp" :type number)
       (:name "maxp" :type number)
@@ -4089,7 +4089,7 @@
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type spectral-in)
-      (:name "nfile" :type number)
+      (:name "nfile" :type spectral-in)
       (:name "outfile" :type spectral-out)
       (:name "skiptime" :type number)
       (:name "noisgain" :type integer :default 2 :flag "-g" :optional t)))
