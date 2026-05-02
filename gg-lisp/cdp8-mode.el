@@ -742,13 +742,116 @@ INPUT is a wave name string (or nil); OUT-WAVE is the output wave filename."
       (cdp8--save)
       (cdp8--refresh))))
 
+;;; Audio import
+
+(defun cdp8--register-source (fname)
+  "Register an existing WAV file FNAME (basename) as a done source node."
+  (let* ((id   (file-name-sans-extension fname))
+         (node `(:id ,id :type source :tool import
+                 :output-type wave
+                 :cmd ""
+                 :inputs ()
+                 :output ,fname
+                 :status done)))
+    (if (cdp8--node-by-id id)
+        (message "CDP8: node %s already exists" id)
+      (setq cdp8--nodes (append cdp8--nodes (list node)))
+      (cdp8--save)
+      (cdp8--refresh)
+      (message "CDP8: registered %s as source node" fname))))
+
+(defun cdp8-import-file (path)
+  "Copy or symlink an audio file PATH into the session and register it."
+  (interactive
+   (list (read-file-name "Audio file to import: " nil nil t)))
+  (unless (and (boundp 'cdp8--dir) (stringp cdp8--dir))
+    (user-error "No active CDP8 session"))
+  (let* ((dest (expand-file-name (file-name-nondirectory path) cdp8--dir)))
+    (unless (file-exists-p dest)
+      (copy-file path dest))
+    (cdp8--register-source (file-name-nondirectory dest))))
+
+(defun cdp8--youtube-id (url-or-id)
+  "Extract the YouTube video ID from URL-OR-ID."
+  (cond
+   ((string-match "youtu\\.be/\\([a-zA-Z0-9_-]+\\)" url-or-id)
+    (match-string 1 url-or-id))
+   ((string-match "[?&]v=\\([a-zA-Z0-9_-]+\\)" url-or-id)
+    (match-string 1 url-or-id))
+   ((string-match "^\\([a-zA-Z0-9_-]\\{11\\}\\)$" url-or-id)
+    (match-string 1 url-or-id))
+   (t nil)))
+
+(defun cdp8-import-youtube (url-or-id)
+  "Download audio from a YouTube URL or video ID and register it as a source node.
+Requires yt-dlp.  Audio is converted to WAV and saved in the session directory."
+  (interactive "sYouTube URL or video ID: ")
+  (unless (and (boundp 'cdp8--dir) (stringp cdp8--dir))
+    (user-error "No active CDP8 session"))
+  (let* ((ytdlp (or (executable-find "yt-dlp")
+                    (executable-find "youtube-dl")
+                    (user-error "yt-dlp not found; install with: nix-shell -p yt-dlp")))
+         (vid   (or (cdp8--youtube-id url-or-id)
+                    (user-error "Cannot parse YouTube URL or ID: %s" url-or-id)))
+         (url   (concat "https://www.youtube.com/watch?v=" vid))
+         (dest  (expand-file-name (concat vid ".wav") cdp8--dir))
+         (proc-buf (get-buffer-create "*cdp8-yt-dlp*"))
+         (ses-buf  (current-buffer)))
+    (if (file-exists-p dest)
+        (progn
+          (message "CDP8: %s already downloaded" dest)
+          (cdp8--register-source (file-name-nondirectory dest)))
+      (with-current-buffer proc-buf (erase-buffer))
+      (message "CDP8: downloading %s …" vid)
+      (make-process
+       :name    "cdp8-yt-dlp"
+       :buffer  proc-buf
+       :command (list ytdlp
+                      "--no-playlist"
+                      "--extract-audio" "--audio-format" "wav" "--audio-quality" "0"
+                      "--output" (expand-file-name "%(id)s.%(ext)s" cdp8--dir)
+                      url)
+       :sentinel
+       (lambda (_proc event)
+         (if (not (string-prefix-p "finished" event))
+             (progn
+               (message "CDP8: yt-dlp failed — see *cdp8-yt-dlp*")
+               (display-buffer proc-buf))
+           (with-current-buffer ses-buf
+             (cdp8--register-source (file-name-nondirectory dest)))))))))
+
+(defun cdp8-import ()
+  "Import audio into the session: choose YouTube download or local file."
+  (interactive)
+  (unless (and (boundp 'cdp8--dir) (stringp cdp8--dir))
+    (user-error "No active CDP8 session"))
+  (let ((choice (read-key "[y]ouTube URL/ID  [f]ile  [q]uit")))
+    (pcase choice
+      (?y (call-interactively #'cdp8-import-youtube))
+      (?f (call-interactively #'cdp8-import-file))
+      (?q nil)
+      (_  (message "Unknown key")))))
+
+;;; Quick play (no action menu)
+
+(defun cdp8-play-node ()
+  "Play the output of the node at point without the action menu."
+  (interactive)
+  (let* ((node (cdp8--node-by-id (tabulated-list-get-id))))
+    (unless node (user-error "No node at point"))
+    (let ((path (cdp8--wave-path (plist-get node :output))))
+      (unless (file-exists-p path)
+        (user-error "%s not found; run the node first" (plist-get node :output)))
+      (cdp8--play path))))
+
 ;;; Mode definition
 
 (define-derived-mode cdp8-mode tabulated-list-mode "CDP8"
   "Major mode for the CDP8 audio node environment.
 
-Nodes are generators or effects whose outputs are WAV files (cables).
+Nodes are generators or effects connected by typed output files (cables).
 Use `cdp8-session' to open a session in a directory.
+Use `cdp8-import' (i) to bring in audio from YouTube or a local file.
 
 \\{cdp8-mode-map}"
   (setq tabulated-list-format
@@ -761,7 +864,9 @@ Use `cdp8-session' to open a session in a directory.
   (setq tabulated-list-sort-key '("ID" . nil))
   (tabulated-list-init-header)
   (define-key cdp8-mode-map (kbd "n")   #'cdp8-new-node)
+  (define-key cdp8-mode-map (kbd "i")   #'cdp8-import)
   (define-key cdp8-mode-map (kbd "RET") #'cdp8-node-actions)
+  (define-key cdp8-mode-map (kbd "p")   #'cdp8-play-node)
   (define-key cdp8-mode-map (kbd "r")   #'cdp8-run-node)
   (define-key cdp8-mode-map (kbd "R")   #'cdp8-run-all)
   (define-key cdp8-mode-map (kbd "e")   #'cdp8-edit-node)

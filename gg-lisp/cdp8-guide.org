@@ -1,5 +1,5 @@
 #+TITLE: CDP8 Mode — Composition Guide
-#+AUTHOR: CDP8 mode session
+#+AUTHOR: Giampaolo Guiducci
 #+STARTUP: overview
 #+OPTIONS: toc:3
 
@@ -17,9 +17,10 @@ The mode represents processing chains as typed cables:
 - =s1.ana= =s2.ana= … spectral analysis (phase vocoder)
 - =p1.frq= =p2.frq= … pitch data
 - =b1.brk= =b2.brk= … breakpoint (time/value text files)
+- =e1.env= =e2.env= … binary envelope data
 
 Nodes are created with =n=, run with =r= or =R=, and inspected with =RET=.
-Edit a node's parameters with =e=, its raw command with =E=.
+Edit a node's parameters with =e=, its raw command string with =E=.
 
 ** SoX integration
 
@@ -31,7 +32,7 @@ Load the optional SoX module and call =cdp8-sox-setup= once after the session is
 #+end_src
 
 After setup, SoX effects (=sox reverb=, =sox norm=, =sox compand=, …) appear in the
-=n= generator list and in the =E= effect menu exactly like CDP8 commands.
+=n= command list and in the =RET= effect menu exactly like CDP8 commands.
 The schema system handles the inverted SoX argument order (=sox infile outfile effect params=)
 automatically — parameters are prompted field-by-field just like CDP8 effects.
 
@@ -58,12 +59,12 @@ shown are starting points — explore the ranges.
 Freeze a single analysis window and stretch it to a texture.
 
 #+begin_example
-  [generator]  synth wave  → a1.wav
-               (a sine or complex source, a few seconds)
-  [effect]     pvoc anal   → s1.ana
-  [effect]     spec grab   → s2.ana    (time=0.5)
+  [generator]  synth wave   → a1.wav
+               (sine or complex source, a few seconds)
+  [effect]     pvoc anal    → s1.ana
+  [effect]     spec grab    → s2.ana    (time=0.5)
   [effect]     spec magnify → s3.ana   (dur=30.0)
-  [effect]     pvoc synth  → a2.wav
+  [effect]     pvoc synth   → a2.wav
 #+end_example
 
 Result: an infinite-seeming spectral drone from a snapshot of the source.
@@ -120,17 +121,16 @@ Stack harmonic distortion and filter it for controlled timbral enrichment.
 
 #+begin_example
   [generator]  synth wave           → a1.wav   (simple sine)
-  [effect]     distort harmonic     → a2.wav   (harmonic=5)
+  [effect]     distort harmonic     → a2.wav   (harmonics-file with partials 1-5)
   [effect]     filter lohi          → a3.wav   (lofrq=200, hifrq=4000)
-  [effect]     modify loudness      → a4.wav   (gain normalised)
+  [effect]     modify loudness      → a4.wav
 #+end_example
 
-Result: rich overtone structures from a clean source. Change =harmonic=
-to shift between odd/even partial emphases.
+Result: rich overtone structures from a clean source.
 
-** 6. Spectral Comb Filter + Freeze
+** 6. Spectral Gate and Freeze
 
-Create a harmonic comb from spectral operations.
+Gate quiet partials, then freeze and stretch the survivors.
 
 #+begin_example
   [source]     any sound            → a1.wav
@@ -150,7 +150,7 @@ Use grain operations to scatter a sound across pitch space.
 
 #+begin_example
   [source]     any sound            → a1.wav
-  [effect]     grain repitch        → a2.wav   (range=12, density=4)
+  [effect]     grain repitch        → a2.wav   (transpmultfile with random ratios)
   [effect]     distort average      → a3.wav   (cyclecnt=4)
   [effect]     filter phasing       → a4.wav
 #+end_example
@@ -164,7 +164,7 @@ Generate noise with Brownian frequency drift.
 
 #+begin_example
   [generator]  brownian motion      → a1.wav
-               (amp=0.8, lo=80, hi=1200, step=50, duration=20)
+               (mode=1, plo=80, phi=1200, step=50, dur=20)
   [effect]     distort envel        → a2.wav
   [effect]     filter variable      → a3.wav
 #+end_example
@@ -172,22 +172,23 @@ Generate noise with Brownian frequency drift.
 The Brownian motion generator produces a sinusoidal tone that drifts
 randomly in frequency — an inherently organic, unpredictable oscillator.
 
-** 9. Cantor Set Rhythm Generator
+** 9. Cantor Set Rhythmic Gating
 
-Use the fractal Cantor set to generate rhythmic gating.
+Apply the fractal Cantor set to punch recursive silence holes into audio.
 
 #+begin_example
-  [generator]  cantor set           → a1.wav
-               (depth=4, gap=0.01, sustain=2.0)
-  [effect]     distort harmonic     → a2.wav
-  [effect]     blur chorus          → s1.ana
+  [source]     any sound            → a1.wav
+  [effect]     cantor set           → a2.wav
+               (mode=1, holesize=0.5, depth-trig=4)
+  [effect]     pvoc anal            → s1.ana
+  [effect]     blur chorus          → s2.ana
   [effect]     pvoc synth           → a3.wav
 #+end_example
 
-Nested silences at multiple time scales, then harmonically enriched and
-spectrally blurred. Produces rhythmically structured noise textures.
+Nested silences at multiple time scales, then spectrally blurred.
+Produces rhythmically structured, fragmented textures.
 
-** 10. Spectral Stretching via Focus Accumulation
+** 10. Spectral Sharpening via Focus Accumulation
 
 Focus accumulation re-emphasises spectral peaks over time.
 
@@ -216,27 +217,28 @@ Iterative reforming of waveform cycles for complex timbres.
 Chaining multiple =distort reform= calls builds up cycle-level
 distortions that no single pass can produce.
 
-** 12. Caltrain Rhythm Machine
+** 12. Click Rhythm Machine
 
-Use the caltrain generator for metrically complex click patterns.
+Use clicknew to generate a precise timed click sequence, then process it.
 
 #+begin_example
-  [generator]  caltrain caltrain    → a1.wav
-               (list of durations: e.g. 0.5 0.25 0.25 0.75)
-  [effect]     grain grev           → a2.wav   (grainsize=0.05)
-  [effect]     modify revecho       → a3.wav   (delay=0.3, feedback=0.4)
+  [generator]  clicknew             → a1.wav
+               (clicks=8, clicktimes_datafile with beat times in seconds)
+  [effect]     grain reverse        → a2.wav   (len=0.05)
+  [effect]     modify revecho       → a3.wav
 #+end_example
 
-Caltrain produces a sequence of timed clicks; grain reversal makes them
-into small granular pops; reverb-echo builds a rhythmic wash.
+Clicknew places a click at each time listed in the data file; grain
+reversal turns the clicks into small granular pops; revecho builds a
+rhythmic wash. BPM 120, 4/4: times are 0.0, 0.5, 1.0, 1.5, …
 
 ** 13. Waveform Sculpting (Additive → Spectral)
 
-Build a custom spectrum additively, then process it.
+Build a custom spectrum additively, then inject spectral noise.
 
 #+begin_example
-  [generator]  waveform make        → a1.wav
-               (sine partials 1,2,3,5,7,11 with amplitudes)
+  [generator]  synth wave           → a1.wav
+               (complex partials: mix modes 1-4)
   [effect]     pvoc anal            → s1.ana
   [effect]     blur noise           → s2.ana   (noise=0.3)
   [effect]     spec gain            → s3.ana   (gain=1.5)
@@ -261,13 +263,13 @@ Produces ambiguous temporal directionality.
 
 ** 15. Crystal Resonator
 
-Crystal rotate for rotating spectral emphasis plus focus.
+Crystal rotate for rotating spectral emphasis, then focus folding.
 
 #+begin_example
   [source]     any sound            → a1.wav
   [effect]     crystal rotate       → a2.wav
   [effect]     pvoc anal            → s1.ana
-  [effect]     focus fold           → s2.ana   (foldpoint=1000)
+  [effect]     focus fold           → s2.ana   (lofrq=100, hifrq=1000)
   [effect]     pvoc synth           → a3.wav
 #+end_example
 
@@ -276,7 +278,7 @@ partials back down, compressing the spectrum.
 
 ** 16. Spectral Blur Depth Map
 
-Layer multiple blur amounts and recombine.
+Layer multiple blur amounts and subtract to isolate mid-timescale motion.
 
 #+begin_example
   [source]     any sound            → a1.wav
@@ -288,34 +290,38 @@ Layer multiple blur amounts and recombine.
 #+end_example
 
 Subtracting a heavily blurred version from a lightly blurred one isolates
-the mid-timescale spectral motion — a spectral "edge detector" in time.
+mid-timescale spectral motion — a spectral "edge detector" in time.
 
-** 17. Fractal Spectral Texture
+** 17. Fractal Spectral Distortion
 
-Use the fractal spectrum generator for complex spectral material.
-
-#+begin_example
-  [generator]  fractal spectrum     → a1.wav
-               (dimension=1.5, lofrq=100, hifrq=8000)
-  [effect]     distort overload     → a2.wav   (gain=4.0)
-  [effect]     filter iterated      → a3.wav
-#+end_example
-
-Fractal spectrum produces noise with a specific spectral dimension (1=pink,
-2=brown). Overloading and iterated filtering adds grit and resonance.
-
-** 18. Ceracu Morphology
-
-Ceracu implements wave-terrain synthesis for organic timbres.
+Use distort fractal for self-similar timbral complexity.
 
 #+begin_example
-  [generator]  ceracu ceracu        → a1.wav
-               (mode=2, speed=0.5, depth=0.8)
-  [effect]     strans multi         → a2.wav
-  [effect]     modify space         → a3.wav
+  [source]     any sound            → a1.wav
+  [effect]     distort fractal      → a2.wav   (scaling=4, loudness=1.0)
+  [effect]     pvoc anal            → s1.ana
+  [effect]     spec gate            → s2.ana   (threshold=0.01)
+  [effect]     pvoc synth           → a3.wav
 #+end_example
 
-Wave-terrain synthesis with spectral transposition and spatial movement.
+Fractal distortion adds self-similar copies of the waveform at different
+scales. Spectral gating then removes the noise floor.
+
+** 18. Ceracu Cycle Morphology
+
+Ceracu repeats and stretches individual waveform cycles for organic timbres.
+
+#+begin_example
+  [source]     any short pitched sound → a1.wav
+  [effect]     ceracu ceracu        → a2.wav
+               (cyclcnts=10, mincycdur=0.1, outdur=20.0)
+  [effect]     strans multi         → a3.wav   (speed=0.5)
+  [effect]     modify space         → a4.wav
+#+end_example
+
+Ceracu analyses the source into waveform cycles and stretches each one
+independently — a form of additive time-stretching. =strans multi= then
+adds spectral transposition; =modify space= adds spatial movement.
 
 ** 19. Chirikov Map Modulator
 
@@ -323,13 +329,14 @@ Chirikov generates chaotic oscillations from a standard map.
 
 #+begin_example
   [generator]  chirikov chirikov    → a1.wav
-               (K=4.0, iterations=1000, freq=200)
+               (mode=1, frq=200, damping=0.5, dur=10.0)
   [effect]     distort multiply (a1, a1) → a2.wav   (self-ring-mod)
-  [effect]     blur scatter         → s1.ana   (via pvoc anal)
+  [effect]     pvoc anal            → s1.ana
+  [effect]     blur scatter         → s2.ana   (keep=2)
   [effect]     pvoc synth           → a3.wav
 #+end_example
 
-Chaotic frequency trajectories self-ring-modulated and then spectrally
+Chaotic frequency trajectories self-ring-modulated, then spectrally
 scattered. Produces dense inharmonic textures.
 
 ** 20. Formant Singing Synthesis
@@ -338,11 +345,11 @@ Synthesise vowel formants and animate them with envelope data.
 
 #+begin_example
   [generator]  synth spectra        → a1.wav
-               (partials: harmonic series, duration=4.0)
+               (harmonic series partials, duration=4.0)
   [effect]     repitch vowels       → a2.wav
                (vowel-data = "a e i o u" sequence)
   [effect]     modify loudness      → a3.wav
-  [effect]     modify revecho       → a4.wav   (feedback=0.2)
+  [effect]     modify revecho       → a4.wav
 #+end_example
 
 Harmonic source shaped by vowel formants over time, giving the impression
@@ -360,7 +367,7 @@ CDP8's =submix= family handles basic DAW-style mixing.
 
 #+begin_example
 Create a mix file:
-  submix atstep  → outmixfile.mix   (place files at timed steps)
+  submix atstep  (place two files at timed steps → outmixfile)
 
 Add tracks to it:
   submix addtomix  (add more sound files to an existing mix)
@@ -397,11 +404,15 @@ sox remix (E)     — manual: sox in.wav out.wav remix 1 0   (left channel only)
 
 *** Compression and Limiting (SoX)
 
-CDP8 has no compressor. Use SoX:
+CDP8 has no compressor. After =cdp8-sox-setup=, use =sox compand=
+which prompts for attack/decay and the transfer curve. For
+complex curves use =E= to enter the full argument string:
 
 #+begin_example
 Soft compression (3:1 from -20dB):
-  sox input.wav output.wav compand 0.01,0.3  -90,-90,-30,-20,-20,-15,0,-5  -5
+  attack,decay  =  0.01,0.3
+  transfer      = -90,-90,-30,-20,-20,-15,0,-5
+  gain-in-dB    = -5
 
 Hard limiter at -0.5dBFS:
   sox input.wav output.wav gain -h 0.5
@@ -410,7 +421,8 @@ Noise gate:
   sox input.wav output.wav silence 1 0.1 -50d 1 0.1 -50d
 #+end_example
 
-The SoX =compand= format is: =attack,decay  input-dB:output-dB pairs=.
+The SoX =compand= transfer curve format is: pairs of =input-dB:output-dB=,
+comma-separated, from quietest to loudest.
 
 *** Envelope Shaping (CDP8)
 
@@ -423,15 +435,14 @@ Shape amplitude envelope:
   modify loudness (overall level with peak normalisation)
 #+end_example
 
-To create breakpoint envelope files for =envel impose=:
-Write a text file with time/level pairs:
+To create a breakpoint envelope file for =envel impose=, when prompted
+select =n= (new file) and write time/level pairs in the compose window:
 #+begin_example
   0.0  0.0
   0.5  1.0
   3.5  1.0
   4.0  0.0
 #+end_example
-Then use =envel impose= with this file as input.
 
 ** Equalisation
 
@@ -458,16 +469,17 @@ Spectral EQ (operates on .ana files):
 
 #+begin_example
 Shelving:
-  sox input.wav output.wav bass +6      (low shelf at 100Hz)
-  sox input.wav output.wav treble -3    (high shelf at 3kHz)
+  sox bass   — low shelf at 100 Hz
+  sox treble — high shelf at 3 kHz
 
 Parametric band:
-  sox input.wav output.wav equalizer 1000 1.0q +4.0
+  sox equalizer — frequency, Q, gain (dB)
 
 High/low pass:
-  sox input.wav output.wav highpass 80
-  sox input.wav output.wav lowpass 12000 sinc
+  sox highpass, sox lowpass
 #+end_example
+
+All available field-by-field after =cdp8-sox-setup=.
 
 ** Reverb and Space
 
@@ -483,17 +495,12 @@ Room simulation (multi-channel):
 
 *** SoX Reverb
 
-#+begin_example
-Algorithmic reverb (Freeverb):
-  sox input.wav output.wav reverb 70 50 100 100 0 0
-                                  # reverberance, HF-damping,
-                                  # room-scale, stereo-depth,
-                                  # pre-delay(ms), wet-gain
+=sox reverb= after =cdp8-sox-setup= prompts for: reverberance (%), HF
+damping (%), room scale (%), stereo depth (%), pre-delay (ms), wet gain (dB).
 
-Convolution reverb requires an external tool (e.g. jconvolver) not
-handled by CDP8 or SoX directly. The .wav can be rendered and then
-re-imported as a node.
-#+end_example
+For impulse-response convolution reverb, render the signal from CDP8/SoX
+and re-import it as a source node; convolve externally with jconvolver or
+similar.
 
 ** Arranging and Timeline Assembly
 
@@ -505,7 +512,7 @@ CDP8's =submix= family is the closest equivalent to a DAW timeline.
 1. Create individual processed clips: each is a node in the session.
 
 2. Place clips at specific times:
-   submix atstep    (uniform spacing)
+   submix atstep    (uniform spacing — two files + step time)
    submix addtomix  (add single clip with position offset)
 
 3. Balance levels:
@@ -517,37 +524,34 @@ CDP8's =submix= family is the closest equivalent to a DAW timeline.
    combine mean  (normalised sum to avoid clipping)
 #+end_example
 
-*** Trimming and Padding (SoX)
+*** Trimming and Padding
 
 #+begin_example
 Cut a region (seconds):
-  sox input.wav output.wav trim 2.5 10.0
+  sox trim   (start and end times via schema prompts)
 
 Add silence before/after:
-  sox input.wav output.wav pad 1.0 2.0   (1s before, 2s after)
+  sox pad    (before-seconds, after-seconds)
 
-Concatenate files:
-  sox -m input1.wav input2.wav output.wav   (mix/overlap at same time)
-  # For true concatenation use combine make or submix atstep
+Remove leading/trailing silence (CDP8):
+  topantail2 topantail   (top-and-tail with threshold)
 #+end_example
 
 *** CDP8 Arrangement Commands
 
 #+begin_example
 Join multiple files end-to-end:
-  combine make   (multi-file concatenation)
-  combine make2  (with crossfade)
+  combine make   (multi-file concatenation with pitch/formant data)
+  combine make2  (with crossfade + envelope support)
 
 Interleave into multi-channel:
   combine interleave
 
-Trim silence from edges:
-  silence prefix / silence suffix   (remove leading/trailing silence)
-  topantail2 topantail               (top-and-tail with threshold)
+Insert silence at a point:
+  repitch insertsil  (insert silence of given duration)
 
-Insert silence or zeros:
-  repitch insertsil  (insert silence at a point)
-  synth silence      (generate N seconds of silence)
+Generate silence:
+  synth silence      (N seconds of silence as a wave node)
 #+end_example
 
 ** Drum Programming
@@ -570,12 +574,13 @@ approached as a timeline assembly problem:
 
 A 4/4 kick on beats, 120 BPM = interval of 0.5s:
 #+begin_example
-  submix atstep kick.wav   (step=0.5 for 4 beats)
+  submix atstep kick.wav kick.wav   (step=0.5 for 4 beats per pass)
   submix addtomix + snare.wav at 0.5, 1.5, 2.5 …
 #+end_example
 
 *** Method B: SoX Synthetic Drums
 
+These are complex one-liners; enter them via =E= (raw command edit):
 #+begin_example
 Kick drum (tuned sine sweep):
   sox -n kick.wav synth 0.3 sine 150:60 fade 0 0.3 0.1 gain -5
@@ -587,47 +592,48 @@ Hi-hat (short high-pass noise):
   sox -n hat.wav synth 0.05 whitenoise highpass 8000 fade 0 0.05 0 gain -12
 #+end_example
 
-After =cdp8-sox-setup=, use =sox silence= or =E= to enter these commands raw for complex one-liners.
-
-*** Method C: Caltrain as a Rhythmic Skeleton
+*** Method C: Clicknew as a Rhythmic Skeleton
 
 #+begin_example
-[generator]  caltrain caltrain    → a1.wav
-             (duration list defines the rhythm)
+[generator]  clicknew             → a1.wav
+             (clicktimes_datafile lists each hit time in seconds)
 #+end_example
 
-Caltrain places a click at each specified duration. These clicks can then
-drive CDP8 grain-based effects to produce rhythmic events from sample material.
+Clicknew places a click at each specified time. These clicks can drive
+CDP8 grain-based effects (grain reverse, grain repitch) to produce
+rhythmic events from sample material.
 
 ** Format Conversion and Sample Rate
 
 *** CDP8
 
 #+begin_example
-Sample rate conversion (within CDP8):
-  submix respec   (respecify sample rate of mix)
-  housekeep respec  (change sample rate header)
-
 Channel conversion:
-  housekeep chans  (change channel count)
+  housekeep chans  (change channel count in header)
   channelx         (extract single channel from multichannel file)
   combine interleave (mono files → multichannel)
+
+Sample rate (header only, no resampling):
+  housekeep respec  (change sample rate in header)
 #+end_example
+
+For actual resampling use SoX (=sox rate= after =cdp8-sox-setup=).
 
 *** SoX Format Conversion
 
 #+begin_example
-Resample to 48kHz:
-  sox input.wav -r 48000 output.wav rate -v
+Resample to 48 kHz:
+  sox rate    (via schema prompts after cdp8-sox-setup)
+  or via E: sox input.wav -r 48000 output.wav rate -v
 
 Convert to stereo:
-  sox mono.wav stereo.wav channels 2
+  sox channels 2
 
 Convert bit depth:
-  sox input.wav -b 24 output.wav
+  via E: sox input.wav -b 24 output.wav
 
 Convert to AIFF (for import into other DAWs):
-  sox input.wav output.aiff
+  via E: sox input.wav output.aiff
 #+end_example
 
 ** Mastering Chain Example
@@ -637,17 +643,16 @@ A complete signal path from raw mix to master:
 #+begin_example
   a1.wav   [raw rendered mix]
 
-  → [effect] filter lohi       → a2.wav   (hi-pass at 30Hz, remove rumble)
-  → [effect] modify loudness   → a3.wav   (CDP8 level normalisation)
-  → [SoX]    compand           → a4.wav   (2:1 compression, -18dBFS threshold)
-  → [effect] distort overload  → a5.wav   (mild tape saturation, gain=1.2)
-  → [SoX]    equalizer 5000 1.0q +1.5  → a6.wav   (air boost)
-  → [SoX]    reverb 15 30 50  → a7.wav   (subtle room)
-  → [SoX]    gain -n -0.3     → a8.wav   (true-peak limit to -0.3dBFS)
+  → [effect] filter lohi        → a2.wav   (hi-pass at 30 Hz, remove rumble)
+  → [effect] modify loudness    → a3.wav   (CDP8 level normalisation)
+  → [SoX]    sox compand        → a4.wav   (2:1 compression, -18 dBFS threshold)
+  → [effect] distort overload   → a5.wav   (mild saturation, gain=1.2)
+  → [SoX]    sox equalizer      → a6.wav   (air boost: 5 kHz, Q=1, +1.5 dB)
+  → [SoX]    sox reverb         → a7.wav   (subtle room: reverberance=15)
+  → [SoX]    sox norm           → a8.wav   (true-peak limit to -0.3 dBFS)
 #+end_example
 
-Each SoX step is a node created via =n= (generator type, free-form command
-with =E=), or entered as a one-liner via the extra-tools system.
+Each SoX step is a schema-driven node created via =n= after =cdp8-sox-setup=.
 
 -----
 
@@ -660,41 +665,43 @@ with =E=), or entered as a one-liner via the extra-tools system.
 | =r= | Run node at point |
 | =R= | Run all pending nodes (topological order) |
 | =e= | Edit node parameters via schema prompts |
-| =E= | Edit node raw command line |
+| =E= | Edit node raw command string |
 | =d= | Delete node (optionally deletes output file) |
 | =g= | Refresh display |
 | =q= | Quit window |
 
 The help side window (opened automatically when selecting a command)
-shows the binary's USAGE text on the right side of the frame.
-Close it with =q= or =C-x 1=.
+shows the binary's USAGE text. Close it with =q= or =C-x 1=.
 
 -----
 
 * SoX Quick Reference for CDP8 Users
 
-| Task | SoX command fragment |
-|------|---------------------|
-| Normalise | =gain -n= |
-| Fade in/out | =fade t 2 0 3= (2s in, 3s out) |
-| Trim | =trim 1.5 5.0= |
-| Pad silence | =pad 1 2= (1s before, 2s after) |
-| Reverse | =reverse= |
-| Repeat N times | =repeat 3= |
-| Tempo (no pitch) | =tempo 1.2= |
-| Pitch shift (semitones) | =pitch -300= (down 3 semitones) |
-| Compand | =compand 0.02,0.1 -50,-50,-10,-7,0,-2 -2= |
-| Reverb | =reverb 50 30 80= |
-| Lo-pass | =lowpass 5000= |
-| Hi-pass | =highpass 100= |
-| Parametric EQ | =equalizer 1k 2q +3= |
-| Spectrogram | =spectrogram -o spec.png= |
-| RMS stats | =stat= |
+After =cdp8-sox-setup=, these appear as schema-driven nodes via =n=.
+For complex multi-effect chains use =E= to write the full command line.
 
-Full SoX command for a node registered as ="sox"= in extra-tools:
+| Task | SoX node / fragment |
+|------|---------------------|
+| Normalise | =sox norm= |
+| Gain | =sox gain= |
+| Fade in/out | =sox fade= |
+| Trim | =sox trim= |
+| Pad silence | =sox pad= |
+| Reverse | =sox reverse= |
+| Repeat N times | =sox repeat= |
+| Tempo (no pitch) | =sox tempo= |
+| Pitch shift (semitones) | =sox pitch= |
+| Compress/expand | =sox compand= |
+| Reverb | =sox reverb= |
+| Lo-pass | =sox lowpass= |
+| Hi-pass | =sox highpass= |
+| Parametric EQ | =sox equalizer= |
+| Remove silence | =sox silence= |
+| Resample | =sox rate= |
+
+Full SoX syntax for raw =E= editing:
 #+begin_example
-  sox input.wav output.wav EFFECT [options] EFFECT [options] ...
+  sox infile outfile EFFECT [options] [EFFECT [options] ...]
 #+end_example
 
-Multiple effects can be chained in a single SoX invocation, which is
-more efficient than creating one node per effect.
+Multiple effects can be chained in a single SoX invocation.
