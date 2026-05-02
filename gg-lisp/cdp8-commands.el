@@ -764,7 +764,7 @@
      :params
      ((:name "pitchfile" :prompt "Binary pitch data file" :type pitch-in)
       (:name "formantfile" :prompt "Binary formant data file" :type data-file)
-      (:name "envfile" :prompt "Binary envelope file (from analysis)" :type number :default 1)
+      (:name "envfile" :prompt "Binary envelope file (from analysis)" :type envelope-in)
       (:name "outfile" :type wave-out)))
     ("combine max"
      :params
@@ -944,13 +944,13 @@
       (:name "wsize" :prompt "Envelope window size (ms, 5-filelen)" :type number :default 50.0)))
     ("envel dbtoenv"
      :params
-     ((:name "db_brkfile" :prompt "Input breakpoint file (dB values)" :type number :default 1)
+     ((:name "db_brkfile" :prompt "Input breakpoint file (dB values)" :type breakpoint-file)
       (:name "outenvfile" :prompt "Output envelope file" :type envelope-out)
       (:name "wsize" :prompt "Envelope window size (ms)" :type number :default 50.0)))
     ("envel dbtogain"
      :params
-     ((:name "db_brkfile" :prompt "Input breakpoint file (dB values)" :type number :default 1)
-      (:name "outbrkfile" :prompt "Output breakpoint file (gain values)" :type number :default 1)))
+     ((:name "db_brkfile" :prompt "Input breakpoint file (dB values)" :type breakpoint-file)
+      (:name "outbrkfile" :prompt "Output breakpoint file (gain values)" :type breakpoint-file)))
     ("envel envtobrk"
      :params
      ((:name "inenvfile" :prompt "Input binary envelope file" :type envelope-in)
@@ -959,12 +959,12 @@
     ("envel envtodb"
      :params
      ((:name "inenvfile" :prompt "Input binary envelope file" :type envelope-in)
-      (:name "outbrkfile" :prompt "Output breakpoint file (dB values)" :type number :default 1)
+      (:name "outbrkfile" :prompt "Output breakpoint file (dB values)" :type breakpoint-file)
       (:name "datareduce" :prompt "Data reduction (0-1, less=more points)" :type number :default 0.5 :flag "-d" :optional t)))
     ("envel gaintodb"
      :params
-     ((:name "brkfile" :prompt "Input breakpoint file (gain values)" :type number :default 1)
-      (:name "out_db_brkfile" :prompt "Output breakpoint file (dB values)" :type number :default 1)))
+     ((:name "brkfile" :prompt "Input breakpoint file (gain values)" :type breakpoint-file)
+      (:name "out_db_brkfile" :prompt "Output breakpoint file (dB values)" :type breakpoint-file)))
     ("envel pluck"
      :params
      ((:name "infile" :type wave-in)
@@ -976,7 +976,7 @@
     ("envel scaled"
      :params
      ((:name "input_sndfile" :type wave-in)
-      (:name "imposed-brkfile" :prompt "Envelope breakpoint file (time-scaled to sound)" :type number :default 1)
+      (:name "imposed-brkfile" :prompt "Envelope breakpoint file (time-scaled to sound)" :type breakpoint-file)
       (:name "outsndfile" :type wave-out)))
     ("envel swell"
      :params
@@ -1022,7 +1022,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "timesfile" :prompt "Text file of times (s) at which source plays" :type number :default 1)
+      (:name "timesfile" :prompt "Text file of times (s) at which source plays" :type data-file)
       (:name "level" :prompt "Output level (0-1)" :type number :default 1.0)))
     ("extend sequence"
      :params
@@ -3286,13 +3286,13 @@
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "file1" :type number)
-      (:name "file2" :type number)
+      (:name "file2" :type data-file)
       (:name "outf" :type wave-out)
       (:name "dur" :type number)
       (:name "maxangle" :type number)
       (:name "dec" :type number)
-      (:name "file1" :type number)
-      (:name "file2" :type number)
+      (:name "file1" :type data-file)
+      (:name "file2" :type data-file)
       (:name "outf" :type wave-out)
       (:name "dur" :type number)
       (:name "skew" :type number)
