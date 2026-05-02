@@ -177,6 +177,7 @@ Commands whose schema has no matching input param are excluded."
                    ('spectral   'spectral-in)
                    ('pitch      'pitch-in)
                    ('breakpoint 'breakpoint-in)
+                   ('envelope   'envelope-in)
                    (_           'wave-in))))
     (seq-filter
      (lambda (spec)
