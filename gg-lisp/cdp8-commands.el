@@ -850,7 +850,7 @@
      :params
      ((:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "harmonics-file" :prompt "Breakpoint file: harmonic_no/amplitude pairs" :type number :default 1)
+      (:name "harmonics-file" :prompt "Harmonic amplitudes breakpoint file" :type breakpoint-file :format-hint "; harmonic-number (1=fundamental) and amplitude (0-1) pairs.\n1  1.0\n2  0.5\n3  0.25\n4  0.1")
       (:name "pre_attenuation" :prompt "Pre-attenuation applied to input" :type number :default 1.0 :flag "-p" :optional t)))
     ("distort interact"
      :params
@@ -1202,8 +1202,8 @@
       (:name "v" :prompt "Display formant-band parameter info" :type bool :flag "-v" :optional t)))
     ("fractal spectrum"
      :params
-     ((:name "inf" :prompt "Input analysis file" :type number :default 1)
-      (:name "outf" :prompt "Output analysis file" :type number :default 1)
+     ((:name "inf" :prompt "Input spectral analysis file" :type spectral-in)
+      (:name "outf" :prompt "Output spectral analysis file" :type spectral-out)
       (:name "shape" :prompt "Fractal shape file (transposition over time)" :type number :default 1)
       (:name "maxfrac" :prompt "Max fractal depth" :type number :default 1.0 :flag "-m" :optional t)
       (:name "str" :prompt "Spectral stretch" :type number :default 1.0 :flag "-t" :optional t)
@@ -1789,12 +1789,12 @@
       (:name "outfile" :type wave-out)))
     ("repitch analenv"
      :params
-     ((:name "inanalfile" :prompt "Input analysis file" :type number :default 1)
-      (:name "outenvfile" :prompt "Output envelope file" :type number :default 1)))
+     ((:name "inanalfile" :prompt "Input spectral analysis file" :type spectral-in)
+      (:name "outenvfile" :prompt "Output envelope file" :type envelope-out)))
     ("repitch approx"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "pitchfile" :type number)
+      (:name "pitchfile" :prompt "Input binary pitch data file" :type pitch-in)
       (:name "outfile" :type wave-out)
       (:name "prange" :type number :flag "-p" :optional t)
       (:name "trange" :type number :flag "-t" :optional t)
@@ -1845,7 +1845,7 @@
     ("repitch invert"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "pitchfile" :type number)
+      (:name "pitchfile" :prompt "Input binary pitch data file" :type pitch-in)
       (:name "outfile" :type wave-out)
       (:name "map" :type number)
       (:name "meanpch" :type number :flag "-m" :optional t)
@@ -1871,14 +1871,14 @@
     ("repitch quantise"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "pitchfile" :type number)
+      (:name "pitchfile" :prompt "Input binary pitch data file" :type pitch-in)
       (:name "outfile" :type wave-out)
       (:name "q-set" :type number)
       (:name "o" :type bool :flag "-o" :optional t)))
     ("repitch randomise"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "pitchfile" :type number)
+      (:name "pitchfile" :prompt "Input binary pitch data file" :type pitch-in)
       (:name "outfile" :type wave-out)
       (:name "maxinterval" :type number)
       (:name "timestep" :type number)
@@ -1886,7 +1886,7 @@
     ("repitch smooth"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "pitchfile" :type number)
+      (:name "pitchfile" :prompt "Input binary pitch data file" :type pitch-in)
       (:name "outfile" :type wave-out)
       (:name "timeframe" :type number)
       (:name "meanpch" :type number :flag "-p" :optional t)
@@ -1899,7 +1899,7 @@
     ("repitch vibrato"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "pitchfile" :type number)
+      (:name "pitchfile" :prompt "Input binary pitch data file" :type pitch-in)
       (:name "outfile" :type wave-out)
       (:name "vibfreq" :type number)
       (:name "vibrange" :type number)))
@@ -2211,9 +2211,9 @@
      :output-type spectral
      :params
      ((:name "partials" :prompt "Number of partials" :type integer :default 8)
-      (:name "analfile1" :prompt "First analysis file" :type number :default 1)
-      (:name "analfile2" :prompt "Second analysis file" :type number :default 1)
-      (:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
+      (:name "analfile1" :prompt "First analysis file" :type spectral-in)
+      (:name "analfile2" :prompt "Second analysis file" :type spectral-in)
+      (:name "outanalfile" :prompt "Output analysis file" :type spectral-out)
       (:name "tuning" :prompt "Tuning reference (Hz)" :type number :default 440.0)
       (:name "minwin" :prompt "Min windows for partial to be recognised" :type integer :default 2)
       (:name "signois" :prompt "Signal-to-noise ratio threshold" :type number :default 2.0)
@@ -2252,8 +2252,8 @@
     ("spectrum format"
      :output-type spectral
      :params
-     ((:name "outdatafile" :prompt "Output data file (frq/amp peaks/troughs/envelope)" :type number :default 1)
-      (:name "indatafile" :prompt "Input text data file (frq/amp pairs, frq increasing)" :type number :default 1)
+     ((:name "outdatafile" :prompt "Output formatted spectral data file" :type data-file :format-hint "; output written by spectrum format")
+      (:name "indatafile" :prompt "Frequency/amplitude data file" :type data-file :format-hint "; frq/amp pairs, one per line.\n100  0.0\n440  1.0\n8000 0.0")
       (:name "pointcnt" :prompt "Analysis points per window" :type integer :default 1024)
       (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)))
     ("spectstr"
@@ -3079,13 +3079,13 @@
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "pitchfile" :type number)
-      (:name "pitchfile2" :type number)
+      (:name "pitchfile2" :prompt "Second pitch data file" :type pitch-in)
       (:name "outtransposfile" :type number)))
     ("repitch combineb"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "pitchfile" :type number)
-      (:name "pitchfile2" :type number)
+      (:name "pitchfile2" :prompt "Second pitch data file" :type pitch-in)
       (:name "outtbrkfile" :type number)
       (:name "I-d" :type number :flag "-d" :optional t)))
     ("repitch getpitch"
@@ -3587,12 +3587,12 @@
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "input_sndfile" :type wave-in)
-      (:name "replacing-envfile" :type number)
+      (:name "replacing-envfile" :prompt "Replacement envelope breakpoint file" :type breakpoint-file :format-hint "; CDP8 breakpoint file — time (s) and value pairs.\n; Time values must be increasing.\n0.0  0.0\n1.0  1.0")
       (:name "outsndfile" :type wave-out)))
     ("envel replot"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "brkfile" :type number)
+      (:name "brkfile" :prompt "Input breakpoint file" :type breakpoint-file :format-hint "; CDP8 breakpoint file — time (s) and value pairs.\n; Time values must be increasing.\n0.0  0.0\n1.0  1.0")
       (:name "outbrkfile" :type number)
       (:name "wsize" :type number)
       (:name "various_params" :type number)
