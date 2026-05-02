@@ -21,19 +21,30 @@ The mode represents processing chains as typed cables:
 Nodes are created with =n=, run with =r= or =R=, and inspected with =RET=.
 Edit a node's parameters with =e=, its raw command with =E=.
 
-To add SoX operations, register them in ~cdp8-extra-tools~:
+** SoX integration
+
+Load the optional SoX module and call =cdp8-sox-setup= once after the session is open:
+
 #+begin_src emacs-lisp
-(setq cdp8-extra-tools
-      '(("sox norm"   . "/usr/bin/sox")
-        ("sox trim"   . "/usr/bin/sox")
-        ("sox compand" . "/usr/bin/sox")
-        ("sox reverb"  . "/usr/bin/sox")
-        ("sox remix"   . "/usr/bin/sox")
-        ("sox pad"     . "/usr/bin/sox")))
+(require 'cdp8-sox)          ; add to your init or eval in *scratch*
+(cdp8-sox-setup)             ; merges 21 SoX effects into the running session
 #+end_src
 
-For SoX nodes, use =E= (edit raw command) to write the full command line,
-as SoX has its own syntax that doesn't map directly to the schema system.
+After setup, SoX effects (=sox reverb=, =sox norm=, =sox compand=, …) appear in the
+=n= generator list and in the =E= effect menu exactly like CDP8 commands.
+The schema system handles the inverted SoX argument order (=sox infile outfile effect params=)
+automatically — parameters are prompted field-by-field just like CDP8 effects.
+
+** Text data files (breakpoint / sequence files)
+
+Many CDP8 parameters are text files: breakpoint envelopes, frequency tables,
+grain timing lists, etc.  When prompted for such a parameter the mode offers two choices:
+
+- =y= — pick an existing file with =read-file-name=
+- =n= — open a compose window pre-populated with a format comment; write the data,
+  then =C-c C-c= to confirm or =C-c C-q= to cancel
+
+The composed file is saved to the session directory so it persists with the project.
 
 -----
 
@@ -364,30 +375,22 @@ Render to audio:
 
 *** Gain and Normalisation (SoX)
 
-CDP8 lacks a simple normalise command. Use SoX via =cdp8-extra-tools=:
+CDP8 lacks a simple normalise command. After =cdp8-sox-setup=, use:
 
 #+begin_example
-Normalise to -1 dBFS:
-  sox input.wav output.wav gain -n -1
-
-Apply gain (dB):
-  sox input.wav output.wav gain -3
-
-RMS normalise:
-  sox input.wav output.wav gain -rn
+sox norm    — normalise to 0 dBFS (level param)
+sox gain    — apply fixed dB gain
 #+end_example
 
-Register in ~cdp8-extra-tools~ as ="sox gain"=, use =E= to write the
-full command line with the desired dB value.
+Both appear in the node menu and prompt field-by-field.
 
 *** Stereo Panning and Imaging
 
 #+begin_example
-CDP8 pan:        abfpan, abfpan2   (B-format spatial)
-CDP8 hard pan:   modify space
-SoX remix:       sox input.wav out.wav remix 1 0   (left only)
-                 sox input.wav out.wav remix 0 1   (right only)
-SoX channels:    sox mono.wav stereo.wav channels 2
+CDP8 pan:         abfpan, abfpan2   (B-format spatial)
+CDP8 hard pan:    modify space
+sox channels      — mono to stereo conversion
+sox remix (E)     — manual: sox in.wav out.wav remix 1 0   (left channel only)
 #+end_example
 
 ** Dynamics Processing
@@ -584,7 +587,7 @@ Hi-hat (short high-pass noise):
   sox -n hat.wav synth 0.05 whitenoise highpass 8000 fade 0 0.05 0 gain -12
 #+end_example
 
-Register =sox= in =cdp8-extra-tools= and enter these commands via =E=.
+After =cdp8-sox-setup=, use =sox silence= or =E= to enter these commands raw for complex one-liners.
 
 *** Method C: Caltrain as a Rhythmic Skeleton
 
