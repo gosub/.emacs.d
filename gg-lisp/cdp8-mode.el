@@ -101,7 +101,10 @@
 (defun cdp8--binary-full-path (name)
   (let ((extra (assoc name cdp8-extra-tools)))
     (if extra (cdr extra)
-      (expand-file-name name (expand-file-name cdp8-binaries-dir)))))
+      (let ((cdp-path (expand-file-name name (expand-file-name cdp8-binaries-dir))))
+        (if (file-executable-p cdp-path)
+            cdp-path
+          (or (executable-find name) cdp-path))))))
 
 (defun cdp8--file-refs (cmd)
   "Extract all CDP8 data filenames mentioned in CMD string."
@@ -158,9 +161,13 @@
 
 ;;; Command list
 
+(defvar cdp8-extra-commands '()
+  "Additional command specs merged into the command list.
+Optional modules such as `cdp8-sox' append to this list.")
+
 (defun cdp8--all-commands ()
-  "Return CDP8 commands plus user-defined extra tool labels."
-  (append cdp8-commands (mapcar #'car cdp8-extra-tools)))
+  "Return CDP8 commands, extra commands, and extra tool labels."
+  (append cdp8-commands cdp8-extra-commands (mapcar #'car cdp8-extra-tools)))
 
 (defun cdp8--effect-commands-for (output-type)
   "Return commands that accept at least one input of OUTPUT-TYPE.
@@ -189,6 +196,59 @@ Commands whose schema has no matching input param are excluded."
   (let ((completion-extra-properties
          (list :annotation-function #'cdp8--annotate-command)))
     (completing-read prompt commands nil t)))
+
+;;; Data-file compose window
+
+(defvar-local cdp8--compose-target nil
+  "Absolute path of the file to write when the compose buffer is confirmed.")
+
+(define-derived-mode cdp8-compose-mode text-mode "CDP8-Data"
+  "Mode for composing CDP8 text data files (breakpoints, filter banks, etc.).
+Finish with \\[cdp8--compose-finish]; cancel with \\[cdp8--compose-cancel].
+\\{cdp8-compose-mode-map}")
+
+(define-key cdp8-compose-mode-map (kbd "C-c C-c") #'cdp8--compose-finish)
+(define-key cdp8-compose-mode-map (kbd "C-c C-q") #'cdp8--compose-cancel)
+
+(defun cdp8--compose-finish ()
+  "Save the composed data file and return to the prompting session."
+  (interactive)
+  (exit-recursive-edit))
+
+(defun cdp8--compose-cancel ()
+  "Abort data file composition."
+  (interactive)
+  (abort-recursive-edit))
+
+(defun cdp8--compose-data-file (hint param-name)
+  "Open a compose buffer pre-populated with HINT; return path of saved file.
+PARAM-NAME is used to derive the filename, which is saved into `cdp8--dir'
+when available, otherwise into `temporary-file-directory'."
+  (let* ((slug (replace-regexp-in-string "[^[:alnum:]]" "-"
+                                         (downcase (or param-name "data"))))
+         (dir  (if (and (boundp 'cdp8--dir) (stringp cdp8--dir))
+                   cdp8--dir temporary-file-directory))
+         (file (expand-file-name (concat slug ".txt") dir))
+         (buf  (get-buffer-create (format "*cdp8-compose: %s*" param-name))))
+    (with-current-buffer buf
+      (erase-buffer)
+      (insert hint)
+      (unless (string-suffix-p "\n" hint) (insert "\n"))
+      (insert "\n")
+      (cdp8-compose-mode)
+      (setq-local cdp8--compose-target file)
+      (goto-char (point-max)))
+    (pop-to-buffer buf)
+    (message "Enter data  C-c C-c confirm  C-c C-q cancel")
+    (condition-case nil
+        (recursive-edit)
+      (quit
+       (kill-buffer buf)
+       (user-error "CDP8: compose cancelled")))
+    (with-current-buffer buf
+      (write-region (point-min) (point-max) file))
+    (kill-buffer buf)
+    file))
 
 ;;; Help side window
 
@@ -244,6 +304,17 @@ OVERRIDE, when non-nil, is used instead of the schema/last-used default."
          (def     (or override (cdp8--param-default param))))
     (pcase type
       ('bool t)
+      ((or 'breakpoint-file 'data-file 'envelope-file)
+       (if (y-or-n-p (format "%s — use existing file? " prompt))
+           (expand-file-name
+            (read-file-name (format "%s: " prompt)
+                            (if (and (boundp 'cdp8--dir) (stringp cdp8--dir))
+                                cdp8--dir default-directory)
+                            nil t)
+            (if (and (boundp 'cdp8--dir) (stringp cdp8--dir))
+                cdp8--dir default-directory))
+         (cdp8--compose-data-file
+          (or (plist-get param :format-hint) "") prompt)))
       ('choice
        (cond
         ;; alist of (value . label) → show "label" pick value
@@ -295,8 +366,10 @@ OVERRIDE, when non-nil, is used instead of the schema/last-used default."
   "Drive sequential prompts using the schema for SPEC; return assembled command.
 INPUT-WAVES is a list of input wave names (may be nil or empty); OUT-WAVE is
 the output wave name.  CURRENT is an alist of (name . value) for re-editing."
-  (let* ((schema (cdp8--schema-for spec))
-         (tokens (list spec))
+  (let* ((entry  (assoc spec cdp8-param-schemas))
+         (prefix (and entry (plist-get (cdr entry) :command-prefix)))
+         (schema (cdp8--schema-for spec))
+         (tokens (list (or prefix spec)))
          (waves  (if (listp input-waves) input-waves (list input-waves))))
     (dolist (param schema)
       (let* ((type     (plist-get param :type))
@@ -310,6 +383,8 @@ the output wave name.  CURRENT is an alist of (name . value) for re-editing."
                    tokens)))
           ((or 'wave-out 'spectral-out 'pitch-out 'breakpoint-out 'envelope-out)
            (push out-wave tokens))
+          ('literal
+           (push (plist-get param :value) tokens))
           (_
            (if (plist-get param :optional)
                (when (y-or-n-p
@@ -370,6 +445,8 @@ the output wave name.  CURRENT is an alist of (name . value) for re-editing."
           (when (and toks (string-match-p "\\.\\(?:wav\\|ana\\|frq\\|brk\\|env\\)$"
                                           (car toks)))
             (setq toks (cdr toks))))
+         ((eq type 'literal)
+          (setq toks (cdr toks)))
          (flag
           (let ((m (cl-find-if (lambda (tok) (string-prefix-p flag tok)) toks)))
             (when m
