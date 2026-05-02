@@ -708,7 +708,16 @@
      :params
      ((:name "infile" :type spectral-in)
       (:name "outfile" :type spectral-out)
-      (:name "weavfile" :prompt "Weave file (list of integer window steps)" :type number :default 1)))
+      (:name "weavfile" :prompt "Weave file"
+             :type data-file
+             :format-hint "; CDP8 blur weave — list of integer window steps, one per line
+; Positive = step forward, negative = step back.  Example:
+1
+3
+2
+-1
+5
+1")))
     ("channelx"
      :params
      ((:name "infile" :type wave-in)
@@ -718,7 +727,14 @@
      :params
      ((:name "clicks" :prompt "Number of clicks" :type integer :default 4)
       (:name "outfile" :type wave-out)
-      (:name "clicktimes_datafile" :prompt "Text file of click times (s)" :type number :default 1)
+      (:name "clicktimes_datafile" :prompt "Click times file"
+             :type data-file
+             :format-hint "; CDP8 clicknew — click times in seconds, one per line.
+; Number of lines must match the 'clicks' parameter.  Example:
+0.0
+0.5
+1.0
+1.5")
       (:name "srate" :prompt "Sample rate (44100/48000/etc)" :type integer :default 44100)))
     ("combine cross"
      :params
@@ -1077,20 +1093,35 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "datafile" :type number)
-      (:name "Q" :type number)
-      (:name "gain" :type number)
-      (:name "tail" :type number :flag "-t" :optional t)
-      (:name "d" :type bool :flag "-d" :optional t)))
+      (:name "datafile" :prompt "Filter bank definition file"
+             :type data-file
+             :format-hint "; CDP8 filter userbank — centre-frequency (Hz) per line.
+; One frequency per line, listed in ascending order.
+200
+440
+880
+1760
+3520")
+      (:name "Q" :prompt "Q (resonance/sharpness, >0)" :type number :default 5.0)
+      (:name "gain" :prompt "Overall gain" :type number :default 1.0)
+      (:name "tail" :prompt "Filter tail multiplier" :type number :flag "-t" :optional t)
+      (:name "d" :prompt "Use decibels" :type bool :flag "-d" :optional t)))
     ("filter variable"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type wave-in)
       (:name "outfile" :type wave-out)
-      (:name "acuity" :type number)
-      (:name "gain" :type number)
-      (:name "frq" :type number)
-      (:name "tail" :type number :flag "-t" :optional t)))
+      (:name "acuity" :prompt "Filter sharpness / Q (>0)" :type number :default 5.0)
+      (:name "gain" :prompt "Gain" :type number :default 1.0)
+      (:name "frq" :prompt "Frequency breakpoint file"
+             :type breakpoint-file
+             :format-hint "; CDP8 filter variable — time (s) / frequency (Hz) breakpoint pairs.
+; The filter cutoff frequency changes over time following this curve.
+0.0   500.0
+1.0  2000.0
+3.0   200.0
+5.0  8000.0")
+      (:name "tail" :prompt "Filter tail multiplier" :type number :flag "-t" :optional t)))
     ("filter varibank"
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
@@ -1340,8 +1371,29 @@
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "infile" :type spectral-in)
       (:name "outfile" :type spectral-out)
-      (:name "filtfile" :type number)
-      (:name "r" :type bool :flag "-r" :optional t)))
+      (:name "filtfile" :prompt "Graphic EQ gains file"
+             :type data-file
+             :format-hint "; CDP8 hilite greq — one gain value per analysis channel.
+; Each line is a multiplier for the corresponding spectral channel (0=silence, 1=unchanged, 2=double).
+; The number of lines must equal the number of analysis channels in the input file.
+; Example for 16-channel file:
+1.0
+1.0
+1.5
+2.0
+1.5
+1.0
+0.5
+0.0
+0.0
+0.5
+1.0
+1.5
+1.0
+0.8
+0.5
+0.0")
+      (:name "r" :prompt "Reverse gain curve" :type bool :flag "-r" :optional t)))
     ("hilite pluck"
      :output-type spectral
      :params
@@ -1761,11 +1813,22 @@
       (:name "w" :prompt "Remove 2-window glitches (use with -s)" :type bool :flag "-w" :optional t)
       (:name "i" :prompt "Interpolate through all unpitched windows" :type bool :flag "-i" :optional t)))
     ("repitch generate"
+     :output-type pitch
      :params
-     ((:name "outpitchdatafile" :prompt "Output binary pitch data file" :type number :default 1)
-      (:name "midipitch-data" :prompt "Text file of time/MIDI pitch value pairs" :type number :default 1)
+     ((:name "outpitchdatafile" :prompt "Output pitch file" :type pitch-out)
+      (:name "midipitch-data" :prompt "Time / MIDI pitch data file"
+             :type data-file
+             :format-hint "; CDP8 repitch generate — time (s) and MIDI note number pairs.
+; MIDI note 60 = middle C.  Time values must be increasing.
+0.0   60
+0.5   62
+1.0   64
+1.5   65
+2.0   67
+2.5   65
+3.0   64")
       (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)
-      (:name "points" :prompt "Analysis points (power of 2, default 1024)" :type integer :default 1024 :flag "-c" :optional t)
+      (:name "points" :prompt "Analysis points (power of 2)" :type integer :default 1024 :flag "-c" :optional t)
       (:name "overlap" :prompt "Filter overlap factor (1-4)" :type integer :default 3 :flag "-o" :optional t)))
     ("repitch insertsil"
      :params
@@ -2163,8 +2226,16 @@
     ("spectrum fixed"
      :output-type spectral
      :params
-     ((:name "outanalfile" :prompt "Output analysis file" :type number :default 1)
-      (:name "datafile" :prompt "Text file of frq/amp pairs (peaks +, troughs -, zero=envelope)" :type number :default 1)
+     ((:name "outanalfile" :prompt "Output analysis file" :type spectral-out)
+      (:name "datafile" :prompt "Frequency / amplitude data file"
+             :type data-file
+             :format-hint "; CDP8 spectrum fixed — frequency/amplitude pairs defining the spectral shape.
+; Lines prefixed + are peaks, - are troughs, no prefix = spectral envelope.
+; Frequencies in Hz (ascending), amplitudes in 0-1 range.
++  440.0  1.0
++  880.0  0.5
++  1320.0 0.25
++  1760.0 0.1")
       (:name "pointcnt" :prompt "Analysis points per window" :type integer :default 1024)
       (:name "srate" :prompt "Sample rate of target sound" :type integer :default 44100)
       (:name "dur" :prompt "Duration (s)" :type number :default 1.0)
@@ -3502,7 +3573,15 @@
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "input_sndfile" :type wave-in)
-      (:name "imposed-envfile" :type wave-in)
+      (:name "imposed-envfile" :prompt "Envelope breakpoint file"
+             :type breakpoint-file
+             :format-hint "; CDP8 envelope breakpoint file — time (s) and amplitude (0-1) pairs.
+; Time values must be increasing.  First time must be 0.
+; Last time should cover the full duration of the sound.
+0.0  0.0
+0.1  1.0
+0.9  1.0
+1.0  0.0")
       (:name "outsndfile" :type wave-out)))
     ("envel replace"
      :params
