@@ -1201,6 +1201,7 @@
       (:name "outsndfile" :type wave-out)
       (:name "v" :prompt "Display formant-band parameter info" :type bool :flag "-v" :optional t)))
     ("fractal spectrum"
+     :output-type spectral
      :params
      ((:name "inf" :prompt "Input spectral analysis file" :type spectral-in)
       (:name "outf" :prompt "Output spectral analysis file" :type spectral-out)
@@ -2778,10 +2779,11 @@
       (:name "permfile" :type number)
       (:name "cycles-of-perm" :type number)))
     ("hilite arpeg"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "wave" :type number)
       (:name "rate" :type number)
       (:name "U-p" :type number :flag "-p" :optional t)
@@ -3140,6 +3142,7 @@
       (:name "outfilecnt" :prompt "Number of output spectral files" :type integer :default 2)
       (:name "changrouping" :prompt "Adjacent channels per group in output spectra" :type integer :default 1)))
     ("specnu remove"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "inanalfile" :type number)
@@ -3426,10 +3429,11 @@
       (:name "g" :prompt "GUID type (1=PCM, 2=AMB)" :type integer :flag "-g" :optional t)
       (:name "s" :prompt "Speaker position mask" :type integer :flag "-s" :optional t)))
     ("blur chorus"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "infile" :type wave-in)
-      (:name "outfile" :type wave-out)
+      (:name "infile" :type spectral-in)
+      (:name "outfile" :type spectral-out)
       (:name "aspread" :type number)))
     ("brownian motion"
      :params
@@ -3697,6 +3701,7 @@
       (:name "pitch-brkpnt-data" :type number)
       (:name "time" :type number)))
     ("fractal wave"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "inf" :type number)
@@ -4080,11 +4085,12 @@
       (:name "meta" :type number :flag "-m" :optional t)
       (:name "f" :type bool :flag "-f" :optional t)))
     ("spec clean"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "infile" :type wave-in)
+      (:name "infile" :type spectral-in)
       (:name "nfile" :type number)
-      (:name "outfile" :type wave-out)
+      (:name "outfile" :type spectral-out)
       (:name "skiptime" :type number)
       (:name "noisgain" :type integer :default 2 :flag "-g" :optional t)))
     ("specanal specanal"
@@ -4111,15 +4117,17 @@
       (:name "len" :type number)
       (:name "a" :type bool :flag "-a" :optional t)))
     ("specnu slice"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
       (:name "inanalfile" :type number)
       (:name "outanalfiles" :type number)
       (:name "pitchdata" :type number)))
     ("spectrum lines"
+     :output-type spectral
      :params
      ((:name "mode" :prompt "Mode" :type integer :default 1)
-      (:name "outfiltfile" :type wave-out)
+      (:name "outfiltfile" :type spectral-out)
       (:name "indatafile" :type number)
       (:name "duration" :type number)
       (:name "datafoot" :type number)
