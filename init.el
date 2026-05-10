@@ -83,6 +83,12 @@
      (:name "Unpack archive"
       :command "tar xf %{} -C %{existing-dir}"
       :extensions archives)
+     (:name "Play with ffplay"
+      :command "ffplay -nodisp -hide_banner %{}"
+      :extensions audio)
+     (:name "Audio info with ffprobe"
+      :command "ffprobe -hide_banner %{}"
+      :extensions audio)
      (:name "Convert audio to mp3"
       :command "ffmpeg -i %{} -b:a %{Bitrate:128k|160k|192k} %{.mp3}"
       :extensions audio)
