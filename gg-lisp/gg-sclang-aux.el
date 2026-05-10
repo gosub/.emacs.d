@@ -55,6 +55,11 @@
 	nil))))
 
 
+(defun gg/sclang-dired-recordings-dir ()
+  "Open a dired buffer on the Platform Recordings directory."
+  (interactive)
+  (dired (sclang-eval-sync "Platform.recordingsDir")))
+
 (require 'transient)
 
 (transient-define-prefix gg/sclang-transient ()
@@ -78,7 +83,8 @@
     ("rn" "Prepare for record" sclang-server-prepare-for-record)
     ("rr" "Start recording" sclang-server-record)
     ("rs" "Stop recording" sclang-server-stop-recording)
-    ("rp" "Pause recording" sclang-server-pause-recording)]])
+    ("rp" "Pause recording" sclang-server-pause-recording)
+    ("rd" "Recordings dir" gg/sclang-dired-recordings-dir)]])
 
 
 (provide 'gg-sclang-aux)
