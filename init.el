@@ -233,6 +233,9 @@
   :defer t
   :commands (roma-random-place))
 
+(use-package sccode
+  :custom
+  (sccode-db-path "~/dl/sccode_dump/sccode.sqlite"))
 
 ;;; BUILT-IN PACKAGES CONFIG
 
