@@ -11,7 +11,7 @@
   :group 'tools
   :prefix "project-aux-")
 
-(defcustom project-aux-base-dir "~/box/prj"
+(defcustom project-aux-base-dir "~/Projects"
   "Root directory to search for git repositories."
   :type 'directory
   :group 'project-aux)

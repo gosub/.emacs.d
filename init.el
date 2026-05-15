@@ -19,7 +19,11 @@
 (use-package sclang-aux)
 
 (use-package project-aux
-  :commands (project-aux-open))
+  :commands (project-aux-open)
+  :custom
+  (project-aux-base-dir "~/box/prj")
+  :bind (("C-x p p" . project-aux-open)
+         ("C-x p P" . project-switch-project)))
 
 (use-package gg-xkcd-geohashing
   :defer t
