@@ -18,6 +18,9 @@
 
 (use-package sclang-aux)
 
+(use-package project-aux
+  :commands (project-aux-open))
+
 (use-package gg-xkcd-geohashing
   :defer t
   :commands (gg/xkcd-geohashing-coords
