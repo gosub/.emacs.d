@@ -363,6 +363,10 @@
   (load-theme theme t)
   (message "Loaded random theme: %s" theme))
 
+;; set the completion styles
+(setq completion-styles
+      '(basic partial-completion substring initials flex))
+
 ;; type y instead of yes
 (setq use-short-answers t)
 
