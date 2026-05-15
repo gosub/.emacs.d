@@ -42,7 +42,7 @@
                         (split-string raw "\n")))))
 
 ;;;###autoload
-(defun project-aux-open (arg)
+(defun project-aux-dired (arg)
   "Select a git repo under `project-aux-base-dir' and open it in dired.
 With prefix argument ARG, refresh the repo list first."
   (interactive "P")
