@@ -1,34 +1,34 @@
-(defun gg/sclang-eval-dwim ()
+(defun sclang-aux-eval-dwim ()
   "If a region is active, eval it.
 Else if point is inside a `(...)' SC code block whose `(' is at the
 beginning of a line, mark the block and eval it.
 Otherwise eval the current line."
   (interactive)
   (if (use-region-p)
-      (gg--sclang-eval-region)
-    (let ((reg (gg--enclosing-sc-block)))
+      (sclang-aux--eval-region)
+    (let ((reg (sclang-aux--enclosing-sc-block)))
       (if reg
           (save-excursion
             (goto-char (car reg))
             (set-mark (point))
             (goto-char (cadr reg))
-            (gg--sclang-eval-region))
-        (gg--sclang-eval-line)))))
+            (sclang-aux--eval-region))
+        (sclang-aux--eval-line)))))
 
 
-(defun gg--sclang-eval-region ()
+(defun sclang-aux--eval-region ()
   (pulse-momentary-highlight-region
    (region-beginning) (region-end))
   (sclang-eval-region)
   (deactivate-mark))
 
 
-(defun gg--sclang-eval-line ()
+(defun sclang-aux--eval-line ()
   (pulse-momentary-highlight-one-line (point))
   (sclang-eval-line))
 
 
-(defun gg--enclosing-sc-block ()
+(defun sclang-aux--enclosing-sc-block ()
   "Return (START END) of the SC code block enclosing point, or nil.
 A block is a `(' at the beginning of a line and its matching `)',
 located via `forward-sexp' so nesting, strings, and comments balance
@@ -47,14 +47,14 @@ correctly."
         (list start end)))))
 
 
-(defun gg/sclang-dired-recordings-dir ()
+(defun sclang-aux-dired-recordings-dir ()
   "Open a dired buffer on the Platform Recordings directory."
   (interactive)
   (dired (sclang-eval-sync "Platform.recordingsDir")))
 
 (require 'transient)
 
-(transient-define-prefix gg/sclang-transient ()
+(transient-define-prefix sclang-aux-transient ()
   "Transient for sclang-mode common options."
   [["Control"
     ("s" "Start SClang" sclang-start :transient t)
@@ -76,7 +76,7 @@ correctly."
     ("rr" "Start recording" sclang-server-record)
     ("rs" "Stop recording" sclang-server-stop-recording)
     ("rp" "Pause recording" sclang-server-pause-recording)
-    ("rd" "Recordings dir" gg/sclang-dired-recordings-dir)]])
+    ("rd" "Recordings dir" sclang-aux-dired-recordings-dir)]])
 
 
-(provide 'gg-sclang-aux)
+(provide 'sclang-aux)

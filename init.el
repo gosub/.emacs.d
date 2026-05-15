@@ -16,7 +16,7 @@
 (use-package gg-utils
   :demand t)
 
-(use-package gg-sclang-aux)
+(use-package sclang-aux)
 
 (use-package gg-xkcd-geohashing
   :defer t
@@ -310,16 +310,16 @@
   :defer t
   :load-path "~/.local/share/SuperCollider/downloaded-quarks/scel/el"
 
-  :after (gg-sclang-aux)
+  :after (sclang-aux)
   :commands (sclang-start)
   :custom
   (sclang-show-workspace-on-startup nil)
   (sclang-eval-line-forward nil)
   :mode ("\\.scd\\'" . sclang-mode)
   :bind (:map sclang-mode-map
-	      ("C-<return>" . gg/sclang-eval-dwim)
+	      ("C-<return>" . sclang-aux-eval-dwim)
 	      ("C-." . sclang-main-stop)
-	      ("C-c t" . gg/sclang-transient)))
+	      ("C-c t" . sclang-aux-transient)))
 
 (use-package ox-hugo
   :ensure t
