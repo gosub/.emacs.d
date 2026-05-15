@@ -148,7 +148,7 @@
 
 (use-package pirate-gg
   :defer t
-  :commands (movie-pirate-gg pirate-movie-gg))
+  :commands (movie-pirate-gg))
 
 (use-package crop-gg
   :defer t
