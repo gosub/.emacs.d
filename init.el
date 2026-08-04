@@ -141,6 +141,10 @@
   :defer t
   :commands (gg/yt-playlist-to-org))
 
+(use-package yt-audio-sample-gg
+  :defer t
+  :commands (yt-audio-sample-gg))
+
 (use-package org-hugo-new-post
   :defer t
   :after org
