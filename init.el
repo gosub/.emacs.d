@@ -143,6 +143,8 @@
 
 (use-package yt-audio-sample-gg
   :defer t
+  :custom
+  (yt-audio-sample-gg-output-directory "~/dl/audio/samples/yt")
   :commands (yt-audio-sample-gg))
 
 (use-package org-hugo-new-post
