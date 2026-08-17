@@ -1,13 +1,13 @@
-;;; grammelot-gg.el --- Generate made-up Romance words -*- lexical-binding: t; -*-
+;;; grammelot-gg.el --- Generate made-up Romance and Germanic words -*- lexical-binding: t; -*-
 
 ;; Named after the grammelot of the commedia dell'arte, the gibberish
 ;; that sounds like a real language without being one.
 ;;
 ;; A style is a plist describing the phonotactics of a family of
 ;; languages: which onsets, nuclei and codas exist, which consonant pairs
-;; may meet across a syllable boundary, and how a word may end.  Every
-;; rule lives in that table rather than in the code, so a new family is a
-;; matter of writing down its inventories.
+;; may meet across a syllable boundary, and how a word may end.  Two are
+;; provided, Romance and Germanic, and each word picks one at random, so
+;; a batch reads like a phrasebook for two neighbouring invented tongues.
 
 (defvar grammelot-gg-buffer-name "*grammelot*"
   "Name of the buffer `grammelot-gg' fills with words.")
@@ -51,9 +51,58 @@
     :final-coda-weights (7 1 0))
   "Phonotactics of a Romance sounding language.")
 
+(defconst grammelot-gg-germanic
+  '(:name "germanic"
+    ;; English and its cousins: short words, rich onsets, and syllables
+    ;; heavy enough to end on a consonant cluster.
+    :syllable-counts (1 2 3)
+    :syllable-weights (3 5 2)
+    :lead-vowel-weights (6 1)
+    :vowels ("a" "e" "i" "o" "u")
+    :vowel-weights (4 5 4 3 2)
+    :diphthongs ("ea" "ee" "oo" "ou" "ai" "oa" "au" "ei" "ie" "oi")
+    :diphthong-weights (4 1)
+    :consonants ("b" "c" "d" "f" "g" "h" "j" "k" "l" "m" "n"
+                 "p" "r" "s" "t" "v" "w" "y" "th" "sh" "ch" "wh")
+    :consonant-weights (3 3 4 3 3 4 1 3 4 4 4
+                        3 4 5 5 1 3 1 3 2 2 1)
+    :clusters ("bl" "br" "cl" "cr" "dr" "fl" "fr" "gl" "gr" "pl" "pr" "tr"
+               "sc" "sk" "sl" "sm" "sn" "sp" "st" "sw" "tw"
+               "str" "spr" "scr" "thr" "shr" "wr" "kn" "gn" "qu")
+    :initial-onset-weights (5 2)
+    :onset-weights (6 1 2)
+    :geminable ("b" "d" "f" "g" "l" "m" "n" "p" "r" "s" "t" "z")
+    ;; C before K spells the English CK, G before H spells GH.
+    :coda-onsets (("n" "d" "t" "c" "g" "k" "s" "th")
+                  ("r" "b" "c" "d" "f" "g" "k" "l" "m" "n" "p" "s" "t" "th" "v")
+                  ("s" "c" "k" "l" "m" "n" "p" "t" "w")
+                  ("l" "b" "c" "d" "f" "g" "k" "m" "p" "s" "t" "th" "v")
+                  ("m" "b" "p" "f")
+                  ("c" "k")
+                  ("f" "t"))
+    ;; The licence English takes and Romance does not: one syllable may
+    ;; carry a cluster, a diphthong and a coda at once, as STRAIND does.
+    :heavy-syllables t
+    :final-vowels ("a" "e" "i" "o" "u")
+    :final-vowel-weights (3 6 2 3 1)
+    ;; An English word that stops on its vowel needs a showy one to stop
+    ;; on: DRY and DROW read as words, DRE does not.  IGH lives here
+    ;; rather than among the diphthongs, where it would draw codas it
+    ;; never takes.
+    :open-endings ("y" "ay" "ow" "aw" "ew" "oy" "ee" "ea" "oo" "igh")
+    :open-ending-weights (1 4)
+    :final-codas ("b" "d" "f" "g" "k" "l" "m" "n" "p" "r" "s" "t"
+                  "th" "sh" "ch" "ck" "ng")
+    :final-coda-clusters ("nd" "nt" "nk" "st" "sk" "sp" "lt" "ld" "lf" "lk"
+                          "lm" "lp" "rd" "rk" "rl" "rm" "rn" "rp" "rt" "rth"
+                          "ft" "mp" "nch")
+    :final-coda-weights (3 4 3))
+  "Phonotactics of a Germanic sounding language.")
+
 (defvar grammelot-gg-styles
-  (list grammelot-gg-romance)
-  "Styles `grammelot-gg--word' draws from, one at random per word.")
+  (list grammelot-gg-romance grammelot-gg-germanic)
+  "Styles `grammelot-gg--word' draws from, one at random per word.
+Narrow this list to a single style to generate words of one kind only.")
 
 (defvar grammelot-gg--style nil
   "The style plist in force while a word is being built.")
