@@ -156,6 +156,10 @@
   :defer t
   :commands (movie-pirate-gg))
 
+(use-package paroliere-gg
+  :defer t
+  :commands (paroliere-gg))
+
 (use-package crop-gg
   :defer t
   :commands (crop-image-gg))
