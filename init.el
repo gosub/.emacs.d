@@ -156,9 +156,9 @@
   :defer t
   :commands (movie-pirate-gg))
 
-(use-package paroliere-gg
+(use-package grammelot-gg
   :defer t
-  :commands (paroliere-gg))
+  :commands (grammelot-gg))
 
 (use-package crop-gg
   :defer t
