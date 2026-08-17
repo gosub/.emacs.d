@@ -10,6 +10,9 @@
 ;; across a syllable boundary, and a word ending on a vowel or on one of
 ;; the few consonants Romance words may close with.
 
+(defvar grammelot-gg-buffer-name "*grammelot*"
+  "Name of the buffer `grammelot-gg' fills with words.")
+
 (defconst grammelot-gg--vowels '("a" "e" "i" "o" "u")
   "Vowels used as syllable nuclei.")
 
@@ -146,8 +149,8 @@ may close with when the last nucleus is a plain vowel."
                  "")))
     (concat onset vowel coda)))
 
-(defun grammelot-gg-word ()
-  "Return one made-up word of two to four syllables."
+(defun grammelot-gg--word ()
+  "Return one made-up word of two to four syllables, upcased."
   (let* ((middle (grammelot-gg--weighted-choice '(0 1 2) '(3 4 2)))
          (syllable (grammelot-gg--initial-syllable))
          (word (car syllable))
@@ -156,22 +159,32 @@ may close with when the last nucleus is a plain vowel."
       (setq syllable (grammelot-gg--syllable heavy)
             word (concat word (car syllable))
             heavy (cdr syllable)))
-    (concat word (grammelot-gg--final-syllable heavy))))
+    (upcase (concat word (grammelot-gg--final-syllable heavy)))))
+
+
+;;; Commands
 
 (defun grammelot-gg (&optional count)
-  "Generate COUNT made-up words, 7 by default.
-Interactively, a numeric prefix argument sets COUNT.  The words are
-shown in the echo area and returned as an upcased, space separated
-string."
+  "Show COUNT made-up words, 7 by default, in the `*grammelot*' buffer.
+Interactively, a numeric prefix argument sets COUNT.  Each call replaces
+the previous contents, so repeating the command deals a fresh hand."
   (interactive "P")
   (let ((n (if count (prefix-numeric-value count) 7))
-        (words nil))
-    (dotimes (_ n)
-      (push (grammelot-gg-word) words))
-    (let ((line (upcase (mapconcat #'identity words " "))))
-      (when (called-interactively-p 'interactive)
-        (message "%s" line))
-      line)))
+        (buffer (get-buffer-create grammelot-gg-buffer-name)))
+    (with-current-buffer buffer
+      (erase-buffer)
+      (dotimes (_ n)
+        (insert (grammelot-gg--word) "\n"))
+      (goto-char (point-min)))
+    (pop-to-buffer buffer)))
+
+(defun grammelot-word-gg ()
+  "Show one made-up word in the echo area and put it on the kill ring."
+  (interactive)
+  (let ((word (grammelot-gg--word)))
+    (kill-new word)
+    (message "%s" word)
+    word))
 
 (provide 'grammelot-gg)
 ;;; grammelot-gg.el ends here

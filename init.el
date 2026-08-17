@@ -158,7 +158,7 @@
 
 (use-package grammelot-gg
   :defer t
-  :commands (grammelot-gg))
+  :commands (grammelot-gg grammelot-word-gg))
 
 (use-package crop-gg
   :defer t
