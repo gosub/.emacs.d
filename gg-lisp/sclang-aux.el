@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defun sclang-aux-eval-dwim ()
   "If a region is active, eval it.
 Else if point is inside a `(...)' SC code block whose `(' is at the
