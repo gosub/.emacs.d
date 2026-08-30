@@ -65,7 +65,8 @@
      ("restow emacs" . "cd /home/gg/box/prj/2016/conchiglie/home && stow -R emacs")
      ("ollama serve" . "ollama serve")
      ("claude update" . "claude update")
-     ("CMF Buds 2 HIFI BT" . "pactl set-card-profile bluez_card.3C_B0_ED_D1_91_A4 a2dp_sink"))))
+     ("CMF Buds 2 HIFI BT" . "pactl set-card-profile bluez_card.3C_B0_ED_D1_91_A4 a2dp_sink")
+     ("VCV Rack" . "~/dl/audio/rack/Rack --system ~/dl/audio/rack --user ~/dl/audio/rackhome/.local/share/Rack2/"))))
 
 (use-package dired-prefab
   :after dired
