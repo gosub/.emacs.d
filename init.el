@@ -66,7 +66,7 @@
      ("ollama serve" . "ollama serve")
      ("claude update" . "claude update")
      ("CMF Buds 2 HIFI BT" . "pactl set-card-profile bluez_card.3C_B0_ED_D1_91_A4 a2dp_sink")
-     ("VCV Rack" . "~/dl/audio/rack/Rack --system ~/dl/audio/rack --user ~/dl/audio/rackhome/.local/share/Rack2/"))))
+     ("VCV Rack" . "cd ~/dl/audio/rack && ./Rack --user /home/gg/dl/audio/rackhome/.local/share/Rack2/"))))
 
 (use-package dired-prefab
   :after dired
