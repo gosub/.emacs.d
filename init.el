@@ -77,6 +77,9 @@
    '((:name "Play video"
       :command "mpv %{}"
       :extensions video)
+     (:name "Convert video to mp4 for youtube"
+      :command "ffmpeg -i %{} -vf \"fps=60\" -c:v libx264 -preset slow -crf 16 -pix_fmt yuv420p -c:a aac -b:a 320k -movflags +faststart %{.mp4}"
+      :extensions video)
      (:name "Open with xdg-open"
       :command "xdg-open %{}"
       :type any)
