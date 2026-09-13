@@ -1,5 +1,7 @@
 ;;; gg-serendip.el --- Serendipity -*- lexical-binding: t; -*-
 
+(declare-function Info-toc-nodes "info" (filename))
+
 
 (defmacro atoms-do-when (accumulator when-predicate body)
   (let ((atom (gensym "atom")))

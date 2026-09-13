@@ -1,5 +1,8 @@
 ;;; gg-erlang-aux.el --- Erlang setup from the distro packages -*- lexical-binding: t; -*-
 
+(defvar erlang-root-dir)
+(defvar inferior-erlang-machine-options)
+
 (defun gg/require-erlang-from-distro ()
   (if (file-directory-p "/usr/lib/erlang")
       (let* ((lib-dir "/usr/lib/erlang/lib/")

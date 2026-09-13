@@ -1,5 +1,9 @@
 ;; -*- lexical-binding: t; -*-
 
+(declare-function sclang-eval-region "ext:sclang-interp" (&optional silent-p))
+(declare-function sclang-eval-line "ext:sclang-interp" (&optional silent-p))
+(declare-function sclang-eval-sync "ext:sclang-interp" (string))
+
 (defun sclang-aux-eval-dwim ()
   "If a region is active, eval it.
 Else if point is inside a `(...)' SC code block whose `(' is at the
