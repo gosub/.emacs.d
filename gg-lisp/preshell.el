@@ -8,6 +8,7 @@
   :type '(alist :key-type string :value-type string)
   :group 'shell)
 
+;;;###autoload
 (defun preshell ()
   "Run a predefined shell command from `preshell-commands-alist'.
 Prompt for selection and execute asynchronously."
