@@ -266,6 +266,7 @@ picked at random."
 
 ;;; Commands
 
+;;;###autoload
 (defun grammelot-gg (&optional count)
   "Show COUNT made-up words, 7 by default, in the `*grammelot*' buffer.
 Interactively, a numeric prefix argument sets COUNT.  Each call replaces
@@ -280,6 +281,7 @@ the previous contents, so repeating the command deals a fresh hand."
       (goto-char (point-min)))
     (pop-to-buffer buffer)))
 
+;;;###autoload
 (defun grammelot-word-gg ()
   "Show one made-up word in the echo area and put it on the kill ring."
   (interactive)

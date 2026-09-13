@@ -25,6 +25,7 @@ See URL `https://geohashing.site/' for additional info."
     (list lat lon)))
 
 
+;;;###autoload
 (defun gg/xkcd-geohashing-coords ()
   "Print the coordinates of today's XKCD geohashing game."
   (interactive)
@@ -39,6 +40,7 @@ See URL `https://geohashing.site/' for additional info."
      (format "LAT %.6f, LON %.6f" (car coords) (cadr coords)))))
 
 
+;;;###autoload
 (defun gg/browse-xkcd-geohashing-map ()
   "Open a web map URL of today's XKCD geohashing game coordinates."
   (interactive)

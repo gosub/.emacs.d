@@ -179,6 +179,7 @@ RET performs the crop via ImageMagick."
   (setq-local cursor-type nil)
   (use-local-map crop-mode-map))
 
+;;;###autoload
 (defun crop-image-gg (path)
   "Open an interactive crop buffer for the image at PATH.
 If the current buffer visits a supported image file, it is used as default."

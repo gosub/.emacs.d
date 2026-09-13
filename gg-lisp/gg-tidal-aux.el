@@ -4,6 +4,7 @@
 (defvar tidal-mode-map)
 (defvar tidal-boot-script-path)
 
+;;;###autoload
 (defun gg/tidal-setup ()
   "Setup my tidal environment.
 Start processes and open files, prompting with ido-complete."

@@ -1,5 +1,6 @@
 ;;; inc-at-point-gg.el --- Increment/decrement number at point -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defun inc-at-point-gg (count)
   "Increment number at point by COUNT, partially simulating C-a in vim."
   (interactive "p")
@@ -10,6 +11,7 @@
     (replace-match (number-to-string
                     (+ (string-to-number (match-string 0)) count)))))
 
+;;;###autoload
 (defun dec-at-point-gg (count)
   "Decrement number at point by COUNT, partially simulating C-x in vim."
   (interactive "p")

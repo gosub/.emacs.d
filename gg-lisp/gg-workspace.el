@@ -15,6 +15,7 @@
   (expand-file-name "done.org" gg-txt-directory)
   "Path to done/archive org file.")
 
+;;;###autoload
 (defun gg/apparecchia ()
   "Setup initial buffers and windows as I like them."
   (interactive)

@@ -139,6 +139,7 @@
   (setq watch--buffer-state nil)
   (quit-window t))
 
+;;;###autoload
 (cl-defun watch-start (command &key (interval 2.0) differences timestamp (strip-ansi t) name)
   "Start watching COMMAND every INTERVAL seconds in a new buffer.
 

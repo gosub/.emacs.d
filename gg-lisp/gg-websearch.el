@@ -19,6 +19,7 @@
   (browse-url (concat "https://hn.algolia.com/?q="
                       (url-hexify-string query))))
 
+;;;###autoload
 (defun gg-websearch-dwim ()
   "Search the web with selected engine.
 If region is active, search for it; otherwise prompt for query."

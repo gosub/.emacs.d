@@ -1,5 +1,6 @@
 ;;; gg-isearch-pop-yank.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defun isearch-mark-whole-paragraph-pop-mark-and-yank ()
   (interactive)
   (isearch-exit)

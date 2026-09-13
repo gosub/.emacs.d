@@ -7,6 +7,7 @@
   :type '(repeat string)
   :group 'gg)
 
+;;;###autoload
 (defun gg/insert-current-date (arg)
   "Insert current date at point.
 Format the date according to `gg/insert-date-formats'.

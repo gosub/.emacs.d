@@ -1,5 +1,6 @@
 ;;; roma-random-place.el --- Random Rome coordinates -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defun roma-random-place ()
   "Generate a Google Maps URL for a random location in Rome.
 Opens the URL in the default browser."

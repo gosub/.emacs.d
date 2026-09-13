@@ -1,5 +1,6 @@
 ;;; gg-other-win.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defun gg/kill-buffer-and-windows-other-window ()
   "Kill the buffer and the window of the other window."
   (interactive)

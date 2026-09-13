@@ -4,6 +4,7 @@
   '("~/dl/" "/mnt/usb/")
   "List of destination directories for `movie-pirate-gg'.")
 
+;;;###autoload
 (defun movie-pirate-gg (url name dest)
   "Asynchronously download URL to DEST/NAME.mkv using ffmpeg.
 NAME is transformed to lowercase and spaces are replaced with underscores."

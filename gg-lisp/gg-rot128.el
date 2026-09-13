@@ -4,6 +4,7 @@
 ;; (gg/rot128-file "/path/to/input.bin")
 ;; (gg/rot128-file "/path/to/input.bin" "/path/to/output.bin")
 
+;;;###autoload
 (defun gg/rot128-file (input-file &optional output-file)
   "Apply a ROT128 transformation to the binary INPUT-FILE.
 Load it into a unibyte temporary buffer and save the result to

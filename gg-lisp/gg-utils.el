@@ -6,6 +6,7 @@
     (insert-file-contents filePath)
     (buffer-string)))
 
+;;;###autoload
 (defun gg/linux-computer-model ()
   "Get computer model from Linux DMI info."
   (interactive)
@@ -14,6 +15,7 @@
 	(string-trim (gg/get-string-from-file dmi-product-family-file))
       "unknown")))
 
+;;;###autoload
 (defun gg/is-computer-model? (model)
   "Check if current computer model matches MODEL (Linux only)."
   (string= model (gg/linux-computer-model)))

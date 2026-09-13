@@ -3,6 +3,7 @@
 (defvar erlang-root-dir)
 (defvar inferior-erlang-machine-options)
 
+;;;###autoload
 (defun gg/require-erlang-from-distro ()
   (if (file-directory-p "/usr/lib/erlang")
       (let* ((lib-dir "/usr/lib/erlang/lib/")

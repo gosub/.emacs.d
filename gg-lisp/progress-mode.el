@@ -172,6 +172,7 @@ REFRESH-FN is stored for the g keybinding."
       (goto-char (point-min))
       (display-buffer buffer))))
 
+;;;###autoload
 (defun progress-day ()
   "Display progress for the current day in minutes."
   (interactive)
@@ -182,6 +183,7 @@ REFRESH-FN is stored for the g keybinding."
      (format "%d-Minutes" progress-day-minutes-per-dot))
    progress-day-columns #'progress-day))
 
+;;;###autoload
 (defun progress-month ()
   "Display progress for the current month in hours."
   (interactive)
@@ -193,6 +195,7 @@ REFRESH-FN is stored for the g keybinding."
                           (plist-get info :days-in-month)))
    "Hours" progress-month-columns #'progress-month))
 
+;;;###autoload
 (defun progress-week ()
   "Display progress for the current week in hours."
   (interactive)
@@ -201,6 +204,7 @@ REFRESH-FN is stored for the g keybinding."
    (lambda (info) (format "Week (day %d/7)" (plist-get info :week-dow)))
    "Hours" progress-week-columns #'progress-week))
 
+;;;###autoload
 (defun progress-year ()
   "Display progress for the current year in days."
   (interactive)

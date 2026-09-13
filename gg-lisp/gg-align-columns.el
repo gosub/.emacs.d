@@ -2,6 +2,7 @@
 
 (require 'align)
 
+;;;###autoload
 (defun gg/align-columns-by-whitespace (spacing)
   (interactive "p")
   (when (region-active-p)

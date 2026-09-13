@@ -1,6 +1,7 @@
 ;;; gg-epoch.el --- Epoch conversion -*- lexical-binding: t; -*-
 
 
+;;;###autoload
 (defun gg/epoch-to-timestamp (epoch)
   "Convert an integer UNIX EPOCH time to a human-readable timestamp.
 

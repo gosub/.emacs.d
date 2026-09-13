@@ -1,5 +1,6 @@
 ;;; gg-org-yt.el --- YouTube to org-mode utilities -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defun gg/yt-playlist-to-org (playlist-url)
   "Turn the YouTube PLAYLIST-URL into an org section.
 Each video in the playlist becomes a subsection."

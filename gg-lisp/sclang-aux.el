@@ -4,6 +4,7 @@
 (declare-function sclang-eval-line "ext:sclang-interp" (&optional silent-p))
 (declare-function sclang-eval-sync "ext:sclang-interp" (string))
 
+;;;###autoload
 (defun sclang-aux-eval-dwim ()
   "If a region is active, eval it.
 Else if point is inside a `(...)' SC code block whose `(' is at the
@@ -60,6 +61,7 @@ correctly."
 
 (require 'transient)
 
+;;;###autoload (autoload 'sclang-aux-transient "sclang-aux" nil t)
 (transient-define-prefix sclang-aux-transient ()
   "Transient for sclang-mode common options."
   [["Control"

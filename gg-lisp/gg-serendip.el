@@ -70,6 +70,7 @@
     (find-file (seq-random-elt lisps))))
 
 
+;;;###autoload (autoload 'gg/serendip-transient "gg-serendip" nil t)
 (transient-define-prefix gg/serendip-transient ()
   "Find something about emacs, serendipitously"
   ["Find something about emacs, serendipitously" ""

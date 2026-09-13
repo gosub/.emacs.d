@@ -284,6 +284,7 @@ is looked up in `figlet-font-directory'."
                    when (file-exists-p path) return path)
           (error "Font %S not found in figlet-font-directory" font)))))
 
+;;;###autoload
 (defun figlet-render (font text)
   "Render TEXT using FIGlet FONT and return a string.
 FONT can be a font name like \"standard\" or a full path."
@@ -291,6 +292,7 @@ FONT can be a font name like \"standard\" or a full path."
          (lines (figlet--render-lines font-obj text)))
     (string-join lines "\n")))
 
+;;;###autoload
 (defun figlet-font-list ()
   "Return an alist of available FIGlet fonts.
 Each entry is (NAME . PATH) where NAME is the .flf filename and
