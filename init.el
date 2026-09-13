@@ -7,49 +7,28 @@
 
 (require 'use-package)
 
-(add-to-list 'load-path
-  (expand-file-name "gg-lisp" user-emacs-directory))
-
 
 ;;; PACKAGES OF MINE
 
-(use-package gg-utils
-  :demand t)
-
-(use-package sclang-aux)
+;; Emacs byte-compiles the files in user-lisp/, scrapes their autoload
+;; cookies and adds the directory to load-path before this file is loaded,
+;; so every command in there is already available.  Only the packages that
+;; need configuration - options, keybindings, load order - show up below.
 
 (use-package project-aux
-  :commands (project-aux-dired)
   :custom
   (project-aux-base-dir "~/box/prj")
   :bind (("C-x p p" . project-aux-dired)
          ("C-x p P" . project-switch-project)))
 
-(use-package gg-xkcd-geohashing
-  :defer t
-  :commands (gg/xkcd-geohashing-coords
-	     gg/browse-xkcd-geohashing-map))
-
-(use-package gg-serendip
-  :defer t
-  :commands (gg/serendip-transient))
-
 (use-package dirty-gits
   :defer t
-  :commands (dirty-gits)
   :custom
   (dirty-gits-root "~/box/prj/")
   (dirty-gits-max-depth 4))
 
-(use-package drench
-  :defer t
-  :commands (drench))
-
-(use-package scoundrel
-  :defer t
-  :commands (scoundrel))
-
 (use-package preshell
+  :defer t
   :custom
   (preshell-commands-alist
    '(("pacman safe update" . "sudo pacman -Syu")
@@ -70,7 +49,6 @@
 
 (use-package dired-prefab
   :after dired
-  :commands (dired-prefab)
   :bind (:map dired-mode-map ("," . dired-prefab))
   :custom
   (dired-prefab-single-commands
@@ -142,76 +120,29 @@
   :bind
   ("<f5>" . gg/apparecchia))
 
-(use-package gg-org-yt
-  :defer t
-  :commands (gg/yt-playlist-to-org))
-
 (use-package yt-audio-sample-gg
   :defer t
   :custom
-  (yt-audio-sample-gg-output-directory "~/dl/audio/samples/yt")
-  :commands (yt-audio-sample-gg))
-
-(use-package org-hugo-new-post
-  :defer t
-  :after org
-  :commands (org-hugo-new-post))
-
-(use-package pirate-gg
-  :defer t
-  :commands (movie-pirate-gg))
-
-(use-package grammelot-gg
-  :defer t
-  :commands (grammelot-gg grammelot-word-gg))
-
-(use-package crop-gg
-  :defer t
-  :commands (crop-image-gg))
-
-(use-package durden
-  :defer t
-  :commands (durden-tile durden-auto-tile))
-
-(use-package cdp8-mode
-  :defer t
-  :commands (cdp8-session))
+  (yt-audio-sample-gg-output-directory "~/dl/audio/samples/yt"))
 
 (use-package gg-other-win
   :bind ("C-x 4 k" . gg/kill-buffer-and-windows-other-window))
-
-(use-package gg-align-columns
-  :defer t
-  :commands (gg/align-columns-by-whitespace))
 
 (use-package gg-isearch-pop-yank
   :bind
   (:map isearch-mode-map
         ("C-c p" . isearch-mark-whole-paragraph-pop-mark-and-yank)))
 
-(use-package progress-mode
-  :defer t
-  :commands (progress-day progress-week progress-month progress-year))
-
 (use-package gg-unicode
+  :after iso-transl
   :config
-  (with-eval-after-load 'iso-transl
-    (gg/more-ctl-x-8-superscript)
-    (gg/more-ctl-x-8-subscript)
-    (gg/more-ctl-x-8-greek)))
-
-(use-package gg-websearch
-  :defer t
-  :commands (gg-websearch-dwim))
+  (gg/more-ctl-x-8-superscript)
+  (gg/more-ctl-x-8-subscript)
+  (gg/more-ctl-x-8-greek))
 
 (use-package figlet
   :defer t
-  :commands (figlet-insert figlet-render figlet-font-list)
   :custom (figlet-font-directory '(detect "/usr/share/figlet")))
-
-(use-package mark-column-rectangle
-  :defer t
-  :commands (mark-column-rectangle))
 
 (use-package gg-mark-whole
   :bind
@@ -230,34 +161,14 @@
    ("C-c m m" . gg-mark-whole-dwim)
    ("C-c m r" . mark-column-rectangle)))
 
-(use-package gg-epoch
-  :defer t
-  :commands (gg/epoch-to-timestamp))
-
-(use-package gg-rot128
-  :defer t
-  :commands (gg/rot128-file))
-
-(use-package watch
-  :defer t
-  :commands (watch-start))
-
 (use-package gg-tidal-aux
-  :defer t
-  :after tidal
-  :commands (gg/tidal-setup))
-
-(use-package gg-erlang-aux
-  :defer t
-  :commands (gg/require-erlang-from-distro))
-
-(use-package roma-random-place
-  :defer t
-  :commands (roma-random-place))
+  :after tidal)
 
 (use-package sccode
+  :defer t
   :custom
   (sccode-db-path "~/dl/sccode_dump/sccode.sqlite"))
+
 
 ;;; BUILT-IN PACKAGES CONFIG
 
@@ -331,8 +242,6 @@
 (use-package sclang
   :defer t
   :load-path "~/.local/share/SuperCollider/downloaded-quarks/scel/el"
-
-  :after (sclang-aux)
   :commands (sclang-start)
   :custom
   (sclang-show-workspace-on-startup nil)
