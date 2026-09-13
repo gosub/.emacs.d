@@ -1,5 +1,7 @@
 ;;; gg-serendip.el --- Serendipity -*- lexical-binding: t; -*-
 
+(require 'transient)
+
 (declare-function Info-toc-nodes "info" (filename))
 
 
