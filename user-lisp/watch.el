@@ -5,6 +5,7 @@
 ;;   or programmatically:
 ;;   (watch-start "date" :interval 1 :differences t :timestamp t)
 
+(require 'ansi-color)
 (require 'cl-lib)
 
 (defgroup watch nil
