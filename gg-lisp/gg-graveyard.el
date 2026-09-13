@@ -1,4 +1,4 @@
-;;; Graveyard - a plethora of functions I don't use anymore
+;;; gg-graveyard.el --- A plethora of functions I don't use anymore -*- lexical-binding: t; -*-
 
 
 ; my idea is to substitute this two next functions

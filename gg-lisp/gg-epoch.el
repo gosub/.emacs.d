@@ -1,4 +1,4 @@
-;;; Epoch conversion
+;;; gg-epoch.el --- Epoch conversion -*- lexical-binding: t; -*-
 
 
 (defun gg/epoch-to-timestamp (epoch)

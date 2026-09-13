@@ -1,4 +1,4 @@
-;;; Serendipity
+;;; gg-serendip.el --- Serendipity -*- lexical-binding: t; -*-
 
 
 (defmacro atoms-do-when (accumulator when-predicate body)

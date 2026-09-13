@@ -1,4 +1,4 @@
-;;; Tidalcycles auxiliary functions
+;;; gg-tidal-aux.el --- Tidalcycles auxiliary functions -*- lexical-binding: t; -*-
 
 (defun gg/tidal-setup ()
   "setup my tidal environment, starting processes and opening files, prompting with ido-complete"

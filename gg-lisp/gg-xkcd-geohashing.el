@@ -1,3 +1,5 @@
+;;; gg-xkcd-geohashing.el --- XKCD geohashing coordinates for today -*- lexical-binding: t; -*-
+
 (defun gg/calculate-xkcd-geohashing-coords (latitude longitude)
   "Calculate the coordinates of today's XKCD geohashing game.
 LATITUDE and LONGITUDE must be integers.

@@ -1,3 +1,5 @@
+;;; gg-rot128.el --- ROT128 a binary file -*- lexical-binding: t; -*-
+
 ;; Example usage:
 ;; (gg/rot128-file "/path/to/input.bin")
 ;; (gg/rot128-file "/path/to/input.bin" "/path/to/output.bin")

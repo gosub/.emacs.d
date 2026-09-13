@@ -1,5 +1,4 @@
-;;; This is the start of a mode to use csound live
-;;; It's a work in progress!
+;;; gg-csound.el --- Live coding csound over UDP (work in progress) -*- lexical-binding: t; -*-
 
 ;; first we start a csound deamon listening on port UDP 7777
 (async-shell-command

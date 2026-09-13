@@ -1,4 +1,4 @@
-;;; mark-column-rectangle.el --- Mark rectangular region around text column under cursor
+;;; mark-column-rectangle.el --- Mark rectangular region around text column under cursor  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; This package provides a function to mark a rectangular region around
