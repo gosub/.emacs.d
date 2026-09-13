@@ -113,17 +113,16 @@ Returns (TOP-LINE BOTTOM-LINE LEFT-COL RIGHT-COL)."
       (setq changed nil)
       (setq iterations (1+ iterations))
       ;; Try to expand vertically with current column range
-      (let ((new-vert (mcr--find-column-boundaries left-col right-col)))
-        (save-excursion
-          ;; Need to position at a line within current range for the search
-          (goto-char (point-min))
-          (forward-line (1- top-line))
-          (let ((vert-bounds (mcr--find-column-boundaries left-col right-col)))
-            (when (or (< (car vert-bounds) top-line)
-                      (> (cdr vert-bounds) bottom-line))
-              (setq top-line (min top-line (car vert-bounds)))
-              (setq bottom-line (max bottom-line (cdr vert-bounds)))
-              (setq changed t)))))
+      (save-excursion
+        ;; Need to position at a line within current range for the search
+        (goto-char (point-min))
+        (forward-line (1- top-line))
+        (let ((vert-bounds (mcr--find-column-boundaries left-col right-col)))
+          (when (or (< (car vert-bounds) top-line)
+                    (> (cdr vert-bounds) bottom-line))
+            (setq top-line (min top-line (car vert-bounds)))
+            (setq bottom-line (max bottom-line (cdr vert-bounds)))
+            (setq changed t))))
       ;; Try to expand horizontally with current line range
       (let ((new-horiz (mcr--find-rectangle-columns top-line bottom-line left-col right-col)))
         (when (or (< (car new-horiz) left-col)
