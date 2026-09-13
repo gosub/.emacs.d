@@ -8,7 +8,7 @@
     `(let (,accumulator)
        (mapatoms
 	(lambda (,atom)
-	  (when (,when-predicate ,atom)
+	  (when (funcall ,when-predicate ,atom)
 	    (push ,atom ,accumulator))))
        ,body)))
 
@@ -28,7 +28,7 @@
   (interactive)
   (atoms-do-when
    all-the-macros
-   macrop
+   #'macrop
    (describe-function (seq-random-elt all-the-macros))))
 
 
