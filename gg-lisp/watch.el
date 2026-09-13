@@ -51,7 +51,7 @@
 (defun watch--kill (st)
   (when (watch--state-timer st)
     (cancel-timer (watch--state-timer st)))
-  (when-let ((p (watch--state-process st)))
+  (when-let* ((p (watch--state-process st)))
     (when (process-live-p p) (kill-process p))))
 
 (defun watch--clear-overlays (st)
