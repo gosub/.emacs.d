@@ -96,7 +96,7 @@
       :command "tar xf %{} -C %{existing-dir}"
       :extensions archives)
      (:name "Play with ffplay"
-      :command "ffplay -nodisp -hide_banner %{}"
+      :command "ffplay -nodisp -hide_banner -autoexit %{}"
       :extensions audio)
      (:name "Audio info with ffprobe"
       :command "ffprobe -hide_banner %{}"
