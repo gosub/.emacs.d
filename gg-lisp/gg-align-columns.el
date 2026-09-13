@@ -1,5 +1,7 @@
 ;;; gg-align-columns.el -*- lexical-binding: t; -*-
 
+(require 'align)
+
 (defun gg/align-columns-by-whitespace (spacing)
   (interactive "p")
   (when (region-active-p)
