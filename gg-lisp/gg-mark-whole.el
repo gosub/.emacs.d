@@ -53,7 +53,8 @@ A WORD is a sequence of non-whitespace characters."
 (defun gg-mark-whole-buffer ()
   "Mark the entire buffer."
   (interactive)
-  (mark-whole-buffer))
+  (goto-char (point-min))
+  (push-mark (point-max) nil t))
 
 (defun gg-mark-whole-number ()
   "Mark the whole number under the cursor."

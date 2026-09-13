@@ -40,7 +40,7 @@
 (defun gg/yank-line-at-beginning-of-buffer ()
   "yank the content of the clipboard at the beginning of the buffer"
   (interactive)
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (yank)
   (newline))
 
