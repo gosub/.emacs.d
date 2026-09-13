@@ -5,6 +5,8 @@
 ;;   or programmatically:
 ;;   (watch-start "date" :interval 1 :differences t :timestamp t)
 
+(require 'cl-lib)
+
 (defgroup watch nil
   "Periodically run a shell command and display its output."
   :group 'tools)
