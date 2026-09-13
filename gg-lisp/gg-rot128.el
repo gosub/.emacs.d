@@ -5,8 +5,9 @@
 ;; (gg/rot128-file "/path/to/input.bin" "/path/to/output.bin")
 
 (defun gg/rot128-file (input-file &optional output-file)
-  "Load a binary INPUT-FILE into a unibyte temporary buffer, apply ROT128 transformation,
-and save to OUTPUT-FILE. If OUTPUT-FILE is nil, append '.rot128' to INPUT-FILE."
+  "Apply a ROT128 transformation to the binary INPUT-FILE.
+Load it into a unibyte temporary buffer and save the result to
+OUTPUT-FILE.  If OUTPUT-FILE is nil, append '.rot128' to INPUT-FILE."
   (let ((output (or output-file (concat input-file ".rot128"))))
     (with-temp-buffer
       (set-buffer-multibyte nil)  ; Make buffer unibyte

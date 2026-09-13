@@ -122,7 +122,8 @@ Respects `progress-week-start'."
           :week-dow (1+ week-dow))))
 
 (defun progress--month-info ()
-  "Return plist with :elapsed, :total, :month-name, :day, :days-in-month for the current month."
+  "Return a plist describing the current month.
+Keys are :elapsed, :total, :month-name, :day and :days-in-month."
   (let* ((now (decode-time (current-time)))
          (hour (nth 2 now))
          (day (nth 3 now))

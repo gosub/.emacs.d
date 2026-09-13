@@ -5,7 +5,8 @@
 (defvar tidal-boot-script-path)
 
 (defun gg/tidal-setup ()
-  "setup my tidal environment, starting processes and opening files, prompting with ido-complete"
+  "Setup my tidal environment.
+Start processes and open files, prompting with ido-complete."
   (interactive)
   (let*
       ((tidal-setup-steps-alist '((jack   . (lambda () (async-shell-command "jackd -d alsa" "*jack-for-tidal*")))

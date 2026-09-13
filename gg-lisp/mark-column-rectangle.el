@@ -55,7 +55,7 @@ Returns (WORD-START . WORD-END) or nil."
     nil))
 
 (defun mcr--line-has-overlapping-word (start-col end-col)
-  "Return t if current line has a word overlapping column range [START-COL, END-COL)."
+  "Return t if current line has a word overlapping [START-COL, END-COL)."
   (let ((words (mcr--get-words-on-line)))
     (mcr--find-overlapping-word words start-col end-col)))
 
@@ -85,7 +85,7 @@ Returns (TOP-LINE . BOTTOM-LINE) as line numbers."
     (cons top-line bottom-line)))
 
 (defun mcr--find-rectangle-columns (top-line bottom-line start-col end-col)
-  "Find the leftmost and rightmost columns of words overlapping [START-COL, END-COL).
+  "Find leftmost and rightmost columns of words in [START-COL, END-COL).
 Searches from TOP-LINE to BOTTOM-LINE.
 Returns (LEFT-COL . RIGHT-COL)."
   (let ((left-col most-positive-fixnum)
@@ -104,7 +104,8 @@ Returns (LEFT-COL . RIGHT-COL)."
 
 (defun mcr--expand-boundaries (top-line bottom-line left-col right-col)
   "Iteratively expand boundaries until stable.
-Some words found by expanding horizontally might allow further vertical expansion.
+Some words found by expanding horizontally might allow further
+vertical expansion.
 Returns (TOP-LINE BOTTOM-LINE LEFT-COL RIGHT-COL)."
   (let ((changed t)
         (iterations 0)

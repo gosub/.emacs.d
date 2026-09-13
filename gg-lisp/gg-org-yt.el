@@ -1,7 +1,8 @@
 ;;; gg-org-yt.el --- YouTube to org-mode utilities -*- lexical-binding: t; -*-
 
 (defun gg/yt-playlist-to-org (playlist-url)
-  "Turn a YouTube playlist link into an org section, where each video is a subsection."
+  "Turn the YouTube PLAYLIST-URL into an org section.
+Each video in the playlist becomes a subsection."
   (interactive "sPlaylist url or id: ")
   (let* ((header-lines
           (process-lines
