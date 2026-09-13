@@ -18,7 +18,7 @@
 
 
 ; tidalcycles samples folder
-(setq gg-tidal-sample-folder
+(defvar gg-tidal-sample-folder
       (expand-file-name "~/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples"))
 
 
