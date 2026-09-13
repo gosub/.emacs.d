@@ -26,6 +26,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'sqlite)
 (require 'url)
 (require 'url-http)
@@ -165,7 +166,7 @@ WHERE status = 200;
 ;; Dump: phase 1 — listing
 ;; -------------------------------------------------------------------------- ;;
 
-(defun sccode--phase1 (page acc known log-buf db)
+(cl-defun sccode--phase1 (page acc known log-buf db)
   "Async: fetch listing PAGE, accumulate new IDs, advance or start phase 2."
   (unless (buffer-live-p log-buf)
     (sqlite-close db)
