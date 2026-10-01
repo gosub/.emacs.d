@@ -33,12 +33,12 @@
   "Move entries from the phone folder to the archive."
   :group 'files)
 
-(defcustom riporta-gg-io-dir "~/dl/io/org/"
+(defcustom riporta-gg-io-dir "~/io/"
   "Directory with the live files, synced with the phone."
   :type 'directory
   :group 'riporta-gg)
 
-(defcustom riporta-gg-base-dir "~/box/txt/"
+(defcustom riporta-gg-base-dir "~/archive/"
   "Directory of the archive, a git repository."
   :type 'directory
   :group 'riporta-gg)
@@ -90,14 +90,16 @@ the CLOSED timestamp."
   :type 'file
   :group 'riporta-gg)
 
-(defcustom riporta-gg-syncthing-device-name "moto_edge30"
-  "Name of the phone in the Syncthing configuration."
-  :type 'string
+(defcustom riporta-gg-syncthing-device-name nil
+  "Name of the phone in the Syncthing configuration.
+It must be set: without it the Syncthing checks fail."
+  :type '(choice string (const nil))
   :group 'riporta-gg)
 
-(defcustom riporta-gg-syncthing-folder-label "io"
-  "Label of the Syncthing folder that contains `riporta-gg-io-dir'."
-  :type 'string
+(defcustom riporta-gg-syncthing-folder-label nil
+  "Label of the Syncthing folder that contains `riporta-gg-io-dir'.
+When nil, the folder is the one whose path contains `riporta-gg-io-dir'."
+  :type '(choice string (const nil))
   :group 'riporta-gg)
 
 (defcustom riporta-gg-syncthing-max-age 15
@@ -381,13 +383,23 @@ Return the parsed JSON, with objects as alists, or signal an error."
   (let ((device (cl-find riporta-gg-syncthing-device-name
                          (riporta-gg--syncthing-get "/rest/config/devices")
                          :key (lambda (d) (alist-get 'name d)) :test #'equal))
-        (folder (cl-find riporta-gg-syncthing-folder-label
-                         (riporta-gg--syncthing-get "/rest/config/folders")
-                         :key (lambda (f) (alist-get 'label f)) :test #'equal)))
+        (folder (cl-find-if
+                 (lambda (f)
+                   (if riporta-gg-syncthing-folder-label
+                       (equal (alist-get 'label f) riporta-gg-syncthing-folder-label)
+                     (string-prefix-p
+                      (file-name-as-directory
+                       (expand-file-name (alist-get 'path f)))
+                      (file-name-as-directory
+                       (expand-file-name riporta-gg-io-dir)))))
+                 (riporta-gg--syncthing-get "/rest/config/folders"))))
+    (unless riporta-gg-syncthing-device-name
+      (error "riporta-gg-syncthing-device-name is not set"))
     (unless device
       (error "No Syncthing device named %s" riporta-gg-syncthing-device-name))
     (unless folder
-      (error "No Syncthing folder labelled %s" riporta-gg-syncthing-folder-label))
+      (error "No Syncthing folder for %s"
+             (or riporta-gg-syncthing-folder-label riporta-gg-io-dir)))
     (cons (alist-get 'deviceID device) (alist-get 'id folder))))
 
 (defun riporta-gg--syncthing-checks (now)

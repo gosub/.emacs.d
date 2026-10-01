@@ -194,6 +194,11 @@
               (t (cdr a)))))))
 
 (defun rgt-checks (overrides)
+  (let ((riporta-gg-syncthing-device-name "moto_edge30")
+        (riporta-gg-syncthing-folder-label "io"))
+    (rgt-checks-1 overrides)))
+
+(defun rgt-checks-1 (overrides)
   (cl-letf (((symbol-function 'riporta-gg--syncthing-get) (rgt-fake-api overrides)))
     (riporta-gg--syncthing-checks rgt-oct-1)))
 
@@ -231,6 +236,20 @@
      (list (cons "/rest/db/completion?folder=fold&device=PHONE"
                  '((completion . 80) (needItems . 2))))))))
 
+(ert-deftest rgt-sync-device-unset ()
+  (let ((riporta-gg-syncthing-device-name nil))
+    (should-not (caar (rgt-checks-1 nil)))))
+
+(ert-deftest rgt-sync-folder-by-path ()
+  (let ((riporta-gg-syncthing-device-name "moto_edge30")
+        (riporta-gg-syncthing-folder-label nil)
+        (riporta-gg-io-dir "/home/u/dl/io/org/"))
+    (should (rgt-all-ok
+             (rgt-checks-1
+              (list (cons "/rest/config/folders"
+                          '(((id . "other") (label . "box") (path . "/home/u/box"))
+                            ((id . "fold") (label . "x") (path . "/home/u/dl/io"))))))))))
+
 (ert-deftest rgt-sync-api-down ()
   (let ((checks (rgt-checks '(("/rest/config/devices" . down)))))
     (should (= 1 (length checks)))
@@ -258,7 +277,9 @@
     (rgt-write riporta-gg-io-dir "contab.txt" rgt-ledger)
     (rgt-write riporta-gg-io-dir "todo.org" "* x\n")
     (rgt-write riporta-gg-io-dir "idee.org" "* y\n")
-    (let ((pushed nil))
+    (let ((pushed nil)
+          (riporta-gg-syncthing-device-name "moto_edge30")
+          (riporta-gg-syncthing-folder-label "io"))
       (cl-letf (((symbol-function 'riporta-gg--syncthing-get) (rgt-fake-api nil))
                 ((symbol-function 'y-or-n-p) (lambda (&rest _) t))
                 ((symbol-function 'current-time) (lambda () rgt-oct-1))
