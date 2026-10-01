@@ -320,8 +320,10 @@ one after the other does not shift the positions still to visit."
 
 (defun riporta-gg--archive-items (file items)
   "Archive ITEMS of FILE, as returned by `riporta-gg--closed-items'.
-Return the list of archive files written."
-  (let (written)
+Return the list of archive files written.  No backup files are made:
+next to FILE they would end up on the phone, and the archive is in git."
+  (let ((make-backup-files nil)
+        written)
     (with-current-buffer (find-file-noselect file)
       (dolist (item items)
         (let* ((dest (expand-file-name

@@ -167,7 +167,10 @@
           (should-not (string-match-p "vecchio" todo))
           (should (string-match-p "recente" todo))
           (should (string-match-p "\\* DONE vecchio" arch))
-          (should (string-match-p ":ARCHIVE_OLPATH: errands" arch)))
+          (should (string-match-p ":ARCHIVE_OLPATH: errands" arch))
+          (should-not (directory-files riporta-gg-io-dir nil "~\\'"))
+          (should-not (directory-files (expand-file-name "archive" riporta-gg-base-dir)
+                                       nil "~\\'")))
         (kill-buffer (find-buffer-visiting
                       (expand-file-name "archive/todo_2026.org" riporta-gg-base-dir)))))))
 
