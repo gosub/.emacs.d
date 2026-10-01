@@ -175,6 +175,25 @@
                       (expand-file-name "completed/todo_2026.org" riporta-gg-base-dir)))))))
 
 
+;;; Mirroring
+
+(ert-deftest rgt-mirror ()
+  (rgt-with-dirs
+    (let ((riporta-gg-mirror-files '("todo.org" "misc.org")))
+      (rgt-write riporta-gg-io-dir "todo.org" "* a\n")
+      (rgt-write riporta-gg-io-dir "misc.org" "* m\n")
+      (should (equal (riporta-gg--stale-mirrors) '("todo.org" "misc.org")))
+      (riporta-gg--mirror)
+      (should (equal (rgt-read riporta-gg-base-dir "todo.org") "* a\n"))
+      (should (= (file-modes (expand-file-name "todo.org" riporta-gg-base-dir)) #o444))
+      (should-not (riporta-gg--stale-mirrors))
+      ;; A read-only copy gets overwritten on the next change.
+      (rgt-write riporta-gg-io-dir "todo.org" "* a\n* b\n")
+      (should (equal (riporta-gg--stale-mirrors) '("todo.org")))
+      (riporta-gg--mirror)
+      (should (equal (rgt-read riporta-gg-base-dir "todo.org") "* a\n* b\n"))
+      (should (= (file-modes (expand-file-name "todo.org" riporta-gg-base-dir)) #o444)))))
+
 ;;; Syncthing
 
 (defun rgt-fake-api (overrides)
@@ -291,6 +310,8 @@
     (should (equal (rgt-read riporta-gg-io-dir "slurp.org")
                    "* Libro senza data :book:\n* [[https://x][Altro]] [2026-10-01 Thu] :yt:\n"))
     (should (file-exists-p (expand-file-name "contab/2026.ledger" riporta-gg-base-dir)))
+    (should (equal (rgt-read riporta-gg-base-dir "todo.org") "* x\n"))
+    (should (equal (rgt-read riporta-gg-base-dir "idee.org") "* y\n"))
     (let ((default-directory riporta-gg-base-dir))
       (should (string-match-p
                "riporta 2026-10-01"

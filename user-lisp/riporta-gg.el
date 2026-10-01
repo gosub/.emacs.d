@@ -68,6 +68,13 @@ Entries without a date are never moved."
   :type '(repeat string)
   :group 'riporta-gg)
 
+(defcustom riporta-gg-mirror-files '("todo.org" "idee.org" "misc.org")
+  "Files in `riporta-gg-io-dir' copied to `riporta-gg-base-dir' at every run.
+The copies are read-only: they are edited on the phone only, and the
+archive keeps their history in git."
+  :type '(repeat string)
+  :group 'riporta-gg)
+
 (defcustom riporta-gg-archive-dest "completed/%s_%Y.org"
   "Archive file for DONE items, relative to `riporta-gg-base-dir'.
 %s is replaced by the base name of the source file, %Y by the year of
@@ -345,6 +352,35 @@ next to FILE they would end up on the phone, and the archive is in git."
     written))
 
 
+;;; Mirroring the live lists
+
+(defun riporta-gg--stale-mirrors ()
+  "Return the files of `riporta-gg-mirror-files' whose copy is out of date."
+  (cl-remove-if
+   (lambda (f)
+     (let ((src (expand-file-name f riporta-gg-io-dir)))
+       (or (not (file-exists-p src))
+           (equal (riporta-gg--file-string src)
+                  (riporta-gg--file-string
+                   (expand-file-name f riporta-gg-base-dir))))))
+   riporta-gg-mirror-files))
+
+(defun riporta-gg--mirror ()
+  "Copy the stale files of `riporta-gg-mirror-files' to the archive.
+Each copy is made read-only.  Return the list of copies written."
+  (mapcar
+   (lambda (f)
+     (let ((dest (expand-file-name f riporta-gg-base-dir)))
+       (riporta-gg--check-buffer dest)
+       (when (file-exists-p dest)
+         (set-file-modes dest #o644))
+       (copy-file (expand-file-name f riporta-gg-io-dir) dest t)
+       (set-file-modes dest #o444)
+       (riporta-gg--revert dest)
+       dest))
+   (riporta-gg--stale-mirrors)))
+
+
 ;;; Syncthing
 
 (defun riporta-gg--syncthing-api-key ()
@@ -536,8 +572,8 @@ Return nil on success, or git's output on failure."
           nil
         (string-trim (buffer-string))))))
 
-(defun riporta-gg--preview (checks moves archives)
-  "Show CHECKS, MOVES and ARCHIVES in the *riporta* buffer."
+(defun riporta-gg--preview (checks moves archives mirrors)
+  "Show CHECKS, MOVES, ARCHIVES and MIRRORS in the *riporta* buffer."
   (with-current-buffer (get-buffer-create "*riporta*")
     (let ((inhibit-read-only t))
       (erase-buffer)
@@ -559,6 +595,9 @@ Return nil on success, or git's output on failure."
       (dolist (a archives)
         (insert (format "  %s: %d voci\n" (file-name-nondirectory (car a))
                         (length (cdr a)))))
+      (insert "\nCopie da aggiornare\n")
+      (dolist (f mirrors)
+        (insert (format "  %s\n" f)))
       (goto-char (point-min))
       (special-mode))
     (display-buffer (current-buffer))))
@@ -571,7 +610,8 @@ Return nil on success, or git's output on failure."
 (defun riporta-gg (&optional force)
   "Move the ready entries from the phone files to the archive and commit.
 Streams are described by `riporta-gg-streams'; DONE items closed long
-enough ago in `riporta-gg-archive-files' are archived too.  Nothing
+enough ago in `riporta-gg-archive-files' are archived too, and the
+files of `riporta-gg-mirror-files' are copied to the archive.  Nothing
 happens unless Syncthing reports the phone as recently seen and the
 folder in sync; with a prefix argument FORCE, offer to go on anyway."
   (interactive "P")
@@ -584,28 +624,40 @@ folder in sync; with a prefix argument FORCE, offer to go on anyway."
                             for file = (expand-file-name f riporta-gg-io-dir)
                             for items = (and (file-exists-p file)
                                              (riporta-gg--closed-items file now))
-                            when items collect (cons file items))))
-    (riporta-gg--preview checks moves archives)
-    (if (not (or moves archives))
+                            when items collect (cons file items)))
+         ;; Archiving changes the lists, so their copies will be stale too.
+         (mirrors (delete-dups
+                   (append (riporta-gg--stale-mirrors)
+                           (cl-intersection
+                            (mapcar (lambda (a) (file-name-nondirectory (car a)))
+                                    archives)
+                            riporta-gg-mirror-files :test #'equal)))))
+    (riporta-gg--preview checks moves archives mirrors)
+    (if (not (or moves archives mirrors))
         (message "riporta-gg: niente da spostare")
       (when (y-or-n-p "Spostare queste voci nell'archivio? ")
         (let* ((sequence (riporta-gg--syncthing-sequence))
                (written (append
                         (mapcan #'riporta-gg--apply-move moves)
                         (mapcan (lambda (a) (riporta-gg--archive-items (car a) (cdr a)))
-                                archives))))
+                                archives)
+                        (riporta-gg--mirror))))
           (let ((err (riporta-gg--git-commit
                       (delete-dups written)
                       (format-time-string "riporta %F" now))))
             (when err
               (display-warning 'riporta-gg (format "git commit fallito:\n%s" err))))
-          (if (and sequence (riporta-gg--syncthing-push sequence))
-              (message "riporta-gg: fatto, %s è allineato"
-                       riporta-gg-syncthing-device-name)
+          (cond
+           ((not (or moves archives))
+            (message "riporta-gg: copie aggiornate"))
+           ((and sequence (riporta-gg--syncthing-push sequence))
+            (message "riporta-gg: fatto, %s è allineato"
+                     riporta-gg-syncthing-device-name))
+           (t
             (display-warning
              'riporta-gg
              (format "%s non ha ancora ricevuto i file accorciati: non modificarli sul telefono finché non sincronizza"
-                     riporta-gg-syncthing-device-name))))))))
+                     riporta-gg-syncthing-device-name)))))))))
 
 ;;;###autoload
 (defun riporta-gg-archive-done (&optional force)
