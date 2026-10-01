@@ -13,7 +13,7 @@ The history lives in ~/box/txt; see `riporta-gg'.")
   "Path to todo org file.")
 
 (defvar gg-done-file
-  (expand-file-name "io.org" gg-txt-directory)
+  (expand-file-name "done.org" gg-txt-directory)
   "Path to the diary of the current month.")
 
 ;;;###autoload
