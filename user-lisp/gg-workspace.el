@@ -1,10 +1,11 @@
 ;;; gg-workspace.el --- Workspace setup -*- lexical-binding: t; -*-
 
-(defvar gg-txt-directory (expand-file-name "~/box/txt")
-  "Directory containing personal text files.")
+(defvar gg-txt-directory (expand-file-name "~/dl/io/org")
+  "Directory containing the live text files, synced with the phone.
+The history lives in ~/box/txt; see `riporta-gg'.")
 
 (defvar gg-notes-file
-  (expand-file-name "ziba.org" gg-txt-directory)
+  (expand-file-name "misc.org" gg-txt-directory)
   "Path to personal notes org file.")
 
 (defvar gg-todo-file
@@ -12,8 +13,8 @@
   "Path to todo org file.")
 
 (defvar gg-done-file
-  (expand-file-name "done.org" gg-txt-directory)
-  "Path to done/archive org file.")
+  (expand-file-name "io.org" gg-txt-directory)
+  "Path to the diary of the current month.")
 
 ;;;###autoload
 (defun gg/apparecchia ()
