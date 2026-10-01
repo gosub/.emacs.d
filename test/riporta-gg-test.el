@@ -163,16 +163,16 @@
         (riporta-gg--archive-items file items)
         (kill-buffer (find-buffer-visiting file))
         (let ((todo (rgt-read riporta-gg-io-dir "todo.org"))
-              (arch (rgt-read riporta-gg-base-dir "archive/todo_2026.org")))
+              (arch (rgt-read riporta-gg-base-dir "completed/todo_2026.org")))
           (should-not (string-match-p "vecchio" todo))
           (should (string-match-p "recente" todo))
           (should (string-match-p "\\* DONE vecchio" arch))
           (should (string-match-p ":ARCHIVE_OLPATH: errands" arch))
           (should-not (directory-files riporta-gg-io-dir nil "~\\'"))
-          (should-not (directory-files (expand-file-name "archive" riporta-gg-base-dir)
+          (should-not (directory-files (expand-file-name "completed" riporta-gg-base-dir)
                                        nil "~\\'")))
         (kill-buffer (find-buffer-visiting
-                      (expand-file-name "archive/todo_2026.org" riporta-gg-base-dir)))))))
+                      (expand-file-name "completed/todo_2026.org" riporta-gg-base-dir)))))))
 
 
 ;;; Syncthing

@@ -68,7 +68,7 @@ Entries without a date are never moved."
   :type '(repeat string)
   :group 'riporta-gg)
 
-(defcustom riporta-gg-archive-dest "archive/%s_%Y.org"
+(defcustom riporta-gg-archive-dest "completed/%s_%Y.org"
   "Archive file for DONE items, relative to `riporta-gg-base-dir'.
 %s is replaced by the base name of the source file, %Y by the year of
 the CLOSED timestamp."
