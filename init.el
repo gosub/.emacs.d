@@ -120,6 +120,14 @@
   :bind
   ("<f5>" . gg/apparecchia))
 
+(use-package riporta-gg
+  :defer t
+  :custom
+  (riporta-gg-io-dir "~/dl/io/org/")
+  (riporta-gg-base-dir "~/box/txt/")
+  (riporta-gg-syncthing-device-name "moto_edge30")
+  (riporta-gg-syncthing-folder-label "io"))
+
 (use-package yt-audio-sample-gg
   :defer t
   :custom
