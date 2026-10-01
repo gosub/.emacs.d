@@ -44,7 +44,7 @@
   :group 'riporta-gg)
 
 (defcustom riporta-gg-streams
-  '((diario "io.org" "done/%Y.org" org mesi-conclusi)
+  '((diario "done.org" "done/%Y.org" org mesi-conclusi)
     (slurp "slurp.org" "slurp/%Y.org" org mesi-conclusi)
     (contab "contab.txt" "contab/%Y.ledger" ledger tutto))
   "Streams moved by `riporta-gg'.
