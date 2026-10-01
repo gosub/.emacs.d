@@ -229,12 +229,17 @@ the strings gives back TEXT exactly."
 
 ;;; Applying a move
 
+(defun riporta-gg--trim-blank-lines (s)
+  "Return S without its final newline and trailing blank lines.
+Trailing spaces on the last line with text are kept."
+  (replace-regexp-in-string "\\(?:\n[ \t]*\\)+\\'" "" s))
+
 (defun riporta-gg--append-text (existing chunks format)
   "Return the text to append to EXISTING so that it ends with CHUNKS.
 Each chunk loses its trailing blank lines; ledger chunks are separated
 by an empty line."
   (let* ((sep (pcase format ('org "") ('ledger "\n")))
-         (body (mapconcat (lambda (c) (concat (string-trim-right c) "\n"))
+         (body (mapconcat (lambda (c) (concat (riporta-gg--trim-blank-lines c) "\n"))
                           chunks sep))
          (glue (cond ((string-empty-p existing)
                       (if (eq format 'ledger) "; -*- ledger -*-\n\n" ""))

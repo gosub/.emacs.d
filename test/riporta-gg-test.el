@@ -101,6 +101,13 @@
                    "* 2026-09-28\n** ieri\n* 2026-09-29\n** bad: X\n** giretto con Mya\n* 2026-09-30\n** spesa\n"))
     (should (equal (rgt-read riporta-gg-io-dir "io.org") "* 2026-10-01\n** oggi\n"))))
 
+(ert-deftest rgt-apply-keeps-trailing-spaces ()
+  (rgt-with-dirs
+    (rgt-write riporta-gg-io-dir "io.org" "* 2026-09-01\n** x \n\n\n")
+    (riporta-gg--apply-move
+     (riporta-gg--plan-stream '(diario "io.org" "done/%Y.org" org mesi-conclusi) rgt-oct-1))
+    (should (equal (rgt-read riporta-gg-base-dir "done/2026.org") "* 2026-09-01\n** x \n"))))
+
 (ert-deftest rgt-apply-ledger-tutto-new-file ()
   (rgt-with-dirs
     (rgt-write riporta-gg-io-dir "contab.txt" rgt-ledger)
