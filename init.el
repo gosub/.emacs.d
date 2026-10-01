@@ -128,6 +128,13 @@
   (riporta-gg-syncthing-device-name "moto_edge30")
   (riporta-gg-syncthing-folder-label "io"))
 
+(use-package ledger-aux
+  :defer t
+  :custom
+  (ledger-aux-master-files
+   '(("~/box/txt/contab/" . "~/box/txt/contab.ledger")
+     ("~/dl/io/org/contab.txt" . "~/box/txt/contab.ledger"))))
+
 (use-package yt-audio-sample-gg
   :defer t
   :custom
@@ -232,7 +239,9 @@
 
 (use-package ledger-mode
   :ensure t
-  :defer t)
+  :defer t
+  :config
+  (ledger-aux-setup))
 
 (use-package magit
   :ensure t
