@@ -381,6 +381,22 @@ Each copy is made read-only.  Return the list of copies written."
    (riporta-gg--stale-mirrors)))
 
 
+;;;###autoload
+(defun riporta-gg-protect-copies ()
+  "Make a buffer visiting a copy of `riporta-gg-mirror-files' read-only.
+The copies in `riporta-gg-base-dir' are overwritten at every run, and
+git checkouts make the files writable again; meant for `find-file-hook'."
+  (when-let* ((file (buffer-file-name))
+              ((member (file-name-nondirectory file) riporta-gg-mirror-files))
+              ((file-equal-p (file-name-directory file)
+                             (file-name-as-directory
+                              (expand-file-name riporta-gg-base-dir)))))
+    (setq buffer-read-only t)
+    (message "Copia in sola lettura: il file da modificare è %s"
+             (abbreviate-file-name
+              (expand-file-name (file-name-nondirectory file) riporta-gg-io-dir)))))
+
+
 ;;; Syncthing
 
 (defun riporta-gg--syncthing-api-key ()

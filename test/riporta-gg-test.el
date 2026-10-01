@@ -194,6 +194,25 @@
       (should (equal (rgt-read riporta-gg-base-dir "todo.org") "* a\n* b\n"))
       (should (= (file-modes (expand-file-name "todo.org" riporta-gg-base-dir)) #o444)))))
 
+;;; Protecting the copies
+
+(ert-deftest rgt-protect-copies ()
+  (rgt-with-dirs
+    (let ((riporta-gg-mirror-files '("todo.org")))
+      (rgt-write riporta-gg-base-dir "todo.org" "* a\n")
+      (rgt-write riporta-gg-base-dir "memo.org" "* m\n")
+      (rgt-write riporta-gg-io-dir "todo.org" "* a\n")
+      (dolist (case '(("base" "todo.org" t) ("base" "memo.org" nil) ("io" "todo.org" nil)))
+        (let ((buf (find-file-noselect
+                    (expand-file-name (cadr case)
+                                      (if (equal (car case) "base")
+                                          riporta-gg-base-dir riporta-gg-io-dir)))))
+          (with-current-buffer buf
+            (setq buffer-read-only nil)
+            (riporta-gg-protect-copies)
+            (should (eq buffer-read-only (nth 2 case))))
+          (kill-buffer buf))))))
+
 ;;; Syncthing
 
 (defun rgt-fake-api (overrides)
