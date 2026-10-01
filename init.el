@@ -122,6 +122,7 @@
 
 (use-package riporta-gg
   :defer t
+  :hook (find-file . riporta-gg-protect-copies)
   :custom
   (riporta-gg-io-dir "~/dl/io/org/")
   (riporta-gg-base-dir "~/box/txt/")
