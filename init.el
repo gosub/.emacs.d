@@ -131,6 +131,7 @@
 (use-package ledger-aux
   :defer t
   :custom
+  (ledger-aux-account-report "conto")
   (ledger-aux-master-files
    '(("~/box/txt/contab/" . "~/box/txt/contab.ledger")
      ("~/dl/io/org/contab.txt" . "~/box/txt/contab.ledger"))))
@@ -240,7 +241,12 @@
 (use-package ledger-mode
   :ensure t
   :defer t
+  :bind (:map ledger-mode-map
+         ("C-c C-a" . ledger-aux-account-report)
+         ("C-c C-n" . ledger-add-transaction))
   :config
+  (add-to-list 'ledger-reports
+               '("conto" "%(binary) -f %(ledger-file) reg --sort -date %(account)") t)
   (ledger-aux-setup))
 
 (use-package magit
