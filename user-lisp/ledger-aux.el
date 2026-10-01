@@ -17,6 +17,7 @@
 (defvar ledger-master-file)
 (defvar ledger-binary-path)
 (declare-function ledger-master-file "ledger-report" ())
+(declare-function ledger-report "ledger-report" (report-name edit))
 
 
 (defgroup ledger-aux nil
@@ -30,6 +31,25 @@ visiting it get MASTER as their `ledger-master-file'."
   :type '(alist :key-type (choice directory file) :value-type file)
   :group 'ledger-aux)
 
+
+(defcustom ledger-aux-account-report "account"
+  "Name of the report in `ledger-reports' run by `ledger-aux-account-report'.
+It should contain %(account), so that the account is asked for."
+  :type 'string
+  :group 'ledger-aux)
+
+
+;;;###autoload
+(defun ledger-aux-account-report ()
+  "Run the report named by `ledger-aux-account-report'.
+Like \\[ledger-report] with that name chosen, which asks for the
+account; offer to save the buffer first, since the report reads the
+files on disk."
+  (interactive)
+  (when (and (buffer-modified-p)
+             (y-or-n-p "Buffer modified, save it? "))
+    (save-buffer))
+  (ledger-report ledger-aux-account-report nil))
 
 (defun ledger-aux-set-master ()
   "Set `ledger-master-file' from `ledger-aux-master-files'."
