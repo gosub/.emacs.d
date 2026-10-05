@@ -359,6 +359,26 @@ them one after the other does not shift the positions still to visit."
         "/DONE" 'file)))
     (sort items (lambda (a b) (> (car a) (car b))))))
 
+(defun riporta-gg--archive-file (file closed)
+  "Return the archive file for an item of FILE closed at CLOSED, a time."
+  (expand-file-name
+   (string-replace "%Y" (format-time-string "%Y" closed)
+                   (string-replace "%s" (file-name-base file)
+                                   riporta-gg-archive-dest))
+   riporta-gg-base-dir))
+
+(defun riporta-gg--item-headings (file items)
+  "Return the headings of ITEMS of FILE, in the order of the file.
+ITEMS are as returned by `riporta-gg--closed-items'.  Each element is
+\(HEADING . ARCHIVE-FILE)."
+  (with-current-buffer (find-file-noselect file)
+    (org-with-wide-buffer
+     (mapcar (lambda (item)
+               (goto-char (car item))
+               (cons (org-get-heading t t t t)
+                     (riporta-gg--archive-file file (cdr item))))
+             (reverse items)))))
+
 (defun riporta-gg--archive-items (file items)
   "Archive ITEMS of FILE, as returned by `riporta-gg--closed-items'.
 Each item goes at the top level of the archive file for the year it
@@ -369,12 +389,7 @@ is in git."
         written)
     (with-current-buffer (find-file-noselect file)
       (dolist (item items)
-        (let* ((dest (expand-file-name
-                      (string-replace
-                       "%Y" (format-time-string "%Y" (cdr item))
-                       (string-replace "%s" (file-name-base file)
-                                       riporta-gg-archive-dest))
-                      riporta-gg-base-dir))
+        (let* ((dest (riporta-gg--archive-file file (cdr item)))
                (org-archive-location (concat dest "::")))
           (make-directory (file-name-directory dest) t)
           (goto-char (car item))
@@ -644,7 +659,12 @@ Return nil on success, or git's output on failure."
       (insert "\nDONE da archiviare\n")
       (dolist (a archives)
         (insert (format "  %s: %d voci\n" (file-name-nondirectory (car a))
-                        (length (cdr a)))))
+                        (length (cdr a))))
+        (pcase-dolist (`(,heading . ,dest)
+                       (riporta-gg--item-headings (car a) (cdr a)))
+          (insert (format "    %s  -> %s\n"
+                          (riporta-gg--first-line heading)
+                          (file-relative-name dest riporta-gg-base-dir)))))
       (insert "\nCopie da aggiornare\n")
       (dolist (f mirrors)
         (insert (format "  %s\n" f)))

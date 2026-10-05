@@ -237,7 +237,25 @@ CLOSED: [2026-09-01 Tue 10:00]
                                          nil "~\\'")))
           (kill-buffer (find-buffer-visiting
                         (expand-file-name "completed/todo_2026.org" riporta-gg-base-dir))))))))
-
+;; Only the whole tasks are listed, not what is below them.
+(ert-deftest rgt-preview-lists-done-items ()
+  (rgt-with-dirs
+    (rgt-with-org-keywords
+      (let ((riporta-gg-archive-age 7))
+        (rgt-write riporta-gg-io-dir "todo.org" rgt-todo)
+        (let* ((file (expand-file-name "todo.org" riporta-gg-io-dir))
+               (items (riporta-gg--closed-items file rgt-oct-1)))
+          (riporta-gg--preview nil nil (list (cons file items)) nil)
+          (with-current-buffer "*riporta*"
+            (should (string-match-p
+                     (concat "  todo.org: 3 voci\n"
+                             "    intero  -> completed/todo_2026.org\n"
+                             "    dell'anno  -> completed/todo_2026.org\n"
+                             "    fatto quest'anno  -> completed/todo_2026.org\n")
+                     (buffer-string)))
+            (should-not (string-match-p "passo uno" (buffer-string))))
+          (kill-buffer "*riporta*")
+          (kill-buffer (find-buffer-visiting file)))))))
 
 ;;; Mirroring
 
