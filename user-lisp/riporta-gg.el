@@ -310,10 +310,12 @@ Return the list of archive files written."
 ;;; Archiving DONE items
 
 (defun riporta-gg--year-heading-p ()
-  "Non-nil if the heading at point is a top-level year, like \"* 2025\"."
+  "Non-nil if the heading at point is a top-level year.
+That is \"* 2025\", or \"* done25\" for the things done that year."
   (and (= (org-outline-level) 1)
        (not (org-get-todo-state))
-       (string-match-p "\\`[0-9]\\{4\\}\\'" (org-get-heading t t t t))))
+       (string-match-p "\\`\\(?:[0-9]\\{4\\}\\|done[0-9]\\{2\\}\\)\\'"
+                      (org-get-heading t t t t))))
 
 (defun riporta-gg--subtree-done-p ()
   "Non-nil if no heading below the one at point is still to do.
@@ -331,7 +333,7 @@ Headings without a todo keyword are notes and do not count."
 A top-level heading is archived at the top level of the archive, and
 returns t; a child of a top-level year heading is archived under the
 same year heading in the archive, and returns that heading, like
-\"* 2025\".  Deeper headings stay with their parent."
+\"* 2025\" or \"* done25\".  Deeper headings stay with their parent."
   (pcase (org-outline-level)
     (1 t)
     (2 (save-excursion

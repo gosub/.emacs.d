@@ -185,6 +185,10 @@ CLOSED: [2026-09-01 Tue 10:00]
 ** aperto dell'anno
 *** DONE nipote dell'anno
 CLOSED: [2026-09-01 Tue 10:00]
+* done26
+** DONE fatto quest'anno
+CLOSED: [2026-09-01 Tue 10:00]
+*** nota
 ")
 
 (ert-deftest rgt-closed-items-whole-tasks ()
@@ -199,7 +203,8 @@ CLOSED: [2026-09-01 Tue 10:00]
                                      (goto-char (car i))
                                      (list (org-get-heading t t t t) (nth 2 i)))
                                    items)
-                           '(("dell'anno" "* 2025")
+                           '(("fatto quest'anno" "* done26")
+                             ("dell'anno" "* 2025")
                              ("intero" t)))))
           (kill-buffer (find-buffer-visiting file)))))))
 
@@ -228,6 +233,10 @@ CLOSED: [2026-09-01 Tue 10:00]
                      "^\\* 2025\n\n*\\*\\* DONE dell'anno\n\\(?:.*\n\\)*?\\*\\*\\* DONE sotto dell'anno"
                      arch))
             (should (string-match-p ":ARCHIVE_OLPATH: 2025" arch))
+            (should (string-match-p
+                     "^\\* done26\n\n*\\*\\* DONE fatto quest'anno\n\\(?:.*\n\\)*?\\*\\*\\* nota"
+                     arch))
+            (should (string-match-p "^\\* done26$" todo))
             (should-not (directory-files riporta-gg-io-dir nil "~\\'"))
             (should-not (directory-files (expand-file-name "completed" riporta-gg-base-dir)
                                          nil "~\\'")))
