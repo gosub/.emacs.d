@@ -201,11 +201,9 @@ CLOSED: [2026-09-01 Tue 10:00]
           (with-current-buffer (find-buffer-visiting file)
             (should (equal (mapcar (lambda (i)
                                      (goto-char (car i))
-                                     (list (org-get-heading t t t t) (nth 2 i)))
+                                     (org-get-heading t t t t))
                                    items)
-                           '(("fatto quest'anno" "* done26")
-                             ("dell'anno" "* 2025")
-                             ("intero" t)))))
+                           '("fatto quest'anno" "dell'anno" "intero"))))
           (kill-buffer (find-buffer-visiting file)))))))
 
 (ert-deftest rgt-archive-done ()
@@ -225,17 +223,14 @@ CLOSED: [2026-09-01 Tue 10:00]
             (should (string-match-p "^\\* 2025$" todo))
             (should (string-match-p "figlio di non DONE" todo))
             (should (string-match-p "nipote dell'anno" todo))
-            ;; The trees are kept whole, at the same level as in todo.org.
+            ;; The trees are kept whole, at the top level of the archive.
             (should (string-match-p
-                     "^\\* DONE intero\n\\(?:.*\n\\)*?\\*\\* DONE passo uno\n\\(?:.*\n\\)*?\\*\\*\\* appunto\n\\(?:.*\n\\)*?\\*\\* DONE passo due"
+                     "^\\* DONE fatto quest'anno\n\\(?:.*\n\\)*?\\*\\* nota\n\\(?:.*\n\\)*?\\* DONE dell'anno\n\\(?:.*\n\\)*?\\*\\* DONE sotto dell'anno\n\\(?:.*\n\\)*?\\* DONE intero\n\\(?:.*\n\\)*?\\*\\* DONE passo uno\n\\(?:.*\n\\)*?\\*\\*\\* appunto\n\\(?:.*\n\\)*?\\*\\* DONE passo due"
                      arch))
-            (should (string-match-p
-                     "^\\* 2025\n\n*\\*\\* DONE dell'anno\n\\(?:.*\n\\)*?\\*\\*\\* DONE sotto dell'anno"
-                     arch))
+            (should-not (string-match-p "^\\* 2026" arch))
+            (should-not (string-match-p "^\\* 2025" arch))
             (should (string-match-p ":ARCHIVE_OLPATH: 2025" arch))
-            (should (string-match-p
-                     "^\\* done26\n\n*\\*\\* DONE fatto quest'anno\n\\(?:.*\n\\)*?\\*\\*\\* nota"
-                     arch))
+            (should-not (string-match-p "^\\* done26" arch))
             (should (string-match-p "^\\* done26$" todo))
             (should-not (directory-files riporta-gg-io-dir nil "~\\'"))
             (should-not (directory-files (expand-file-name "completed" riporta-gg-base-dir)
