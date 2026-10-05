@@ -151,28 +151,88 @@
 
 ;;; Archiving DONE
 
+;; The org keywords of this machine, so that the tests do not depend on
+;; the defaults.
+(defmacro rgt-with-org-keywords (&rest body)
+  (declare (indent 0))
+  `(let ((org-todo-keywords '((sequence "TODO" "ASIDE" "DONE"))))
+     ,@body))
+
+(defconst rgt-todo
+  "* DONE intero
+CLOSED: [2026-09-01 Tue 10:00]
+** DONE passo uno
+CLOSED: [2026-08-30 Sun 10:00]
+*** appunto
+** DONE passo due
+CLOSED: [2026-08-31 Mon 10:00]
+* DONE recente
+CLOSED: [2026-09-30 Wed 10:00]
+* DONE incompleto
+CLOSED: [2026-09-01 Tue 10:00]
+** TODO passo aperto
+* errands
+** DONE figlio di non DONE
+CLOSED: [2026-09-01 Tue 10:00]
+* 2025
+** DONE dell'anno
+CLOSED: [2026-09-01 Tue 10:00]
+*** DONE sotto dell'anno
+CLOSED: [2026-08-01 Sat 10:00]
+** DONE dell'anno con ASIDE
+CLOSED: [2026-09-01 Tue 10:00]
+*** ASIDE da riprendere
+** aperto dell'anno
+*** DONE nipote dell'anno
+CLOSED: [2026-09-01 Tue 10:00]
+")
+
+(ert-deftest rgt-closed-items-whole-tasks ()
+  (rgt-with-dirs
+    (rgt-with-org-keywords
+      (let ((riporta-gg-archive-age 7))
+        (rgt-write riporta-gg-io-dir "todo.org" rgt-todo)
+        (let* ((file (expand-file-name "todo.org" riporta-gg-io-dir))
+               (items (riporta-gg--closed-items file rgt-oct-1)))
+          (with-current-buffer (find-buffer-visiting file)
+            (should (equal (mapcar (lambda (i)
+                                     (goto-char (car i))
+                                     (list (org-get-heading t t t t) (nth 2 i)))
+                                   items)
+                           '(("dell'anno" "* 2025")
+                             ("intero" t)))))
+          (kill-buffer (find-buffer-visiting file)))))))
+
 (ert-deftest rgt-archive-done ()
   (rgt-with-dirs
-    (let ((riporta-gg-archive-age 7)
-          (org-archive-save-context-info '(time olpath)))
-      (rgt-write riporta-gg-io-dir "todo.org"
-                 "* errands\n** DONE vecchio\nCLOSED: [2026-09-01 Tue 10:00]\n** DONE recente\nCLOSED: [2026-09-30 Wed 10:00]\n** aperto\n")
-      (let* ((file (expand-file-name "todo.org" riporta-gg-io-dir))
-             (items (riporta-gg--closed-items file rgt-oct-1)))
-        (should (= 1 (length items)))
-        (riporta-gg--archive-items file items)
-        (kill-buffer (find-buffer-visiting file))
-        (let ((todo (rgt-read riporta-gg-io-dir "todo.org"))
-              (arch (rgt-read riporta-gg-base-dir "completed/todo_2026.org")))
-          (should-not (string-match-p "vecchio" todo))
-          (should (string-match-p "recente" todo))
-          (should (string-match-p "\\* DONE vecchio" arch))
-          (should (string-match-p ":ARCHIVE_OLPATH: errands" arch))
-          (should-not (directory-files riporta-gg-io-dir nil "~\\'"))
-          (should-not (directory-files (expand-file-name "completed" riporta-gg-base-dir)
-                                       nil "~\\'")))
-        (kill-buffer (find-buffer-visiting
-                      (expand-file-name "completed/todo_2026.org" riporta-gg-base-dir)))))))
+    (rgt-with-org-keywords
+      (let ((riporta-gg-archive-age 7)
+            (org-archive-save-context-info '(time olpath)))
+        (rgt-write riporta-gg-io-dir "todo.org" rgt-todo)
+        (let* ((file (expand-file-name "todo.org" riporta-gg-io-dir))
+               (items (riporta-gg--closed-items file rgt-oct-1)))
+          (riporta-gg--archive-items file items)
+          (kill-buffer (find-buffer-visiting file))
+          (let ((todo (rgt-read riporta-gg-io-dir "todo.org"))
+                (arch (rgt-read riporta-gg-base-dir "completed/todo_2026.org")))
+            (should-not (string-match-p "intero\\|passo uno\\|appunto" todo))
+            (should-not (string-match-p "DONE dell'anno$\\|sotto dell'anno" todo))
+            (should (string-match-p "^\\* 2025$" todo))
+            (should (string-match-p "figlio di non DONE" todo))
+            (should (string-match-p "nipote dell'anno" todo))
+            ;; The trees are kept whole, at the same level as in todo.org.
+            (should (string-match-p
+                     "^\\* DONE intero\n\\(?:.*\n\\)*?\\*\\* DONE passo uno\n\\(?:.*\n\\)*?\\*\\*\\* appunto\n\\(?:.*\n\\)*?\\*\\* DONE passo due"
+                     arch))
+            (should (string-match-p
+                     "^\\* 2025\n\n*\\*\\* DONE dell'anno\n\\(?:.*\n\\)*?\\*\\*\\* DONE sotto dell'anno"
+                     arch))
+            (should (string-match-p ":ARCHIVE_OLPATH: 2025" arch))
+            (should-not (directory-files riporta-gg-io-dir nil "~\\'"))
+            (should-not (directory-files (expand-file-name "completed" riporta-gg-base-dir)
+                                         nil "~\\'")))
+          (kill-buffer (find-buffer-visiting
+                        (expand-file-name "completed/todo_2026.org" riporta-gg-base-dir))))))))
 
 
 ;;; Mirroring

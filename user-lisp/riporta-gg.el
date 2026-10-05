@@ -309,21 +309,56 @@ Return the list of archive files written."
 
 ;;; Archiving DONE items
 
+(defun riporta-gg--year-heading-p ()
+  "Non-nil if the heading at point is a top-level year, like \"* 2025\"."
+  (and (= (org-outline-level) 1)
+       (not (org-get-todo-state))
+       (string-match-p "\\`[0-9]\\{4\\}\\'" (org-get-heading t t t t))))
+
+(defun riporta-gg--subtree-done-p ()
+  "Non-nil if no heading below the one at point is still to do.
+Headings without a todo keyword are notes and do not count."
+  (save-excursion
+    (let ((end (save-excursion (org-end-of-subtree t t)))
+          (done t))
+      (while (and done (outline-next-heading) (< (point) end))
+        (when (org-entry-is-todo-p)
+          (setq done nil)))
+      done)))
+
+(defun riporta-gg--archivable-parent ()
+  "Return where the DONE heading at point can be archived, or nil.
+A top-level heading is archived at the top level of the archive, and
+returns t; a child of a top-level year heading is archived under the
+same year heading in the archive, and returns that heading, like
+\"* 2025\".  Deeper headings stay with their parent."
+  (pcase (org-outline-level)
+    (1 t)
+    (2 (save-excursion
+         (and (org-up-heading-safe)
+              (riporta-gg--year-heading-p)
+              (concat "* " (org-get-heading t t t t)))))))
+
 (defun riporta-gg--closed-items (file now)
   "Return the DONE items of FILE closed long enough before NOW.
-That is at least `riporta-gg-archive-age' days.  Each item is
-\(POSITION . CLOSED-TIME), last position first, so that archiving them
-one after the other does not shift the positions still to visit."
+That is at least `riporta-gg-archive-age' days.  Only whole tasks are
+archived: top-level DONE headings, or DONE children of a top-level year
+heading, with nothing still to do below them.  Each item is
+\(POSITION CLOSED-TIME PARENT), PARENT as returned by
+`riporta-gg--archivable-parent'; last position first, so that archiving
+them one after the other does not shift the positions still to visit."
   (let ((limit (time-subtract now (days-to-time riporta-gg-archive-age)))
         items)
     (with-current-buffer (find-file-noselect file)
       (org-with-wide-buffer
        (org-map-entries
         (lambda ()
-          (let ((closed (org-entry-get nil "CLOSED")))
-            (when (and closed
-                       (time-less-p (org-time-string-to-time closed) limit))
-              (push (cons (point) (org-time-string-to-time closed)) items))))
+          (when-let* ((closed (org-entry-get nil "CLOSED"))
+                      (time (org-time-string-to-time closed))
+                      ((time-less-p time limit))
+                      (parent (riporta-gg--archivable-parent))
+                      ((riporta-gg--subtree-done-p)))
+            (push (list (point) time parent) items)))
         "/DONE" 'file)))
     (sort items (lambda (a b) (> (car a) (car b))))))
 
@@ -337,11 +372,13 @@ next to FILE they would end up on the phone, and the archive is in git."
       (dolist (item items)
         (let* ((dest (expand-file-name
                       (string-replace
-                       "%Y" (format-time-string "%Y" (cdr item))
+                       "%Y" (format-time-string "%Y" (nth 1 item))
                        (string-replace "%s" (file-name-base file)
                                        riporta-gg-archive-dest))
                       riporta-gg-base-dir))
-               (org-archive-location (concat dest "::")))
+               (parent (nth 2 item))
+               (org-archive-location
+                (concat dest "::" (if (stringp parent) parent ""))))
           (make-directory (file-name-directory dest) t)
           (goto-char (car item))
           (org-archive-subtree)
