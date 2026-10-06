@@ -127,7 +127,8 @@
   (riporta-gg-io-dir "~/dl/io/org/")
   (riporta-gg-base-dir "~/box/txt/")
   (riporta-gg-syncthing-device-name "moto_edge30")
-  (riporta-gg-syncthing-folder-label "io"))
+  (riporta-gg-syncthing-folder-label "io")
+  (riporta-gg-archive-age 1))
 
 (use-package ledger-aux
   :defer t
