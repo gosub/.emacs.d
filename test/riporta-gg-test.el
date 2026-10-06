@@ -237,6 +237,35 @@ CLOSED: [2026-09-01 Tue 10:00]
                                          nil "~\\'")))
           (kill-buffer (find-buffer-visiting
                         (expand-file-name "completed/todo_2026.org" riporta-gg-base-dir))))))))
+;; Only the date of CLOSED counts, not the time.
+(ert-deftest rgt-closed-items-by-date ()
+  (rgt-with-dirs
+    (rgt-with-org-keywords
+      (rgt-write riporta-gg-io-dir "todo.org"
+                 "* DONE ieri sera
+CLOSED: [2026-09-30 Wed 23:00]
+* DONE stanotte
+CLOSED: [2026-10-01 Thu 00:30]
+* DONE stamattina
+CLOSED: [2026-10-01 Thu 09:00]
+* DONE stasera
+CLOSED: [2026-10-01 Thu 22:00]
+")
+      (let ((file (expand-file-name "todo.org" riporta-gg-io-dir)))
+        (cl-flet ((titles (age)
+                    (let ((riporta-gg-archive-age age))
+                      (with-current-buffer (find-file-noselect file)
+                        (mapcar (lambda (i)
+                                  (goto-char (car i))
+                                  (org-get-heading t t t t))
+                                (reverse (riporta-gg--closed-items
+                                          file rgt-oct-1)))))))
+          (should (equal (titles 2) nil))
+          (should (equal (titles 1) '("ieri sera")))
+          (should (equal (titles 0)
+                         '("ieri sera" "stanotte" "stamattina" "stasera"))))
+        (kill-buffer (find-buffer-visiting file))))))
+
 ;; Only the whole tasks are listed, not what is below them.
 (ert-deftest rgt-preview-lists-done-items ()
   (rgt-with-dirs

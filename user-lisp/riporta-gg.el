@@ -83,7 +83,9 @@ the CLOSED timestamp."
   :group 'riporta-gg)
 
 (defcustom riporta-gg-archive-age 7
-  "Archive DONE items closed at least this many days ago."
+  "Archive DONE items closed at least this many days ago.
+Only the date of CLOSED counts, not the time: with 1, everything closed
+up to yesterday is archived; with 0, also what was closed today."
   :type 'natnum
   :group 'riporta-gg)
 
@@ -337,6 +339,15 @@ That is a top-level heading, or a child of a top-level year heading."
          (and (org-up-heading-safe)
               (riporta-gg--year-heading-p))))))
 
+(defun riporta-gg--archive-limit (now)
+  "Return the time before which DONE items are archived, at NOW.
+That is the start of the day after the last one archived, so that only
+the date of CLOSED counts."
+  (let ((d (decode-time now)))
+    (encode-time
+     (list 0 0 0 (- (decoded-time-day d) (1- riporta-gg-archive-age))
+           (decoded-time-month d) (decoded-time-year d) nil -1 nil))))
+
 (defun riporta-gg--closed-items (file now)
   "Return the DONE items of FILE closed long enough before NOW.
 That is at least `riporta-gg-archive-age' days.  Only whole tasks are
@@ -344,7 +355,7 @@ archived: top-level DONE headings, or DONE children of a top-level year
 heading, with nothing still to do below them.  Each item is
 \(POSITION . CLOSED-TIME), last position first, so that archiving
 them one after the other does not shift the positions still to visit."
-  (let ((limit (time-subtract now (days-to-time riporta-gg-archive-age)))
+  (let ((limit (riporta-gg--archive-limit now))
         items)
     (with-current-buffer (find-file-noselect file)
       (org-with-wide-buffer
