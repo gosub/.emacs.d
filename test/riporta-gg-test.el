@@ -90,6 +90,16 @@
       (should (= 2 (length (riporta-gg-move-moved m))))
       (should (equal (riporta-gg-move-keep m) "* 2026-10-01\n** oggi\n")))))
 
+(ert-deftest rgt-plan-giorni-conclusi ()
+  (rgt-with-dirs
+    (rgt-write riporta-gg-io-dir "io.org" rgt-diario)
+    (let ((m (riporta-gg--plan-stream
+              '(diario "io.org" "done/%Y.org" org giorni-conclusi)
+              (encode-time (parse-time-string "2026-09-30 10:00:00")))))
+      (should (= 1 (length (riporta-gg-move-moved m))))
+      (should (equal (riporta-gg-move-keep m)
+                     "* 2026-09-30\n** spesa\n\n* 2026-10-01\n** oggi\n")))))
+
 (ert-deftest rgt-apply-org ()
   (rgt-with-dirs
     (rgt-write riporta-gg-io-dir "io.org" rgt-diario)

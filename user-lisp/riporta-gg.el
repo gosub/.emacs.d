@@ -55,12 +55,14 @@ Each element is (NAME IO-FILE DEST FORMAT POLICY):
 - FORMAT is `org' (an entry is a top-level heading, dated by the last
   YYYY-MM-DD on the heading line) or `ledger' (an entry is a block of
   lines separated by blank lines, dated by its first YYYY-MM-DD);
-- POLICY is `mesi-conclusi' (move the entries of the months before the
-  current one) or `tutto' (move every dated entry).
+- POLICY is `giorni-conclusi' (move the entries of the days before the
+  current one), `mesi-conclusi' (move the entries of the months before
+  the current one) or `tutto' (move every dated entry).
 Entries without a date are never moved."
   :type '(repeat (list symbol string string
                        (choice (const org) (const ledger))
-                       (choice (const mesi-conclusi) (const tutto))))
+                       (choice (const giorni-conclusi) (const mesi-conclusi)
+                               (const tutto))))
   :group 'riporta-gg)
 
 (defcustom riporta-gg-archive-files '("todo.org" "idee.org")
@@ -200,6 +202,8 @@ the strings gives back TEXT exactly."
   (and date
        (pcase policy
          ('tutto t)
+         ('giorni-conclusi
+          (string< (substring date 0 10) (format-time-string "%F" now)))
          ('mesi-conclusi
           (string< (substring date 0 7) (format-time-string "%Y-%m" now))))))
 
