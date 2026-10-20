@@ -8,10 +8,16 @@
   :type '(alist :key-type string :value-type string)
   :group 'shell)
 
+(defcustom preshell-window-height 6
+  "Height in lines of the window showing the output of `preshell'."
+  :type 'integer
+  :group 'shell)
+
 ;;;###autoload
 (defun preshell ()
   "Run a predefined shell command from `preshell-commands-alist'.
-Prompt for selection and execute asynchronously."
+Prompt for selection and execute asynchronously, showing the output
+in a small window at the bottom of the frame."
   (interactive)
   (let* ((choice (completing-read
                   "Preshell: "
@@ -20,7 +26,10 @@ Prompt for selection and execute asynchronously."
                   t))
          (command (cdr (assoc choice preshell-commands-alist))))
     (when command
-      (async-shell-command command (concat "preshell:" choice)))))
+      (let ((display-buffer-overriding-action
+             `((display-buffer-reuse-window display-buffer-at-bottom)
+               (window-height . ,preshell-window-height))))
+        (async-shell-command command (concat "preshell:" choice))))))
 
 (provide 'preshell)
 ;;; preshell.el ends here
